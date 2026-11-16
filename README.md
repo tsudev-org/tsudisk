@@ -19,6 +19,15 @@ bằng cách **dời dữ liệu** - thao tác rủi ro nhất khi quản lý �
 (KB5028997): tắt WinRE, dời phân vùng Recovery ra sau ổ đích, mở rộng ổ, bật lại WinRE - **không di chuyển một byte
 dữ liệu nào** của các phân vùng khác, không cần khởi động lại.
 
+## Cài đặt
+
+Tải `tsudisk_<phiên bản>_x64-portable.exe` ở <https://disk.tsudev.com/tai-ve/> (kèm SHA-256), hoặc qua Scoop:
+
+```powershell
+scoop bucket add tsudev https://github.com/tsudev-org/scoop-bucket
+scoop install tsudev/tsudisk
+```
+
 ## Cách dùng
 
 Mở **Terminal (Admin)** cho các lệnh có ghi đĩa. Lệnh chỉ đọc chạy được với quyền thường.

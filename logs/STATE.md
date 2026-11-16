@@ -5,9 +5,10 @@
 
 ## Hàng đợi task (làm từ trên xuống)
 
-- [ ] 👤 Chủ dự án: xem Settings > Actions của org `tsudev-org` - cổng "Bảo vệ bản quyền" startup_failure từ ~16:03Z
-      16/11 ở scoop-bucket, linux-packages. Sau đó merge `tsudev-org/scoop-bucket#15` (gói Scoop `tsudisk`, đã cài thử
-      thật trên CI) và gửi phiếu cho repo `tsudev` gỡ ngoại lệ tạm cổng C4 cho id `disk` + chạy `pkg:catalog`.
+- [ ] 👤 Chủ dự án: tạo Actions event policy cấp org cho phép `pull_request_target` trước 02/12/2026 (GitHub sẽ chặn
+      vĩnh viễn trên repo công khai; brownout 16/11 16:00-18:00 UTC đã làm cổng "Bảo vệ bản quyền" startup_failure).
+      Phiên tsudev đang hướng dẫn.
+- [ ] Theo dõi phiếu tsudev 20261117-D3 (gỡ ngoại lệ C4 cho `disk`, chạy `pkg:catalog`).
 - [ ] Theo dõi phiếu tsudev 20261117-D2 (logo TsuDisk cho tsudev.com/apps).
 - [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): giao diện WPF; đổi chữ cái/nhãn ổ; thu nhỏ ổ tổng quát; tạo/định dạng
       phân vùng trong vùng trống; `mbr2gpt`.
@@ -21,6 +22,7 @@
 
 ## Đã hoàn thành (mới nhất trên cùng)
 
+- 17/11/2026 - Gói Scoop `tsudisk` merge (scoop-bucket#15); trang Tải về + README có khối cài bằng Scoop.
 - 17/11/2026 - 26.11.1701: logo riêng TsuDisk (một ảnh gốc, favicon/PWA/og/icon exe/AVIF+WebP), `docs/BRAND.md`.
 - 16/11/2026 - 26.11.1603: `mo-rong-winre` sửa lỗi 0x80070643 (KB5034441), ADR-0003; E2E VHDX 32/32.
 - 16/11/2026 - 26.11.1602: `suc-khoe` (chặn ghi khi ổ hỏng), `kiem-tra-gpt`, `sao-luu` GPT thô.
