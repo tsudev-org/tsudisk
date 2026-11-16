@@ -8,8 +8,7 @@
 - [ ] 👤 Chủ dự án: tạo Actions event policy cấp org cho phép `pull_request_target` trước 02/12/2026 (GitHub sẽ chặn
       vĩnh viễn trên repo công khai; brownout 16/11 16:00-18:00 UTC đã làm cổng "Bảo vệ bản quyền" startup_failure).
       Phiên tsudev đang hướng dẫn.
-- [ ] Theo dõi phiếu tsudev 20261117-D3 (gỡ ngoại lệ C4 cho `disk`, chạy `pkg:catalog`).
-- [ ] Theo dõi phiếu tsudev 20261117-D2 (logo TsuDisk cho tsudev.com/apps).
+- [ ] Theo dõi phiếu tsudev 20261117-D2 (logo TsuDisk cho tsudev.com/apps): tsudev#294 chờ `nguyentrangtinhsu` duyệt.
 - [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): giao diện WPF; đổi chữ cái/nhãn ổ; thu nhỏ ổ tổng quát; tạo/định dạng
       phân vùng trong vùng trống; `mbr2gpt`.
 - [ ] Giai đoạn 3: bộ cài, winget `tsudev.TsuDisk` (cần PAT `public_repo` làm secret `WINGET_TOKEN`), ký SignPath (D5).
@@ -22,6 +21,7 @@
 
 ## Đã hoàn thành (mới nhất trên cùng)
 
+- 17/11/2026 - Phiếu tsudev 20261117-D3 ĐÓNG (tsudev#295): tsudev.com/apps có `scoop install tsudev/tsudisk` (đo 200).
 - 17/11/2026 - Gói Scoop `tsudisk` merge (scoop-bucket#15); trang Tải về + README có khối cài bằng Scoop.
 - 17/11/2026 - 26.11.1701: logo riêng TsuDisk (một ảnh gốc, favicon/PWA/og/icon exe/AVIF+WebP), `docs/BRAND.md`.
 - 16/11/2026 - 26.11.1603: `mo-rong-winre` sửa lỗi 0x80070643 (KB5034441), ADR-0003; E2E VHDX 32/32.
