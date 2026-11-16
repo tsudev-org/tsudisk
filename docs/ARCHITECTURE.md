@@ -25,7 +25,7 @@
 
 | Tầng | Thư mục | Nền tảng | Test trên Linux |
 | --- | --- | --- | --- |
-| Nghiệp vụ thuần | `src/TsuDisk.Core/` | `net10.0` | ✅ 57 test |
+| Nghiệp vụ thuần | `src/TsuDisk.Core/` | `net10.0` | ✅ test đơn vị + FakeBackend tiêm lỗi |
 | Adapter hệ thống | `src/TsuDisk.Windows/` | `net10.0-windows10.0.17763.0` | ❌ - E2E VHDX trên Windows |
 | Điểm vào | `src/TsuDisk.Cli/` | `net10.0-windows10.0.17763.0` | ❌ - E2E VHDX trên Windows |
 
