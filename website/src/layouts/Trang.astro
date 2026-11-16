@@ -38,6 +38,8 @@ const dangO = (href: string) => duongDan.startsWith(href);
     <title>{title}</title>
     <meta name="description" content={moTa}>
     <meta name="theme-color" content="#0a0a0a">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <meta name="color-scheme" content="dark light">
     <!-- Giao diện: chạy chặn, SAU meta theme-color và TRƯỚC stylesheet, để không nháy màu (public/theme.js; CSP script-src 'self') -->
     <script is:inline src="/theme.js"></script>
@@ -62,7 +64,7 @@ const dangO = (href: string) => duongDan.startsWith(href);
     <header class="dau-trang">
       <div class="khung dau-trang__trong">
         <a class="thuong-hieu" href="/" aria-label="TsuDisk - Trang chủ">
-          <picture><source type="image/avif" srcset="/brand/logo-tsudev-48.avif 1x, /brand/logo-tsudev-96.avif 2x, /brand/logo-tsudev-144.avif 3x"><source type="image/webp" srcset="/brand/logo-tsudev-48.webp 1x, /brand/logo-tsudev-96.webp 2x, /brand/logo-tsudev-144.webp 3x"><img src="/brand/logo-tsudev-96.webp" alt="" width="36" height="36"></picture>
+          <picture><source type="image/avif" srcset="/brand/logo-tsudisk-48.avif 1x, /brand/logo-tsudisk-96.avif 2x, /brand/logo-tsudisk-144.avif 3x"><source type="image/webp" srcset="/brand/logo-tsudisk-48.webp 1x, /brand/logo-tsudisk-96.webp 2x, /brand/logo-tsudisk-144.webp 3x"><img src="/brand/logo-tsudisk.png" alt="" width="36" height="36"></picture>
           <span>Tsu<span class="thuong-hieu__sp">Disk</span></span>
         </a>
         <nav aria-label="Chính">

@@ -2,6 +2,11 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
+## [26.11.1701] - 17/11/2026
+
+- Logo riêng của TsuDisk: `tsudisk.exe` có icon ứng dụng; website dùng biểu tượng mới ở đầu trang, favicon, icon
+  PWA, ảnh chia sẻ, kèm logo đầy đủ ở trang chủ (AVIF/WebP, PNG dự phòng).
+
 ## [26.11.1603] - 16/11/2026
 
 - Lệnh `ke-hoach-winre`, `mo-rong-winre`: sửa lỗi cập nhật Windows 0x80070643 (KB5034441) khi phân vùng Recovery

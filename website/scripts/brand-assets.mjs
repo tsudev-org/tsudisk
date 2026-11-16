@@ -50,22 +50,30 @@ const hex = (h) => ({
 });
 const CLEAR = { r: 0, g: 0, b: 0, alpha: 0 };
 
-/** Ô biểu tượng: cắt vuông chính giữa, bo góc (mặt nạ SVG). */
-async function tile(buf) {
-  const m = await sharp(buf).metadata();
-  const side = Math.min(m.width, m.height);
+/**
+ * Ô biểu tượng, bo góc (mặt nạ SVG). Có `crop` [trái, trên, rộng, cao]: chỉ lấy vùng biểu tượng của ảnh gốc (bỏ chữ),
+ * đặt giữa ô vuông nền `bg` với lề `pad` - favicon 16px vẫn đọc được. Không có `crop`: cắt vuông chính giữa ảnh.
+ */
+async function tile(buf, { crop, pad = 0.14, bg, radius = 0.22 } = {}) {
   const big = 1024;
-  const sq = await sharp(buf)
-    .extract({
-      left: Math.floor((m.width - side) / 2),
-      top: Math.floor((m.height - side) / 2),
-      width: side,
-      height: side,
-    })
+  let src = buf;
+  if (crop) {
+    const [left, top, width, height] = crop;
+    const side = Math.round(Math.max(width, height) * (1 + 2 * pad));
+    const region = await sharp(buf).extract({ left, top, width, height }).png().toBuffer();
+    src = await sharp({ create: { width: side, height: side, channels: 4, background: bg } })
+      .composite([{ input: region, left: Math.round((side - width) / 2), top: Math.round((side - height) / 2) }])
+      .png()
+      .toBuffer();
+  }
+  const m = await sharp(src).metadata();
+  const side = Math.min(m.width, m.height);
+  const sq = await sharp(src)
+    .extract({ left: Math.floor((m.width - side) / 2), top: Math.floor((m.height - side) / 2), width: side, height: side })
     .resize(big, big, { kernel: 'lanczos3' })
     .png()
     .toBuffer();
-  const r = Math.round(big * (CFG.tileRadius ?? 0.22));
+  const r = Math.round(big * radius);
   const mask = Buffer.from(
     `<svg width="${big}" height="${big}"><rect width="${big}" height="${big}" rx="${r}" ry="${r}"/></svg>`
   );
@@ -152,8 +160,10 @@ const esc = (s) => String(s).replace(/[<>&'"]/g, (c) => `&#${c.charCodeAt(0)};`)
 
 async function main() {
   const raw = fs.readFileSync(path.join(ROOT, 'assets/brand', CFG.source));
-  const { rounded, square } = CFG.mode === 'tile' ? await tile(raw) : await noWhite(raw);
   const SOLID = hex(CFG.solidBg);
+  const { rounded, square } = CFG.mode === 'tile'
+    ? await tile(raw, { crop: CFG.iconCrop, pad: CFG.iconPadding, bg: SOLID, radius: CFG.tileRadius })
+    : await noWhite(raw);
   const at = (size, src = rounded) =>
     sharp(src).resize(size, size, { fit: 'contain', background: CLEAR, kernel: 'lanczos3' }).png({ compressionLevel: 9 }).toBuffer();
   const png = async (size, src) => sharp(await at(size, src)).png({ palette: true, quality: 92, effort: 10, compressionLevel: 9 }).toBuffer();
@@ -180,6 +190,26 @@ async function main() {
     emit(pub(`brand/logo-${CFG.id}-${s}.webp`), await base.clone().webp({ quality: 90, effort: 6 }).toBuffer());
   }
   emit(pub(`brand/logo-${CFG.id}.png`), await png(512));
+
+  // --- Logo đầy đủ (biểu tượng + chữ) cho chỗ hiển thị lớn: AVIF/WebP theo bề rộng, PNG dự phòng.
+  for (const w of CFG.fullSizes ?? []) {
+    const full = sharp(raw).resize({ width: w, kernel: 'lanczos3' });
+    emit(pub(`brand/logo-${CFG.id}-day-du-${w}.avif`), await full.clone().avif({ quality: 72, effort: 9 }).toBuffer());
+    emit(pub(`brand/logo-${CFG.id}-day-du-${w}.webp`), await full.clone().webp({ quality: 90, effort: 6 }).toBuffer());
+  }
+  if (CFG.fullSizes?.length) {
+    emit(pub(`brand/logo-${CFG.id}-day-du.png`), await sharp(raw).resize({ width: Math.max(...CFG.fullSizes) }).png({ palette: true, quality: 95, effort: 10 }).toBuffer());
+  }
+
+  // --- Dấu hiệu tsudev cho chân trang / khối "nhà làm" (BRAND_ASSETS.md mục 15 quy tắc 5), cũng sinh từ bản gốc.
+  if (CFG.ecosystem) {
+    const eco = await tile(fs.readFileSync(path.join(ROOT, 'assets/brand', CFG.ecosystem.source)), { bg: CLEAR });
+    for (const s of [48, 96, 144]) {
+      const base = sharp(await sharp(eco.rounded).resize(s, s, { kernel: 'lanczos3' }).png().toBuffer());
+      emit(pub(`brand/logo-${CFG.ecosystem.id}-${s}.avif`), await base.clone().avif({ quality: 70, effort: 9 }).toBuffer());
+      emit(pub(`brand/logo-${CFG.ecosystem.id}-${s}.webp`), await base.clone().webp({ quality: 90, effort: 6 }).toBuffer());
+    }
+  }
 
   // --- Favicon + PWA.
   emit(pub('favicon.ico'), await ico(rounded));

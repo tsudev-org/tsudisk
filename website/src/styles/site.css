@@ -223,3 +223,6 @@ kbd { border: 1px solid var(--border-strong); border-bottom-width: 2px; border-r
   .chan-trang__trong { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem 1rem; }
   .chan-trang__cot { grid-column: 1 / -1; }
 }
+
+/* Logo đầy đủ ở trang chủ: ảnh có nền tối riêng, bo góc theo token, không phóng to quá bản gốc. */
+.logo-day-du img { display: block; width: 180px; height: auto; border-radius: var(--radius-lg); margin-bottom: 1rem; }
