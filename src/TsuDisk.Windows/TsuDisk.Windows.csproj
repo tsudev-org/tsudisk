@@ -7,7 +7,7 @@
     <AssemblyName>TsuDisk.Windows</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Management" Version="10.0.0" />
+    <PackageReference Include="System.Management" Version="11.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../TsuDisk.Core/TsuDisk.Core.csproj" />
