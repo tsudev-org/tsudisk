@@ -55,7 +55,7 @@ public class PlanRunnerTests
 
         Assert.Equal(RunState.DryRunCompleted, journal.State);
         Assert.Same(before, backend.Layout);
-        Assert.Equal(["scan", "backup"], backend.Calls);
+        Assert.Equal(["health", "scan", "backup"], backend.Calls);
         Assert.True(backend.WinRe.Enabled);
     }
 
@@ -76,6 +76,28 @@ public class PlanRunnerTests
     }
 
     [Fact]
+    public void Failing_disk_stops_before_any_other_call()
+    {
+        var (backend, store, plan) = Arrange();
+        backend.Health = backend.Health! with { HealthStatus = "Unhealthy", OperationalStatus = ["Predictive Failure"] };
+
+        var journal = new PlanRunner(backend, store).Run(plan, Real);
+
+        Assert.Equal(RunState.RolledBack, journal.State);
+        Assert.Equal(["health"], backend.Calls);
+        Assert.Contains("dấu hiệu hỏng", journal.Steps[0].Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Unknown_health_on_raid_driver_does_not_block()
+    {
+        var (backend, store, plan) = Arrange();
+        backend.Health = null;
+
+        Assert.Equal(RunState.Succeeded, new PlanRunner(backend, store).Run(plan, Real).State);
+    }
+
+    [Fact]
     public void Unhealthy_volume_stops_before_touching_the_disk()
     {
         var (backend, store, plan) = Arrange();
@@ -84,7 +106,7 @@ public class PlanRunnerTests
         var journal = new PlanRunner(backend, store).Run(plan, Real);
 
         Assert.Equal(RunState.RolledBack, journal.State);
-        Assert.Equal(["scan"], backend.Calls);
+        Assert.Equal(["health", "scan"], backend.Calls);
     }
 
     [Fact]

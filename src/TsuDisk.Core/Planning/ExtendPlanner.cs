@@ -87,6 +87,7 @@ public static class ExtendPlanner
             return RefuseTooSmall(gain, request);
 
         var steps = new StepBuilder();
+        steps.Add(StepKind.CheckHealth, "Kiểm tra sức khỏe ổ đĩa (S.M.A.R.T., chỉ đọc)", changesDisk: false);
         steps.Add(StepKind.ScanVolume, $"Quét hệ thống tệp {target.DriveLetter}: (chỉ đọc)", changesDisk: false, driveLetter: target.DriveLetter);
         steps.Add(StepKind.Backup, "Lưu ảnh bảng phân vùng và BCD vào thư mục nhật ký", changesDisk: false);
         steps.Add(StepKind.ExtendPartition,
@@ -123,6 +124,7 @@ public static class ExtendPlanner
             return RefuseTooSmall(gain, request);
 
         var steps = new StepBuilder();
+        steps.Add(StepKind.CheckHealth, "Kiểm tra sức khỏe ổ đĩa (S.M.A.R.T., chỉ đọc)", changesDisk: false);
         steps.Add(StepKind.ScanVolume, $"Quét hệ thống tệp {target.DriveLetter}: (chỉ đọc)", changesDisk: false, driveLetter: target.DriveLetter);
         steps.Add(StepKind.Backup, "Lưu ảnh bảng phân vùng, BCD và ảnh WinRE vào thư mục nhật ký", changesDisk: false);
         if (winReHere)

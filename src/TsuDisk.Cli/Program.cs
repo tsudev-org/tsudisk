@@ -22,6 +22,9 @@ try
         "mo-rong" => Commands.Extend(cli, planOnly: false),
         "nhat-ky" => Commands.Journal(cli),
         "winre" => Commands.WinRe(),
+        "suc-khoe" => Commands.Health(cli),
+        "kiem-tra-gpt" => Commands.VerifyGpt(cli),
+        "sao-luu" => Commands.Backup(cli),
         "phien-ban" => Commands.Version(),
         _ => Commands.Help(),
     };
@@ -47,14 +50,14 @@ internal static class ExitCodes
     public const int NeedsAttention = 5;
 }
 
-internal static class Commands
+internal static partial class Commands
 {
-    private static readonly WindowsDiskBackend Backend = new();
+    internal static readonly WindowsDiskBackend Backend = new();
 
     public static string ToolVersion =>
         typeof(Commands).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0] ?? "0";
 
-    private static string DefaultLogRoot =>
+    internal static string DefaultLogRoot =>
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "TsuDisk", "nhat-ky");
 
     public static int List(CliArgs cli)
@@ -202,6 +205,9 @@ internal static class Commands
               tsudisk mo-rong <X:> [tùy chọn]             Lập kế hoạch, hỏi xác nhận, rồi thực hiện (cần quyền quản trị)
               tsudisk nhat-ky [tệp journal.json]          Xem lần chạy gần nhất và việc cần làm nếu bị đứt giữa chừng
               tsudisk winre                               Trạng thái Windows Recovery Environment
+              tsudisk suc-khoe [--dia N] [--json]         Sức khỏe ổ: trạng thái, nhiệt độ, độ mòn, lỗi đọc/ghi (S.M.A.R.T.)
+              tsudisk kiem-tra-gpt [--dia N] [--json]     Kiểm tra toàn vẹn bảng GPT trên đĩa (CRC, header dự phòng) - quản trị
+              tsudisk sao-luu [--dia N] [--thu-muc-nhat-ky DIR]  Sao lưu sector GPT thô + bố cục + SHA-256 - quản trị
               tsudisk phien-ban | tro-giup
 
             Tùy chọn cho ke-hoach / mo-rong:
@@ -212,7 +218,7 @@ internal static class Commands
               --chi-o-ao                 Chỉ cho phép thao tác trên ổ ảo VHD/VHDX (kiểm thử)
               --thu-muc-nhat-ky DIR      Nơi lưu nhật ký và bản sao lưu (mặc định %ProgramData%\TsuDisk\nhat-ky)
 
-            Bí danh tiếng Anh: list, analyze, plan, extend, journal, version, help; --dry-run, --yes, --disk, --virtual-only, --log-dir.
+            Bí danh tiếng Anh: list, analyze, plan, extend, journal, health, verify-gpt, backup, version, help; --dry-run, --yes, --disk, --virtual-only, --log-dir.
             Mã thoát: 0 xong, 1 từ chối/lỗi, 2 sai cú pháp, 3 thiếu quyền quản trị, 4 thất bại đã hoàn tác, 5 cần xử lý.
             """);
         return ExitCodes.Ok;
@@ -231,7 +237,7 @@ internal static class Commands
         };
     }
 
-    private static IEnumerable<DiskInfo> SelectDisks(CliArgs cli) =>
+    internal static IEnumerable<DiskInfo> SelectDisks(CliArgs cli) =>
         cli.IntValue("dia") is { } n ? Backend.ListDisks().Where(d => d.Number == n) : Backend.ListDisks();
 
     /// <summary>reagentc can quyen quan tri; lenh chi doc van chay duoc khi khong co (coi WinRE la khong ro = tat).</summary>

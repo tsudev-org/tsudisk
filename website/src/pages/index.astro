@@ -10,6 +10,8 @@ const tinhNang = [
   { t: 'Xem kế hoạch trước', d: 'Lệnh ke-hoach in từng bước sẽ chạy, bước nào ghi đĩa, ổ tăng bao nhiêu. Không có gì xảy ra cho tới khi bạn gõ lại chữ cái ổ để xác nhận.' },
   { t: 'Bảo toàn WinRE', d: 'Tắt WinRE trước khi đụng phân vùng Recovery, giữ ảnh khôi phục an toàn trên ổ hệ thống, tạo Recovery mới 1 GB rồi bật lại. Không mất chức năng Reset this PC.' },
   { t: 'Tự hoàn tác khi lỗi', d: 'Lỗi giữa chừng thì chạy các bước bù theo thứ tự ngược: tạo lại Recovery đúng chỗ cũ, bật lại WinRE. Nhật ký ghi sau từng bước để mất điện vẫn biết phải làm gì.' },
+  { t: 'Sức khỏe ổ trước tiên', d: 'Đọc trạng thái ổ, nhiệt độ, độ mòn, lỗi đọc ghi (S.M.A.R.T.). Ổ có dấu hiệu hỏng thì không thay đổi bảng phân vùng - việc cần làm lúc đó là sao lưu dữ liệu và thay ổ.' },
+  { t: 'Kiểm tra và sao lưu GPT', d: 'Đọc thẳng bảng GPT trên đĩa, kiểm CRC32 của hai header và hai bảng entry, đối chiếu với Windows. Sao lưu sector thô đầu và cuối đĩa kèm SHA-256 trước mỗi thay đổi.' },
   { t: 'Chạy online, không khởi động lại', d: 'Mở rộng NTFS khi Windows đang chạy. Máy ảo, WSL, cơ sở dữ liệu, terminal đang mở không bị gián đoạn.' },
 ];
 
@@ -40,14 +42,15 @@ const camKet = [
       <p class="muc__dan">Máy có 60 GB trống nhưng phân vùng Recovery 917 MB nằm giữa C: và vùng trống, nên Disk Management không cho Extend Volume.</p>
       <pre tabindex="0"><code>PS&gt; tsudisk ke-hoach C:
 KẾ HOẠCH: mở rộng C: trên đĩa 0, tăng 59,9 GB
-  1.       Quét hệ thống tệp C: (chỉ đọc)
-  2.       Lưu ảnh bảng phân vùng, BCD và ảnh WinRE vào thư mục nhật ký
-  3.       Tắt WinRE (Windows chép Winre.wim về ổ hệ thống)
-  4. [GHI] Xóa phân vùng 4 - Phân vùng khôi phục (Recovery) (917 MB)
-  5. [GHI] Mở rộng C: từ 265,11 GB lên 325,01 GB
-  6. [GHI] Tạo phân vùng Recovery mới 1 GB ngay sau C:
-  7.       Bật lại WinRE vào phân vùng Recovery mới
-  8.       Đọc lại bảng phân vùng, đối chiếu với kết quả dự kiến</code></pre>
+  1.       Kiểm tra sức khỏe ổ đĩa (S.M.A.R.T., chỉ đọc)
+  2.       Quét hệ thống tệp C: (chỉ đọc)
+  3.       Lưu ảnh bảng phân vùng, BCD và ảnh WinRE vào thư mục nhật ký
+  4.       Tắt WinRE (Windows chép Winre.wim về ổ hệ thống)
+  5. [GHI] Xóa phân vùng 4 - Phân vùng khôi phục (Recovery) (917 MB)
+  6. [GHI] Mở rộng C: từ 265,11 GB lên 325,01 GB
+  7. [GHI] Tạo phân vùng Recovery mới 1 GB ngay sau C:
+  8.       Bật lại WinRE vào phân vùng Recovery mới
+  9.       Đọc lại bảng phân vùng, đối chiếu với kết quả dự kiến</code></pre>
       <p>G: và E: phía sau giữ nguyên từng byte. Toàn bộ chạy khi Windows đang hoạt động, không khởi động lại.</p>
     </div>
   </section>

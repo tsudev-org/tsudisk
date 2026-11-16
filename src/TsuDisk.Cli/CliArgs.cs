@@ -16,6 +16,9 @@ internal sealed class CliArgs
         ["mo-rong"] = "mo-rong", ["extend"] = "mo-rong",
         ["nhat-ky"] = "nhat-ky", ["journal"] = "nhat-ky",
         ["winre"] = "winre",
+        ["suc-khoe"] = "suc-khoe", ["health"] = "suc-khoe",
+        ["kiem-tra-gpt"] = "kiem-tra-gpt", ["verify-gpt"] = "kiem-tra-gpt",
+        ["sao-luu"] = "sao-luu", ["backup"] = "sao-luu",
         ["phien-ban"] = "phien-ban", ["version"] = "phien-ban", ["--version"] = "phien-ban", ["-v"] = "phien-ban",
         ["tro-giup"] = "tro-giup", ["help"] = "tro-giup", ["--help"] = "tro-giup", ["-h"] = "tro-giup", ["/?"] = "tro-giup",
     };

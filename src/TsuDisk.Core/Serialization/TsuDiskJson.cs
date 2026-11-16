@@ -2,6 +2,8 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using TsuDisk.Core.Execution;
+using TsuDisk.Core.Gpt;
+using TsuDisk.Core.Health;
 using TsuDisk.Core.Model;
 using TsuDisk.Core.Planning;
 
@@ -20,6 +22,8 @@ namespace TsuDisk.Core.Serialization;
 [JsonSerializable(typeof(IReadOnlyList<FreeSpaceAdvice>))]
 [JsonSerializable(typeof(Refusal))]
 [JsonSerializable(typeof(WinReStatus))]
+[JsonSerializable(typeof(IReadOnlyList<DiskHealth>))]
+[JsonSerializable(typeof(GptReport))]
 internal sealed partial class TsuDiskJsonContext : JsonSerializerContext;
 
 public static class TsuDiskJson
@@ -41,6 +45,10 @@ public static class TsuDiskJson
     public static string Serialize(Refusal value) => JsonSerializer.Serialize(value, Context.Refusal);
 
     public static string Serialize(WinReStatus value) => JsonSerializer.Serialize(value, Context.WinReStatus);
+
+    public static string Serialize(IReadOnlyList<DiskHealth> value) => JsonSerializer.Serialize(value, Context.IReadOnlyListDiskHealth);
+
+    public static string Serialize(GptReport value) => JsonSerializer.Serialize(value, Context.GptReport);
 
     public static RunJournal? DeserializeJournal(string json) => JsonSerializer.Deserialize(json, Context.RunJournal);
 

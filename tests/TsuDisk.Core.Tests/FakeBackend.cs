@@ -1,4 +1,5 @@
 using TsuDisk.Core.Execution;
+using TsuDisk.Core.Health;
 using TsuDisk.Core.Model;
 
 namespace TsuDisk.Core.Tests;
@@ -29,6 +30,14 @@ internal sealed class FakeBackend(DiskLayout initial, WinReStatus winRe) : IDisk
     public DiskLayout ReadLayout(int diskNumber) => Layout;
 
     public WinReStatus ReadWinRe() => WinRe;
+
+    public DiskHealth? Health { get; set; } = new(0, "NVMe SSD 512GB", "SSD", "Healthy", ["OK"], 40, 70, 3, 0, 0, 1200);
+
+    public DiskHealth? ReadHealth(int diskNumber)
+    {
+        Enter("health");
+        return Health;
+    }
 
     public VolumeScanResult ScanVolume(char driveLetter)
     {

@@ -14,7 +14,7 @@ public class ExtendPlannerTests
         Assert.True(result.Success, result.Refusal?.Message);
         var plan = result.Plan!;
         Assert.Equal(
-            [StepKind.ScanVolume, StepKind.Backup, StepKind.DisableWinRe, StepKind.DeletePartition, StepKind.ExtendPartition,
+            [StepKind.CheckHealth, StepKind.ScanVolume, StepKind.Backup, StepKind.DisableWinRe, StepKind.DeletePartition, StepKind.ExtendPartition,
              StepKind.CreateRecovery, StepKind.EnableWinRe, StepKind.VerifyLayout],
             plan.Steps.Select(s => s.Kind));
 
@@ -71,7 +71,7 @@ public class ExtendPlannerTests
         var result = ExtendPlanner.Plan(DirectGap(), WinReStatus.Disabled, new ExtendRequest('c'));
 
         Assert.True(result.Success);
-        Assert.Equal([StepKind.ScanVolume, StepKind.Backup, StepKind.ExtendPartition, StepKind.VerifyLayout],
+        Assert.Equal([StepKind.CheckHealth, StepKind.ScanVolume, StepKind.Backup, StepKind.ExtendPartition, StepKind.VerifyLayout],
             result.Plan!.Steps.Select(s => s.Kind));
         Assert.Equal(10 * Units.GiB, result.Plan.GainBytes);
     }

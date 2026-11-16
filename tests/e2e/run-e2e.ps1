@@ -129,6 +129,22 @@ try {
     $r = Invoke-TsuDisk @('ke-hoach', $L1, '--chi-o-ao')
     Assert-True ($r.Code -eq 1 -and $r.Output -match 'NotAdjacent') 'tu choi NotAdjacent'
 
+    Write-Host "`n=== Ca 8: suc khoe, kiem tra GPT, sao luu tho ==="
+    $r = Invoke-TsuDisk @('suc-khoe', '--dia', "$($disk.Number)")
+    Assert-True ($r.Code -eq 0) 'suc-khoe chay duoc tren o ao'
+    $r = Invoke-TsuDisk @('kiem-tra-gpt', '--dia', "$($disk.Number)")
+    Assert-True ($r.Code -eq 0) 'kiem-tra-gpt: GPT o ao toan ven va khop Storage API'
+    $backupRoot = Join-Path $WorkDir 'sao-luu'
+    $r = Invoke-TsuDisk @('sao-luu', '--dia', "$($disk.Number)", '--thu-muc-nhat-ky', $backupRoot)
+    Assert-True ($r.Code -eq 0) 'sao-luu thanh cong'
+    $head = Get-ChildItem $backupRoot -Recurse -Filter 'gpt-dau-dia*.bin' | Select-Object -First 1
+    Assert-True ($null -ne $head -and $head.Length -eq 1MB) 'co tep sector GPT dau dia 1 MiB'
+    $sums = Get-ChildItem $backupRoot -Recurse -Filter 'SHA256SUMS-dia*.txt' | Select-Object -First 1
+    $line = (Get-Content $sums.FullName | Where-Object { $_ -match 'gpt-dau-dia' } | Select-Object -First 1) -split '\s+'
+    Assert-True ($line[0] -eq (Get-FileHash $head.FullName -Algorithm SHA256).Hash.ToLower()) 'SHA256SUMS khop tep sao luu'
+    $runHead = Get-ChildItem $Logs -Recurse -Filter 'gpt-dau-dia*.bin' | Select-Object -First 1
+    Assert-True ($null -ne $runHead) 'moi lan mo-rong deu tu sao luu sector GPT tho'
+
     Write-Host "`n=== Ca 7: doc nhat ky ==="
     $first = (Get-ChildItem $Logs -Recurse -Filter journal.json | Sort-Object FullName | Select-Object -First 1).FullName
     $r = Invoke-TsuDisk @('nhat-ky', $first)

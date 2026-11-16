@@ -5,6 +5,8 @@ namespace TsuDisk.Core.Planning;
 /// <summary>Loai buoc trong ke hoach. Thu tu khai bao KHONG mang nghia - thu tu chay nam o Plan.Steps.</summary>
 public enum StepKind
 {
+    /// <summary>Doc suc khoe o (HealthStatus + S.M.A.R.T.); o bi danh gia hong thi dung truoc moi thao tac ghi.</summary>
+    CheckHealth,
     /// <summary>Quet NTFS truc tuyen (chi doc) o dich; loi thi dung.</summary>
     ScanVolume,
     /// <summary>Luu anh bo cuc + BCD vao thu muc nhat ky.</summary>
