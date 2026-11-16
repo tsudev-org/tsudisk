@@ -89,6 +89,8 @@ jobs:
           cache: npm
           cache-dependency-path: website/package-lock.json
       - run: npm ci
+      - name: Test Worker chuan hoa URL (open redirect, 405, 414, vong lap)
+        run: npm run test:worker
       - name: Tai san thuong hieu khop anh goc (brand-assets --check)
         run: node scripts/brand-assets.mjs --check
       - name: Build + check-dist
