@@ -37,12 +37,18 @@ public interface IDiskBackend
     /// <summary>Kich thuoc toi da Windows cho phep mo rong phan vung toi.</summary>
     long GetMaxPartitionSize(int diskNumber, int partitionNumber);
 
+    /// <summary>Kich thuoc toi thieu Windows cho phep thu nho phan vung toi (tinh ca du lieu khong doi cho duoc).</summary>
+    long GetMinPartitionSize(int diskNumber, int partitionNumber);
+
     void DeletePartition(int diskNumber, int partitionNumber);
 
     void ResizePartition(int diskNumber, int partitionNumber, long newSize);
 
-    /// <summary>Tao phan vung Recovery (NTFS, loai + thuoc tinh chuan) chiem tu offset toi het vung trong lien ke.</summary>
-    void CreateRecoveryPartition(int diskNumber, long offset, PartitionStyle style);
+    /// <summary>
+    /// Tao phan vung Recovery (NTFS, loai + thuoc tinh chuan) tai offset; <paramref name="size"/> null = chiem het vung
+    /// trong lien ke, co gia tri thi phai la boi so 1 MiB.
+    /// </summary>
+    void CreateRecoveryPartition(int diskNumber, long offset, long? size, PartitionStyle style);
 }
 
 public sealed class DiskOperationException : Exception

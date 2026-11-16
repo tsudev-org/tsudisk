@@ -46,6 +46,15 @@ public static class SafetyGuard
                 case StepKind.ExtendPartition when size < existing.Size:
                     violations.Add($"Bước {step.Index}: kế hoạch thu nhỏ {existing.DisplayName} - bị cấm.");
                     break;
+                case StepKind.ShrinkPartition when plan.Operation != Planning.WinReGrowPlanner.Operation:
+                    violations.Add($"Bước {step.Index}: thu nhỏ chỉ được phép trong thao tác nới rộng WinRE.");
+                    break;
+                case StepKind.ShrinkPartition when existing is null || existing.Kind != PartitionKind.BasicData:
+                    violations.Add($"Bước {step.Index}: chỉ được thu nhỏ ổ dữ liệu.");
+                    break;
+                case StepKind.ShrinkPartition when size >= existing.Size || existing.Size - size > Planning.WinReGrowRequest.MaxShrink:
+                    violations.Add($"Bước {step.Index}: mức thu nhỏ {existing.DisplayName} không hợp lệ (phải nhỏ hơn hiện tại và không quá 4 GB).");
+                    break;
                 case StepKind.CreateRecovery when existing is not null && plan.Steps.All(s => s.Kind != StepKind.DeletePartition || s.Offset != offset):
                     violations.Add($"Bước {step.Index}: tạo phân vùng đè lên {existing.DisplayName}.");
                     break;
@@ -78,6 +87,7 @@ public static class SafetyGuard
                         violations.Add($"Phân vùng tại offset {step.Offset} lẽ ra đã bị xóa nhưng vẫn còn.");
                     break;
                 case StepKind.ExtendPartition:
+                case StepKind.ShrinkPartition:
                 case StepKind.CreateRecovery:
                     if (found is null)
                     {

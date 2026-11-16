@@ -76,8 +76,10 @@ public sealed class WindowsDiskBackend : IDiskBackend
     public void ResizePartition(int diskNumber, int partitionNumber, long newSize) =>
         StorageApi.Resize(diskNumber, partitionNumber, newSize);
 
-    public void CreateRecoveryPartition(int diskNumber, long offset, PartitionStyle style) =>
-        RunDiskpart(DiskpartScript.CreateRecovery(diskNumber, offset, style));
+    public void CreateRecoveryPartition(int diskNumber, long offset, long? size, PartitionStyle style) =>
+        RunDiskpart(DiskpartScript.CreateRecovery(diskNumber, offset, style, size));
+
+    public long GetMinPartitionSize(int diskNumber, int partitionNumber) => StorageApi.GetMinSize(diskNumber, partitionNumber);
 
     private void RunDiskpart(IReadOnlyList<string> lines)
     {

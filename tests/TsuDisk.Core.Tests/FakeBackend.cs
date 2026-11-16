@@ -82,6 +82,9 @@ internal sealed class FakeBackend(DiskLayout initial, WinReStatus winRe) : IDisk
     public void ResizePartition(int diskNumber, int partitionNumber, long newSize)
     {
         Enter("resize");
+        Calls[^1] = Layout.Partitions.Single(p => p.PartitionNumber == partitionNumber).Size > newSize ? "shrink" : "resize";
+        if (FailOn.Contains(Calls[^1]))
+            throw new DiskOperationException($"Lỗi tiêm vào: {Calls[^1]}");
         if (newSize > GetMaxPartitionSize(diskNumber, partitionNumber))
             throw new DiskOperationException("Vượt kích thước tối đa.");
         Layout = Layout with
@@ -90,11 +93,15 @@ internal sealed class FakeBackend(DiskLayout initial, WinReStatus winRe) : IDisk
         };
     }
 
-    public void CreateRecoveryPartition(int diskNumber, long offset, PartitionStyle style)
+    public long MinSize { get; set; } = Units.GiB;
+
+    public long GetMinPartitionSize(int diskNumber, int partitionNumber) => MinSize;
+
+    public void CreateRecoveryPartition(int diskNumber, long offset, long? size, PartitionStyle style)
     {
         Enter("create-recovery");
         var next = Layout.Partitions.Where(p => p.Offset > offset).OrderBy(p => p.Offset).FirstOrDefault();
-        var end = Units.AlignDown(next?.Offset ?? Layout.Disk.LastUsableByteExclusive, Units.MiB);
+        var end = size is { } s ? offset + s : Units.AlignDown(next?.Offset ?? Layout.Disk.LastUsableByteExclusive, Units.MiB);
         if (Layout.Partitions.Any(p => p.Offset < end && p.End > offset))
             throw new DiskOperationException("Vùng đích không trống.");
         var used = Layout.Partitions.Select(p => p.PartitionNumber).ToHashSet();

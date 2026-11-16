@@ -15,6 +15,8 @@ public enum StepKind
     DisableWinRe,
     /// <summary>Xoa phan vung (chi cho phep voi Recovery, kiem lai offset + loai ngay truoc khi xoa).</summary>
     DeletePartition,
+    /// <summary>Thu nho o du lieu - CHI trong thao tac grow-winre, toi da 4 GiB, o phai con du trong (WinReGrowPlanner).</summary>
+    ShrinkPartition,
     /// <summary>Mo rong phan vung dich (NTFS/ReFS mo rong truc tuyen, khong doi du lieu).</summary>
     ExtendPartition,
     /// <summary>Tao phan vung Recovery moi tai offset chi dinh, NTFS, GPT type + thuoc tinh chuan.</summary>

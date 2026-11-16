@@ -28,6 +28,7 @@ public static class LayoutSimulator
                     break;
                 }
                 case StepKind.ExtendPartition:
+                case StepKind.ShrinkPartition:
                 {
                     var index = partitions.FindIndex(p => p.Offset == step.Offset);
                     var old = partitions[index];

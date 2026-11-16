@@ -10,7 +10,7 @@ namespace TsuDisk.Core.Scripts;
 /// </summary>
 public static class DiskpartScript
 {
-    public static IReadOnlyList<string> CreateRecovery(int diskNumber, long offsetBytes, PartitionStyle style)
+    public static IReadOnlyList<string> CreateRecovery(int diskNumber, long offsetBytes, PartitionStyle style, long? sizeBytes = null)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(diskNumber);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(offsetBytes);
@@ -18,12 +18,16 @@ public static class DiskpartScript
             throw new ArgumentException("Offset phải căn lề 1 MiB.", nameof(offsetBytes));
         if (style is not (PartitionStyle.Gpt or PartitionStyle.Mbr))
             throw new ArgumentException("Chỉ hỗ trợ đĩa GPT hoặc MBR.", nameof(style));
+        if (sizeBytes is { } s && (s <= 0 || !Units.IsAligned(s, Units.MiB)))
+            throw new ArgumentException("Kích thước phải là bội số dương của 1 MiB.", nameof(sizeBytes));
 
         // diskpart nhan offset theo KB. Khong ghi size: lay het vung trong lien ke tai offset (ke hoach da tinh dung).
         var lines = new List<string>
         {
             Inv($"select disk {diskNumber}"),
-            Inv($"create partition primary offset={offsetBytes / Units.KiB}"),
+            sizeBytes is { } mb
+                ? Inv($"create partition primary offset={offsetBytes / Units.KiB} size={mb / Units.MiB}")
+                : Inv($"create partition primary offset={offsetBytes / Units.KiB}"),
             "format quick fs=ntfs label=\"Recovery\"",
         };
         if (style == PartitionStyle.Gpt)
