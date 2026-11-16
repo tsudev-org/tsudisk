@@ -2,6 +2,13 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
+## [26.11.1603] - 16/11/2026
+
+- Lệnh `ke-hoach-winre`, `mo-rong-winre`: sửa lỗi cập nhật Windows 0x80070643 (KB5034441) khi phân vùng Recovery
+  thiếu 250 MB trống. Có vùng trống sau Recovery thì nới tại chỗ; không có thì nhường đúng phần thiếu từ cuối ổ đứng
+  trước (tối đa 4 GB, ổ phải còn đủ trống), tạo Recovery lớn hơn và bật lại WinRE. Lỗi giữa chừng tự nới ổ về cỡ cũ và
+  tạo lại Recovery cũ.
+
 ## [26.11.1602] - 16/11/2026
 
 - Lệnh `suc-khoe`: trạng thái ổ theo Windows, nhiệt độ, độ mòn, giờ chạy, lỗi đọc/ghi không sửa được (S.M.A.R.T.).

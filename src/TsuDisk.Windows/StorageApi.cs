@@ -72,6 +72,14 @@ internal static class StorageApi
         return checked((long)(ulong)result["SizeMax"]);
     }
 
+    public static long GetMinSize(int diskNumber, int partitionNumber)
+    {
+        using var partition = Partition(diskNumber, partitionNumber);
+        var result = partition.InvokeMethod("GetSupportedSize", null, null);
+        EnsureSuccess(result, "GetSupportedSize");
+        return checked((long)(ulong)result["SizeMin"]);
+    }
+
     public static void Resize(int diskNumber, int partitionNumber, long newSize)
     {
         using var partition = Partition(diskNumber, partitionNumber);

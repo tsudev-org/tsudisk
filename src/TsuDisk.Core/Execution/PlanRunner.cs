@@ -101,8 +101,9 @@ public sealed class PlanRunner(IDiskBackend backend, IJournalStore store, TimePr
                     throw new DiskOperationException($"Phân vùng {victim.PartitionNumber} không còn đúng là Recovery {step.Size} byte như kế hoạch.");
                 backend.DeletePartition(disk, victim.PartitionNumber);
                 var style = plan.Before.Disk.Style;
+                long? oldSize = Units.IsAligned(victim.Size, Units.MiB) ? victim.Size : null;
                 compensations.Add(new Compensation("recreate-recovery", $"Tạo lại Recovery tại vị trí cũ (offset {victim.Offset})",
-                    () => backend.CreateRecoveryPartition(disk, victim.Offset, style)));
+                    () => backend.CreateRecoveryPartition(disk, victim.Offset, oldSize, style)));
                 return null;
             }
             case StepKind.ExtendPartition:
@@ -120,9 +121,27 @@ public sealed class PlanRunner(IDiskBackend backend, IJournalStore store, TimePr
                 compensations.RemoveAll(c => c.Key == "recreate-recovery");
                 return null;
             }
+            case StepKind.ShrinkPartition:
+            {
+                var target = RequirePartition(disk, step.Offset!.Value, step.PartitionNumber);
+                var min = backend.GetMinPartitionSize(disk, target.PartitionNumber);
+                if (min > step.Size!.Value)
+                    throw new DiskOperationException($"Windows chỉ cho thu nhỏ {target.DriveLetter}: tới {Units.Format(min)} (dữ liệu không dời được nằm ở cuối ổ), kế hoạch cần {Units.Format(step.Size.Value)}.");
+                var oldSize = target.Size;
+                backend.ResizePartition(disk, target.PartitionNumber, step.Size.Value);
+                compensations.Add(new Compensation("regrow", $"Nới {target.DriveLetter}: về lại {Units.Format(oldSize)}",
+                    () => backend.ResizePartition(disk, target.PartitionNumber, oldSize)));
+                var shrunk = RequirePartition(disk, step.Offset.Value, target.PartitionNumber);
+                if (Math.Abs(shrunk.Size - step.Size.Value) > SafetyGuard.SizeTolerance)
+                    throw new DiskOperationException($"Sau khi thu nhỏ, kích thước thật là {Units.Format(shrunk.Size)}.");
+                return null;
+            }
             case StepKind.CreateRecovery:
             {
-                backend.CreateRecoveryPartition(disk, step.Offset!.Value, plan.Before.Disk.Style);
+                long? exact = plan.Operation == WinReGrowPlanner.Operation ? step.Size : null;
+                backend.CreateRecoveryPartition(disk, step.Offset!.Value, exact, plan.Before.Disk.Style);
+                // Recovery moi da nam dung cho: khong con duong lui "tao lai Recovery cu" hay "noi lai o" nua.
+                compensations.RemoveAll(c => c.Key is "recreate-recovery" or "regrow");
                 var created = backend.ReadLayout(disk).FindByOffset(step.Offset.Value)
                     ?? throw new DiskOperationException($"Không thấy phân vùng Recovery mới tại offset {step.Offset}.");
                 if (created.Kind != PartitionKind.Recovery)

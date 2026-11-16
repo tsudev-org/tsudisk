@@ -38,7 +38,7 @@ TsuDisk **không sao chép mã** của dự án GPL nào (Apache-2.0 không tư�
 | --- | --- | --- |
 | Giao diện WPF: bản đồ đĩa trực quan, hàng đợi thao tác, xem trước, áp dụng | - | Dùng chung `PlanRunner`; mọi thao tác GUI = một `Plan` |
 | ~~Sao lưu bảng GPT thô (kiểu `sgdisk --backup`)~~ ĐÃ XONG; khôi phục tự động | Cao | Khôi phục chỉ khi có ADR riêng, xác nhận hai lần |
-| Mở rộng riêng phân vùng WinRE (lỗi 0x80070643 của KB5034441) | Thấp | Thu nhỏ C: 250 MB + dời Recovery - cùng hàng bước đã có |
+| ~~Mở rộng riêng phân vùng WinRE (lỗi 0x80070643 của KB5034441)~~ ĐÃ XONG ở 26.11.1603 | Vừa | `mo-rong-winre`, thu nhỏ có trần 4 GB |
 | ~~Sức khỏe ổ: S.M.A.R.T./`MSFT_StorageReliabilityCounter`~~ ĐÃ XONG | Thấp | Chặn ghi khi ổ báo lỗi |
 | Đổi chữ cái ổ, nhãn ổ | Thấp | Storage API |
 | Thu nhỏ ổ NTFS (`GetSupportedSize` min) | Vừa | Kiểm hệ thống tệp, chống phân mảnh không dời được |

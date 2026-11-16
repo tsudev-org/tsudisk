@@ -29,6 +29,8 @@ tsudisk phan-tich                 # Mỗi vùng trống gộp được vào ổ 
 tsudisk ke-hoach C:               # Lập kế hoạch mở rộng C:, in từng bước, KHÔNG thay đổi gì
 tsudisk mo-rong C: --chay-thu     # Chạy các bước không ghi đĩa (quét, sao lưu) để kiểm tra
 tsudisk mo-rong C:                # Thực hiện: hỏi xác nhận bằng cách gõ lại chữ cái ổ
+tsudisk ke-hoach-winre            # Kế hoạch nới rộng Recovery khi Windows Update báo lỗi 0x80070643 (KB5034441)
+tsudisk mo-rong-winre             # Thực hiện (Admin), gõ WINRE để xác nhận
 tsudisk nhat-ky                   # Xem lần chạy gần nhất và việc cần làm nếu bị đứt giữa chừng
 tsudisk suc-khoe                  # Sức khỏe ổ: trạng thái, nhiệt độ, độ mòn, lỗi đọc/ghi (S.M.A.R.T.)
 tsudisk kiem-tra-gpt              # Kiểm tra toàn vẹn bảng GPT trên đĩa (Admin)
@@ -48,7 +50,7 @@ Tùy chọn của `ke-hoach` / `mo-rong`:
 | `--thu-muc-nhat-ky DIR` | Nơi lưu nhật ký, mặc định `%ProgramData%\TsuDisk\nhat-ky` |
 | `--json` | In kế hoạch hoặc bố cục dạng JSON để tích hợp |
 
-Bí danh tiếng Anh: `list`, `analyze`, `plan`, `extend`, `journal`, `health`, `verify-gpt`, `backup`, `--dry-run`, `--yes`, `--disk`, `--virtual-only`.
+Bí danh tiếng Anh: `list`, `analyze`, `plan`, `extend`, `plan-winre`, `grow-winre`, `journal`, `health`, `verify-gpt`, `backup`, `--dry-run`, `--yes`, `--disk`, `--virtual-only`.
 
 ### Mã thoát
 
@@ -66,8 +68,8 @@ Bí danh tiếng Anh: `list`, `analyze`, `plan`, `extend`, `journal`, `health`, 
 0. **Không ghi lên ổ đang hỏng.** Bước đầu của mọi kế hoạch đọc sức khỏe ổ (HealthStatus, trạng thái vận hành,
    S.M.A.R.T.); ổ có dấu hiệu hỏng (lỗi đọc/ghi không sửa được, Predictive Failure, mòn 100%) thì dừng. Bảng GPT trên
    đĩa cũng phải toàn vẹn (CRC32, header dự phòng) và khớp Windows, nếu không cũng dừng.
-1. **Chỉ chạm đúng những gì cần.** Kế hoạch chỉ được xóa phân vùng Recovery, chỉ được mở rộng (không bao giờ thu
-   nhỏ) ổ dữ liệu, không bao giờ chạm EFI, MSR, ổ động, Storage Spaces.
+1. **Chỉ chạm đúng những gì cần.** Kế hoạch chỉ được xóa phân vùng Recovery, chỉ được mở rộng ổ dữ liệu (thu nhỏ
+   CHỈ được phép trong `mo-rong-winre`: tối đa 4 GB, ổ phải còn đủ trống, Windows phải xác nhận phần đó dời được), không bao giờ chạm EFI, MSR, ổ động, Storage Spaces.
 2. **Mô phỏng trước khi làm.** Mọi kế hoạch được chạy "trên giấy" ra bố cục dự kiến, rồi kiểm bất biến: mọi phân vùng
    khác giữ nguyên vị trí, kích thước và loại; không chồng lấn; offset căn lề 1 MiB. Vi phạm là hủy.
 3. **Dấu vân tay bố cục.** Bố cục thật khác lúc lập kế hoạch (có công cụ khác vừa sửa đĩa) thì dừng trước bước đầu.
@@ -108,7 +110,7 @@ Muốn tự làm bằng tay từng lệnh: [`docs/HUONG-DAN-MO-RONG-O-C.md`](doc
 
 ## Đánh số phiên bản
 
-`YY.M.DDNN` theo `.standards/docs/VERSIONING.md`: `26.11.1602` là bản thứ 02 ngày 16/11/2026.
+`YY.M.DDNN` theo `.standards/docs/VERSIONING.md`: `26.11.1603` là bản thứ 03 ngày 16/11/2026.
 
 ## Giấy phép
 

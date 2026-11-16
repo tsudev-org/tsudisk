@@ -145,6 +145,27 @@ try {
     $runHead = Get-ChildItem $Logs -Recurse -Filter 'gpt-dau-dia*.bin' | Select-Object -First 1
     Assert-True ($null -ne $runHead) 'moi lan mo-rong deu tu sao luu sector GPT tho'
 
+    Write-Host "`n=== Ca 9: noi rong Recovery (KB5034441) bang cach thu nho DATA1 ==="
+    $hashBefore9 = (Get-FileHash $sentinel -Algorithm SHA256).Hash
+    $d1Before = Get-Partition -DiskNumber $disk.Number | Where-Object Offset -eq $data1.Offset
+    $recBefore = Get-Partition -DiskNumber $disk.Number | Where-Object GptType -eq $RecoveryGuid
+    $d2Before = Get-Partition -DiskNumber $disk.Number | Where-Object Offset -eq $data2Offset
+    $r = Invoke-TsuDisk @('ke-hoach-winre', '--dia', "$($disk.Number)", '--chi-o-ao', '--recovery', 'tao-lai-rong', '--recovery-mb', '700')
+    Assert-True ($r.Code -eq 0 -and $r.Output -match 'Thu nh') 'ke-hoach-winre lap duoc ke hoach co buoc thu nho'
+    $r = Invoke-TsuDisk @('mo-rong-winre', '--dia', "$($disk.Number)", '--chi-o-ao', '--recovery', 'tao-lai-rong', '--recovery-mb', '700', '--dong-y', '--thu-muc-nhat-ky', $Logs)
+    Assert-True ($r.Code -eq 0) 'mo-rong-winre thanh cong (exit 0)'
+    $d1After = Get-Partition -DiskNumber $disk.Number | Where-Object Offset -eq $data1.Offset
+    $recAfter = Get-Partition -DiskNumber $disk.Number | Where-Object GptType -eq $RecoveryGuid
+    $d2After = Get-Partition -DiskNumber $disk.Number | Where-Object Offset -eq $data2Offset
+    $delta = 700MB - $recBefore.Size
+    Assert-True ($d1Before.Size - $d1After.Size -eq $delta) "DATA1 nho di dung $($delta / 1MB) MB"
+    Assert-True ($recAfter.Size -eq 700MB -and $recAfter.Offset -eq $d1After.Offset + $d1After.Size) 'Recovery moi 700 MB ngay sau DATA1'
+    Assert-True ($recAfter.Offset + $recAfter.Size -eq $recBefore.Offset + $recBefore.Size) 'Recovery moi ket thuc dung cho Recovery cu'
+    Assert-True ($d2After.Size -eq $d2Before.Size) 'DATA2 khong bi cham'
+    Assert-True ((Get-FileHash $sentinel -Algorithm SHA256).Hash -eq $hashBefore9) 'Du lieu DATA2 nguyen ven'
+    $r = Invoke-TsuDisk @('kiem-tra-gpt', '--dia', "$($disk.Number)")
+    Assert-True ($r.Code -eq 0) 'GPT van toan ven sau khi noi rong Recovery'
+
     Write-Host "`n=== Ca 7: doc nhat ky ==="
     $first = (Get-ChildItem $Logs -Recurse -Filter journal.json | Sort-Object FullName | Select-Object -First 1).FullName
     $r = Invoke-TsuDisk @('nhat-ky', $first)

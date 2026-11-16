@@ -20,6 +20,8 @@ try
         "phan-tich" => Commands.Analyze(cli),
         "ke-hoach" => Commands.Extend(cli, planOnly: true),
         "mo-rong" => Commands.Extend(cli, planOnly: false),
+        "ke-hoach-winre" => Commands.GrowWinRe(cli, planOnly: true),
+        "mo-rong-winre" => Commands.GrowWinRe(cli, planOnly: false),
         "nhat-ky" => Commands.Journal(cli),
         "winre" => Commands.WinRe(),
         "suc-khoe" => Commands.Health(cli),
@@ -99,7 +101,30 @@ internal static partial class Commands
 
         var layout = Backend.ListDisks().Select(d => Backend.ReadLayout(d.Number)).FirstOrDefault(l => l.FindByLetter(letter) is not null)
             ?? throw new DiskOperationException($"Không có ổ {letter}: trên đĩa nào.");
-        var result = ExtendPlanner.Plan(layout, ReadWinReSafely(), request);
+        return ShowAndRun(cli, ExtendPlanner.Plan(layout, ReadWinReSafely(), request), planOnly, letter.ToString());
+    }
+
+    public static int GrowWinRe(CliArgs cli, bool planOnly)
+    {
+        var winRe = ReadWinReSafely();
+        var diskNumber = cli.IntValue("dia") ?? winRe.DiskNumber ?? 0;
+        var request = new WinReGrowRequest
+        {
+            VirtualDiskOnly = cli.Has("chi-o-ao"),
+            TargetSize = cli.IntValue("recovery-mb") is { } mb ? mb * Units.MiB : null,
+            RecoveryPolicy = cli.Value("recovery") switch
+            {
+                null or "winre" => RecoveryPolicy.RelocateActiveWinReOnly,
+                "tao-lai-rong" or "recreate-empty" => RecoveryPolicy.RecreateEmpty,
+                var other => throw new UsageException($"--recovery chỉ nhận winre hoặc tao-lai-rong, không nhận {other}."),
+            },
+        };
+        return ShowAndRun(cli, WinReGrowPlanner.Plan(Backend.ReadLayout(diskNumber), winRe, request), planOnly, "WINRE");
+    }
+
+    /// <summary>Luong chung: in ke hoach (hoac ly do tu choi), xac nhan bang mot tu khoa, chay, bao cao, ma thoat.</summary>
+    private static int ShowAndRun(CliArgs cli, PlanResult result, bool planOnly, string confirmWord)
+    {
         if (!result.Success)
         {
             if (cli.Has("json"))
@@ -122,7 +147,7 @@ internal static partial class Commands
             return ExitCodes.NeedsAdmin;
         }
         var dryRun = cli.Has("chay-thu");
-        if (!dryRun && !cli.Has("dong-y") && !Confirm(letter))
+        if (!dryRun && !cli.Has("dong-y") && !Confirm(confirmWord))
         {
             Console.WriteLine("Đã hủy - không có thay đổi nào.");
             return ExitCodes.Ok;
@@ -203,6 +228,8 @@ internal static partial class Commands
               tsudisk phan-tich [--dia N] [--json]        Mỗi vùng trống gộp được vào ổ nào, vì sao
               tsudisk ke-hoach <X:> [tùy chọn] [--json]   Lập và in kế hoạch mở rộng, KHÔNG thay đổi gì
               tsudisk mo-rong <X:> [tùy chọn]             Lập kế hoạch, hỏi xác nhận, rồi thực hiện (cần quyền quản trị)
+              tsudisk ke-hoach-winre [tùy chọn]           Kế hoạch nới rộng Recovery cho WinRE (lỗi cập nhật 0x80070643, KB5034441)
+              tsudisk mo-rong-winre [tùy chọn]            Thực hiện nới rộng Recovery; gõ WINRE để xác nhận (cần quyền quản trị)
               tsudisk nhat-ky [tệp journal.json]          Xem lần chạy gần nhất và việc cần làm nếu bị đứt giữa chừng
               tsudisk winre                               Trạng thái Windows Recovery Environment
               tsudisk suc-khoe [--dia N] [--json]         Sức khỏe ổ: trạng thái, nhiệt độ, độ mòn, lỗi đọc/ghi (S.M.A.R.T.)
@@ -213,12 +240,12 @@ internal static partial class Commands
             Tùy chọn cho ke-hoach / mo-rong:
               --chay-thu                 Chỉ chạy các bước không ghi đĩa (quét, sao lưu) để kiểm tra
               --dong-y                   Không hỏi xác nhận (dùng trong kịch bản tự động)
-              --recovery-mb N            Kích thước Recovery mới (512-4096, mặc định 1024)
+              --recovery-mb N            Kích thước Recovery mới (512-4096; mo-rong mặc định 1024, mo-rong-winre mặc định đủ 250 MB trống)
               --recovery tao-lai-rong    Cho phép xóa và tạo lại RỖNG một Recovery không chứa WinRE đang dùng
               --chi-o-ao                 Chỉ cho phép thao tác trên ổ ảo VHD/VHDX (kiểm thử)
               --thu-muc-nhat-ky DIR      Nơi lưu nhật ký và bản sao lưu (mặc định %ProgramData%\TsuDisk\nhat-ky)
 
-            Bí danh tiếng Anh: list, analyze, plan, extend, journal, health, verify-gpt, backup, version, help; --dry-run, --yes, --disk, --virtual-only, --log-dir.
+            Bí danh tiếng Anh: list, analyze, plan, extend, plan-winre, grow-winre, journal, health, verify-gpt, backup, version, help; --dry-run, --yes, --disk, --virtual-only, --log-dir.
             Mã thoát: 0 xong, 1 từ chối/lỗi, 2 sai cú pháp, 3 thiếu quyền quản trị, 4 thất bại đã hoàn tác, 5 cần xử lý.
             """);
         return ExitCodes.Ok;
@@ -259,12 +286,12 @@ internal static partial class Commands
         }
     }
 
-    private static bool Confirm(char letter)
+    private static bool Confirm(string word)
     {
-        Console.Write($"Gõ chữ cái ổ đích ({letter}) rồi Enter để thực hiện, Enter trống để hủy: ");
+        Console.Write($"Gõ {word} rồi Enter để thực hiện, Enter trống để hủy: ");
         var answer = Console.ReadLine()?.Trim();
-        return string.Equals(answer, letter.ToString(), StringComparison.OrdinalIgnoreCase)
-            || string.Equals(answer, $"{letter}:", StringComparison.OrdinalIgnoreCase);
+        return string.Equals(answer, word, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(answer, $"{word}:", StringComparison.OrdinalIgnoreCase);
     }
 
     private static string? LatestJournal()
