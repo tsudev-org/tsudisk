@@ -1,16 +1,22 @@
-// disk.tsudev.com: Cloudflare Workers Static Assets (gói miễn phí), chỉ phục vụ tệp tĩnh trong dist/ - không có mã
-// Worker nào chạy. Chọn Workers thay vì Pages vì Custom Domain của Workers tự tạo bản ghi DNS + chứng chỉ trong zone
-// tsudev.com cùng tài khoản (Pages cần thêm CNAME bằng tay). public/_headers vẫn áp dụng như trên Pages.
+// disk.tsudev.com: Cloudflare Workers Static Assets (gói miễn phí).
+// - Tệp tĩnh khớp đường dẫn: phục vụ thẳng từ biên, KHÔNG gọi Worker (không tốn lượt, khó bị làm cạn hạn mức).
+// - Không khớp: gọi worker/index.mjs để chuẩn hóa URL (301 về dạng chuẩn) hoặc trả trang 404 thật; chặn phương thức
+//   khác GET/HEAD (405), URL quá dài (414). Logic thuần + test: worker/chuan-hoa-url.mjs, `npm run test:worker`.
+// - Custom Domain của Workers tự tạo bản ghi DNS + chứng chỉ trong zone tsudev.com (Pages cần CNAME bằng tay).
+// - workers_dev/preview_urls tắt: chỉ một tên miền công khai, không có bản sao ở *.workers.dev.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "tsudisk",
+  "main": "worker/index.mjs",
   "compatibility_date": "2026-11-01",
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "404-page",
+    "binding": "ASSETS",
+    "not_found_handling": "none",
     "html_handling": "auto-trailing-slash"
   },
   "workers_dev": false,
   "preview_urls": false,
+  "observability": { "enabled": false },
   "routes": [{ "pattern": "disk.tsudev.com", "custom_domain": true }]
 }
