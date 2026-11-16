@@ -8,7 +8,7 @@
 - [ ] Giai đoạn 2 (`docs/ROADMAP.md`): GUI WPF, sao lưu/khôi phục GPT thô, mở rộng WinRE (KB5034441), S.M.A.R.T.
 - [ ] Phát hành bản cài + ký SignPath khi D5 duyệt; winget `tsudev.TsuDisk`, Scoop
 - [ ] Rà 8 PR Dependabot (#1-#6, #8, #9). Riêng #6 `System.Management` 11.0.0: kiểm có cần .NET 11 không trước khi merge
-- [ ] Theo dõi phiếu `tsudev` 20261116-D1 (thêm TsuDisk vào tsudev.com/apps), đã gửi phiên tsudev-27
+- [ ] Khi có gói winget/Scoop: gửi phiếu mới cho repo `tsudev` để gỡ ngoại lệ tạm của cổng C4 cho id `disk` và chạy `pkg:catalog`
 
 ## Đang thực hiện
 
@@ -17,6 +17,7 @@
 
 ## Đã hoàn thành (mới nhất trên cùng)
 
+- 16/11/2026 - Phiếu tsudev 20261116-D1 ĐÓNG: tsudev#291 thêm thẻ TsuDisk vào tsudev.com/apps (đo 200, có thẻ).
 - 16/11/2026 - Repo `tsudev-org/tsudisk` công khai, ruleset "Bao ve main" (PR + 6 check bắt buộc, 0 bypass), secret
   scanning + push protection + private vulnerability reporting + Dependabot. Website https://disk.tsudev.com (Worker
   chuẩn hóa URL #7). Phát hành v26.11.1601 (SHA256SUMS + attestation đã kiểm chứng).
