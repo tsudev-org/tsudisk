@@ -30,6 +30,9 @@ tsudisk ke-hoach C:               # Lập kế hoạch mở rộng C:, in từng
 tsudisk mo-rong C: --chay-thu     # Chạy các bước không ghi đĩa (quét, sao lưu) để kiểm tra
 tsudisk mo-rong C:                # Thực hiện: hỏi xác nhận bằng cách gõ lại chữ cái ổ
 tsudisk nhat-ky                   # Xem lần chạy gần nhất và việc cần làm nếu bị đứt giữa chừng
+tsudisk suc-khoe                  # Sức khỏe ổ: trạng thái, nhiệt độ, độ mòn, lỗi đọc/ghi (S.M.A.R.T.)
+tsudisk kiem-tra-gpt              # Kiểm tra toàn vẹn bảng GPT trên đĩa (Admin)
+tsudisk sao-luu                   # Sao lưu sector GPT thô + bố cục + SHA-256 (Admin)
 ```
 
 Tùy chọn của `ke-hoach` / `mo-rong`:
@@ -45,7 +48,7 @@ Tùy chọn của `ke-hoach` / `mo-rong`:
 | `--thu-muc-nhat-ky DIR` | Nơi lưu nhật ký, mặc định `%ProgramData%\TsuDisk\nhat-ky` |
 | `--json` | In kế hoạch hoặc bố cục dạng JSON để tích hợp |
 
-Bí danh tiếng Anh: `list`, `analyze`, `plan`, `extend`, `journal`, `--dry-run`, `--yes`, `--disk`, `--virtual-only`.
+Bí danh tiếng Anh: `list`, `analyze`, `plan`, `extend`, `journal`, `health`, `verify-gpt`, `backup`, `--dry-run`, `--yes`, `--disk`, `--virtual-only`.
 
 ### Mã thoát
 
@@ -60,6 +63,9 @@ Bí danh tiếng Anh: `list`, `analyze`, `plan`, `extend`, `journal`, `--dry-run
 
 ## Cơ chế an toàn
 
+0. **Không ghi lên ổ đang hỏng.** Bước đầu của mọi kế hoạch đọc sức khỏe ổ (HealthStatus, trạng thái vận hành,
+   S.M.A.R.T.); ổ có dấu hiệu hỏng (lỗi đọc/ghi không sửa được, Predictive Failure, mòn 100%) thì dừng. Bảng GPT trên
+   đĩa cũng phải toàn vẹn (CRC32, header dự phòng) và khớp Windows, nếu không cũng dừng.
 1. **Chỉ chạm đúng những gì cần.** Kế hoạch chỉ được xóa phân vùng Recovery, chỉ được mở rộng (không bao giờ thu
    nhỏ) ổ dữ liệu, không bao giờ chạm EFI, MSR, ổ động, Storage Spaces.
 2. **Mô phỏng trước khi làm.** Mọi kế hoạch được chạy "trên giấy" ra bố cục dự kiến, rồi kiểm bất biến: mọi phân vùng
@@ -67,8 +73,8 @@ Bí danh tiếng Anh: `list`, `analyze`, `plan`, `extend`, `journal`, `--dry-run
 3. **Dấu vân tay bố cục.** Bố cục thật khác lúc lập kế hoạch (có công cụ khác vừa sửa đĩa) thì dừng trước bước đầu.
 4. **Kiểm lại trước từng bước ghi.** Trước khi xóa, đọc lại phân vùng: đúng số, đúng offset, đúng loại Recovery,
    đúng kích thước. Sau khi mở rộng, đọc lại kích thước thật.
-5. **Sao lưu trước khi đổi.** Bố cục phân vùng (JSON), BCD (`bcdedit /export`), trạng thái WinRE và một bản sao
-   `Winre.wim` được lưu trong thư mục nhật ký của lần chạy.
+5. **Sao lưu trước khi đổi.** Bố cục phân vùng (JSON), sector GPT thô đầu và cuối đĩa (kèm SHA-256), BCD
+   (`bcdedit /export`), trạng thái WinRE và một bản sao `Winre.wim` được lưu trong thư mục nhật ký của lần chạy.
 6. **Hoàn tác tự động.** Lỗi giữa chừng thì chạy các bước bù theo thứ tự ngược: tạo lại Recovery đúng chỗ cũ, bật
    lại WinRE.
 7. **Nhật ký nguyên tử.** Ghi `journal.json` sau mỗi chuyển trạng thái; mất điện giữa chừng thì `tsudisk nhat-ky`
@@ -102,7 +108,7 @@ Muốn tự làm bằng tay từng lệnh: [`docs/HUONG-DAN-MO-RONG-O-C.md`](doc
 
 ## Đánh số phiên bản
 
-`YY.M.DDNN` theo `.standards/docs/VERSIONING.md`: `26.11.1601` là bản thứ 01 ngày 16/11/2026.
+`YY.M.DDNN` theo `.standards/docs/VERSIONING.md`: `26.11.1602` là bản thứ 02 ngày 16/11/2026.
 
 ## Giấy phép
 

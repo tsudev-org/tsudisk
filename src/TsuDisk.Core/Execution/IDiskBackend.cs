@@ -1,3 +1,4 @@
+using TsuDisk.Core.Health;
 using TsuDisk.Core.Model;
 
 namespace TsuDisk.Core.Execution;
@@ -19,6 +20,9 @@ public interface IDiskBackend
     WinReStatus ReadWinRe();
 
     VolumeScanResult ScanVolume(char driveLetter);
+
+    /// <summary>Suc khoe o vat ly chua dia; null khi driver khong cung cap (RAID, USB).</summary>
+    DiskHealth? ReadHealth(int diskNumber);
 
     /// <summary>Luu ban sao luu (anh bo cuc, BCD, Winre.wim neu co) vao thu muc nhat ky cua lan chay.</summary>
     void SaveBackups(string runDirectory, DiskLayout layout);

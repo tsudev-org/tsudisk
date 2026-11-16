@@ -1,3 +1,4 @@
+using TsuDisk.Core.Health;
 using TsuDisk.Core.Model;
 using TsuDisk.Core.Planning;
 using TsuDisk.Core.Safety;
@@ -68,6 +69,13 @@ public sealed class PlanRunner(IDiskBackend backend, IJournalStore store, TimePr
         var disk = plan.DiskNumber;
         switch (step.Kind)
         {
+            case StepKind.CheckHealth:
+            {
+                var verdict = HealthEvaluator.Evaluate(backend.ReadHealth(disk));
+                if (!verdict.AllowsWrites)
+                    throw new DiskOperationException("Ổ đĩa có dấu hiệu hỏng - không thay đổi bảng phân vùng. Sao lưu dữ liệu và thay ổ trước: " + string.Join(" ", verdict.Reasons));
+                return $"{verdict.Level}: {string.Join(" ", verdict.Reasons)}";
+            }
             case StepKind.ScanVolume:
             {
                 var scan = backend.ScanVolume(step.DriveLetter!.Value);

@@ -1,6 +1,8 @@
 using System.Runtime.Versioning;
 using System.Text;
 using TsuDisk.Core.Execution;
+using TsuDisk.Core.Gpt;
+using TsuDisk.Core.Health;
 using TsuDisk.Core.Model;
 using TsuDisk.Core.Scripts;
 using TsuDisk.Core.Serialization;
@@ -19,6 +21,8 @@ public sealed class WindowsDiskBackend : IDiskBackend
 
     public WinReStatus ReadWinRe() => ReAgentInfoParser.Parse(SystemTools.RunChecked("reagentc.exe", "/info").Output);
 
+    public DiskHealth? ReadHealth(int diskNumber) => HealthReader.Read(diskNumber);
+
     public VolumeScanResult ScanVolume(char driveLetter)
     {
         var (healthy, detail) = StorageApi.ScanVolume(driveLetter);
@@ -29,9 +33,16 @@ public sealed class WindowsDiskBackend : IDiskBackend
     {
         _runDirectory = runDirectory;
         Directory.CreateDirectory(runDirectory);
-        File.WriteAllText(Path.Combine(runDirectory, "layout-before.json"), TsuDiskJson.Serialize([layout]), Encoding.UTF8);
+        File.WriteAllText(Path.Combine(runDirectory, "layout-before.json"), TsuDiskJson.Serialize(new DiskLayout[] { layout }), Encoding.UTF8);
         File.WriteAllText(Path.Combine(runDirectory, "reagentc-before.txt"), SystemTools.Run("reagentc.exe", ["/info"]).Output, Encoding.UTF8);
         SystemTools.RunChecked("bcdedit.exe", "/export", Path.Combine(runDirectory, "bcd-backup"));
+        if (layout.Disk.Style == PartitionStyle.Gpt)
+        {
+            var report = GptBackup.Save(layout, runDirectory);
+            if (!report.Healthy)
+                throw new DiskOperationException("Bảng GPT trên đĩa không toàn vẹn - không thay đổi gì: " +
+                    string.Join(" | ", report.Findings.Where(f => f.Level == GptCheckLevel.Error).Select(f => f.Message)));
+        }
     }
 
     public void DisableWinRe()

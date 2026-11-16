@@ -203,7 +203,7 @@ public class ToolingTests
     {
         var plan = ExtendPlanner.Plan(RealMachine20261116(), WinReOnPartition4, new ExtendRequest('C')).Plan!;
         var steps = plan.Steps.Select(s => new StepRecord(s.Index, s.Kind, s.Title,
-            s.Kind is StepKind.ScanVolume or StepKind.Backup or StepKind.DisableWinRe or StepKind.DeletePartition ? StepStatus.Done : StepStatus.Pending,
+            s.Kind is StepKind.CheckHealth or StepKind.ScanVolume or StepKind.Backup or StepKind.DisableWinRe or StepKind.DeletePartition ? StepStatus.Done : StepStatus.Pending,
             null, null, null)).ToList();
         var journal = new RunJournal("r2", plan, RunState.Running, steps, [], "test");
 
