@@ -17,7 +17,7 @@ const camKet = [
   { t: 'Không chạm phân vùng khác', d: 'Mọi phân vùng ngoài kế hoạch giữ nguyên vị trí, kích thước, loại - kiểm trên mô phỏng trước khi chạy và trên đĩa thật sau khi chạy.' },
   { t: 'Không dời dữ liệu', d: 'Bố cục cần dời dữ liệu bị từ chối kèm giải thích, thay vì làm liều. EFI, MSR, ổ động, Storage Spaces không bao giờ bị đụng.' },
   { t: 'Dừng khi đĩa đã đổi', d: 'Dấu vân tay bố cục: có công cụ khác vừa sửa đĩa giữa lúc lập kế hoạch và lúc chạy thì dừng trước bước đầu tiên.' },
-  { t: 'Kiểm chứng được', d: 'Mã nguồn mở, 57 test đơn vị kèm tiêm lỗi, kiểm thử đầu-cuối trên ổ ảo VHDX trong CI Windows ở mọi thay đổi.' },
+  { t: 'Kiểm chứng được', d: 'Mã nguồn mở, bộ test đơn vị có tiêm lỗi từng bước, kiểm thử đầu-cuối trên ổ ảo VHDX trong CI Windows ở mọi thay đổi.' },
 ];
 ---
 <Trang moTa="TsuDisk quản lý phân vùng ổ cứng Windows an toàn: phân tích vùng trống, xem kế hoạch trước, mở rộng ổ C: kể cả khi Recovery chắn đường." duongDan="/">
@@ -39,7 +39,7 @@ const camKet = [
       <h2 id="vi-du">Một lần chạy thật</h2>
       <p class="muc__dan">Máy có 60 GB trống nhưng phân vùng Recovery 917 MB nằm giữa C: và vùng trống, nên Disk Management không cho Extend Volume.</p>
       <pre tabindex="0"><code>PS&gt; tsudisk ke-hoach C:
-KẾ HOẠCH: mở rộng C: trên đĩa 0, tăng 59,89 GB
+KẾ HOẠCH: mở rộng C: trên đĩa 0, tăng 59,9 GB
   1.       Quét hệ thống tệp C: (chỉ đọc)
   2.       Lưu ảnh bảng phân vùng, BCD và ảnh WinRE vào thư mục nhật ký
   3.       Tắt WinRE (Windows chép Winre.wim về ổ hệ thống)
