@@ -1,0 +1,16 @@
+{
+  "name": "TsuDisk | tsudev",
+  "short_name": "TsuDisk",
+  "description": "Quản lý phân vùng ổ cứng Windows an toàn: phân tích vùng trống, lập kế hoạch, mở rộng ổ C: kể cả khi Recovery chắn đường.",
+  "lang": "vi",
+  "start_url": "/",
+  "display": "browser",
+  "theme_color": "#0a0a0a",
+  "background_color": "#0a0a0a",
+  "icons": [
+    { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/android-chrome-maskable-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/android-chrome-maskable-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

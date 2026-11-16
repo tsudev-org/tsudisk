@@ -1,0 +1,8 @@
+---
+import TaiLieu from '../components/TaiLieu.astro';
+import { renderMd } from '../lib/noi-dung';
+const { html } = renderMd('docs/DIEU-KHOAN.md');
+---
+<TaiLieu tieuDe="Điều khoản sử dụng" moTa="Điều khoản sử dụng TsuDisk: giấy phép Apache 2.0, phần mềm cung cấp nguyên trạng, trách nhiệm sao lưu dữ liệu trước khi thay đổi ổ đĩa." duongDan="/dieu-khoan/" nguon="docs/DIEU-KHOAN.md">
+  <Fragment set:html={html} />
+</TaiLieu>

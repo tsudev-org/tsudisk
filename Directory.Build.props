@@ -1,0 +1,29 @@
+<Project>
+  <!-- NGUON SU THAT DUY NHAT cho metadata toan giai phap.
+       Phien ban app theo .standards/docs/VERSIONING.md muc 2: YY.M.DDNN
+       (26.11.1601 = ban thu 01 ngay 16/11/2026). Khong khai Version trong tung .csproj. -->
+  <PropertyGroup>
+    <VersionPrefix>26.11.1601</VersionPrefix>
+    <Company>tsudev</Company>
+    <Authors>tsudev</Authors>
+    <Product>TsuDisk</Product>
+    <Copyright>Copyright (c) 2026 tsudev</Copyright>
+    <Description>Quản lý phân vùng ổ cứng Windows an toàn: phân tích, lập kế hoạch, mở rộng ổ</Description>
+    <RepositoryUrl>https://github.com/tsudev-org/tsudisk</RepositoryUrl>
+    <PackageProjectUrl>https://disk.tsudev.com</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <!-- Build duoc project net10.0-windows tren may dev Linux va CI ubuntu. -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+</Project>

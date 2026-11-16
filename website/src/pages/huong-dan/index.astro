@@ -1,0 +1,19 @@
+---
+import TaiLieu from '../../components/TaiLieu.astro';
+import { mucMd, renderMd } from '../../lib/noi-dung';
+
+// Một nguồn: các mục này lấy nguyên văn từ README.md của repo. Sửa ở README, không sửa ở đây.
+const MUC = ['Vì sao có TsuDisk', 'Cách dùng', 'Đánh số phiên bản'];
+const { html } = renderMd('README.md', { md: mucMd('README.md', MUC) });
+const mucLuc = [
+  { id: 'vì-sao-có-tsudisk', ten: 'Vì sao có TsuDisk' },
+  { id: 'cách-dùng', ten: 'Cách dùng' },
+  { id: 'mã-thoát', ten: 'Mã thoát' },
+  { id: 'đánh-số-phiên-bản', ten: 'Đánh số phiên bản' },
+];
+---
+<TaiLieu tieuDe="Hướng dẫn sử dụng" moTa="Hướng dẫn dùng TsuDisk: các lệnh danh-sach, phan-tich, ke-hoach, mo-rong, nhat-ky, tùy chọn chạy thử, kích thước Recovery và mã thoát." duongDan="/huong-dan/" mucLuc={mucLuc} nguon="README.md">
+  <h1>Hướng dẫn sử dụng</h1>
+  <p>Mở <strong>Terminal (Admin)</strong> ở thư mục chứa <code>tsudisk.exe</code>. Bắt đầu bằng <code>tsudisk phan-tich</code> để xem vùng trống nào gộp được vào ổ nào, rồi <code>tsudisk ke-hoach C:</code> để xem trước từng bước.</p>
+  <Fragment set:html={html} />
+</TaiLieu>

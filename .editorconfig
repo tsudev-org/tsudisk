@@ -1,0 +1,36 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+
+[*.{cs,csproj,props,targets,slnx}]
+indent_size = 4
+
+[*.{json,jsonc,yml,yaml,md,mjs,ts,astro,css}]
+indent_size = 2
+
+[*.ps1]
+indent_size = 4
+end_of_line = crlf
+
+[*.cs]
+csharp_style_namespace_declarations = file_scoped:suggestion
+csharp_using_directive_placement = outside_namespace:suggestion
+dotnet_sort_system_directives_first = true
+
+# CA1303: chuoi hien thi la tieng Viet co chu dich, khong qua resource.
+dotnet_diagnostic.CA1303.severity = none
+# CA1848/CA1873: khong dung ILogger.
+dotnet_diagnostic.CA1848.severity = none
+# CA1031: tang dieu phoi (Executor, Cli) bat moi ngoai le de ghi nhat ky + rollback; co comment tai cho.
+dotnet_diagnostic.CA1031.severity = suggestion
+# CA1716/CA1724: ten "Plan", "Step" trung tu khoa VB - khong ho tro VB.
+dotnet_diagnostic.CA1716.severity = none
+dotnet_diagnostic.CA1724.severity = none
+
+[.standards/**]
+generated_code = true

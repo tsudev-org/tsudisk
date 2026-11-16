@@ -1,0 +1,12 @@
+---
+import TaiLieu from '../components/TaiLieu.astro';
+import { mucMd, renderMd } from '../lib/noi-dung';
+
+// Một nguồn: mục "Cơ chế an toàn" và "Kiểm thử" của README.md.
+const { html } = renderMd('README.md', { md: mucMd('README.md', ['Cơ chế an toàn', 'Kiểm thử']) });
+---
+<TaiLieu tieuDe="Cơ chế an toàn" moTa="Chín lớp bảo vệ dữ liệu của TsuDisk: mô phỏng và kiểm bất biến, dấu vân tay bố cục, kiểm lại trước từng bước, sao lưu, tự hoàn tác, nhật ký nguyên tử." duongDan="/an-toan/" nguon="README.md">
+  <h1>Cơ chế an toàn</h1>
+  <p>TsuDisk theo mô hình <strong>lập kế hoạch, mô phỏng, kiểm bất biến, chạy có nhật ký, hoàn tác</strong>. Quyết định kiến trúc đầy đủ ở ADR-0002 trong mã nguồn.</p>
+  <Fragment set:html={html} />
+</TaiLieu>

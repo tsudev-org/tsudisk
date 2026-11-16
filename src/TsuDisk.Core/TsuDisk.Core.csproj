@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Nghiep vu thuan: mo hinh bo cuc o dia, lap ke hoach, canh an toan, chay ke hoach qua cong IDiskBackend.
+       KHONG goi he dieu hanh o day - nho vay toan bo logic test duoc tren Linux (tests/TsuDisk.Core.Tests). -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>TsuDisk.Core</RootNamespace>
+    <AssemblyName>TsuDisk.Core</AssemblyName>
+    <IsTrimmable>true</IsTrimmable>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="TsuDisk.Core.Tests" />
+  </ItemGroup>
+</Project>

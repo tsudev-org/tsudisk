@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/TsuDisk.Core/TsuDisk.Core.csproj" />
+    <Project Path="src/TsuDisk.Windows/TsuDisk.Windows.csproj" />
+    <Project Path="src/TsuDisk.Cli/TsuDisk.Cli.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TsuDisk.Core.Tests/TsuDisk.Core.Tests.csproj" />
+  </Folder>
+</Solution>

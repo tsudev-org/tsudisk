@@ -1,0 +1,109 @@
+<img src="assets/tsudev-logo-144.png" alt="tsudev" height="56">
+
+# TsuDisk
+
+Quản lý phân vùng ổ cứng Windows **an toàn trước hết**: phân tích vùng trống, lập kế hoạch xem trước, mở rộng ổ
+(kể cả khi phân vùng Recovery chắn đường), có nhật ký từng bước và tự hoàn tác khi lỗi. Một tệp `tsudisk.exe` duy
+nhất, không cần cài .NET.
+
+Một sản phẩm của [tsudev](https://tsudev.com). Trang sản phẩm: <https://disk.tsudev.com>
+
+**Hạng sản phẩm: C - Ngoại tuyến** (theo `.standards/docs/AUTH_AND_ACCOUNT.md` mục 1): chạy trọn vẹn không cần
+Internet, không tài khoản, không gửi dữ liệu đi đâu.
+
+## Vì sao có TsuDisk
+
+Disk Management của Windows chỉ cho **Extend Volume** khi vùng trống nằm ngay sau ổ. Trên rất nhiều máy, phân vùng
+Recovery (WinRE) nằm chắn giữa ổ C: và vùng trống, nên nút Extend bị mờ. Các công cụ phân vùng thương mại giải quyết
+bằng cách **dời dữ liệu** - thao tác rủi ro nhất khi quản lý ổ đĩa. TsuDisk làm theo quy trình Microsoft khuyến nghị
+(KB5028997): tắt WinRE, dời phân vùng Recovery ra sau ổ đích, mở rộng ổ, bật lại WinRE - **không di chuyển một byte
+dữ liệu nào** của các phân vùng khác, không cần khởi động lại.
+
+## Cách dùng
+
+Mở **Terminal (Admin)** cho các lệnh có ghi đĩa. Lệnh chỉ đọc chạy được với quyền thường.
+
+```powershell
+tsudisk danh-sach                 # Liệt kê đĩa, phân vùng, vùng trống
+tsudisk phan-tich                 # Mỗi vùng trống gộp được vào ổ nào, vì sao
+tsudisk ke-hoach C:               # Lập kế hoạch mở rộng C:, in từng bước, KHÔNG thay đổi gì
+tsudisk mo-rong C: --chay-thu     # Chạy các bước không ghi đĩa (quét, sao lưu) để kiểm tra
+tsudisk mo-rong C:                # Thực hiện: hỏi xác nhận bằng cách gõ lại chữ cái ổ
+tsudisk nhat-ky                   # Xem lần chạy gần nhất và việc cần làm nếu bị đứt giữa chừng
+```
+
+Tùy chọn của `ke-hoach` / `mo-rong`:
+
+| Tùy chọn | Ý nghĩa |
+| --- | --- |
+| `--chay-thu` | Chỉ chạy bước không ghi đĩa: quét hệ thống tệp, sao lưu bảng phân vùng và BCD |
+| `--dong-y` | Không hỏi xác nhận (kịch bản tự động) |
+| `--recovery-mb N` | Kích thước Recovery mới, 512-4096 MB, mặc định 1024 (đủ chỗ cho các bản cập nhật WinRE) |
+| `--recovery tao-lai-rong` | Cho phép xóa và tạo lại **rỗng** một Recovery không chứa WinRE đang dùng |
+| `--chi-o-ao` | Chỉ thao tác trên ổ ảo VHD/VHDX (kiểm thử) |
+| `--thu-muc-nhat-ky DIR` | Nơi lưu nhật ký, mặc định `%ProgramData%\TsuDisk\nhat-ky` |
+| `--json` | In kế hoạch hoặc bố cục dạng JSON để tích hợp |
+
+Bí danh tiếng Anh: `list`, `analyze`, `plan`, `extend`, `journal`, `--dry-run`, `--yes`, `--disk`, `--virtual-only`.
+
+### Mã thoát
+
+| Mã | Nghĩa |
+| --- | --- |
+| `0` | Thành công (hoặc chạy thử xong) |
+| `1` | Từ chối lập kế hoạch hoặc lỗi trước khi ghi đĩa |
+| `2` | Sai cú pháp |
+| `3` | Thiếu quyền quản trị |
+| `4` | Thất bại giữa chừng, **đã hoàn tác** về trạng thái an toàn |
+| `5` | Thất bại và hoàn tác không trọn vẹn - làm theo gợi ý của `tsudisk nhat-ky` |
+
+## Cơ chế an toàn
+
+1. **Chỉ chạm đúng những gì cần.** Kế hoạch chỉ được xóa phân vùng Recovery, chỉ được mở rộng (không bao giờ thu
+   nhỏ) ổ dữ liệu, không bao giờ chạm EFI, MSR, ổ động, Storage Spaces.
+2. **Mô phỏng trước khi làm.** Mọi kế hoạch được chạy "trên giấy" ra bố cục dự kiến, rồi kiểm bất biến: mọi phân vùng
+   khác giữ nguyên vị trí, kích thước và loại; không chồng lấn; offset căn lề 1 MiB. Vi phạm là hủy.
+3. **Dấu vân tay bố cục.** Bố cục thật khác lúc lập kế hoạch (có công cụ khác vừa sửa đĩa) thì dừng trước bước đầu.
+4. **Kiểm lại trước từng bước ghi.** Trước khi xóa, đọc lại phân vùng: đúng số, đúng offset, đúng loại Recovery,
+   đúng kích thước. Sau khi mở rộng, đọc lại kích thước thật.
+5. **Sao lưu trước khi đổi.** Bố cục phân vùng (JSON), BCD (`bcdedit /export`), trạng thái WinRE và một bản sao
+   `Winre.wim` được lưu trong thư mục nhật ký của lần chạy.
+6. **Hoàn tác tự động.** Lỗi giữa chừng thì chạy các bước bù theo thứ tự ngược: tạo lại Recovery đúng chỗ cũ, bật
+   lại WinRE.
+7. **Nhật ký nguyên tử.** Ghi `journal.json` sau mỗi chuyển trạng thái; mất điện giữa chừng thì `tsudisk nhat-ky`
+   biết chính xác bước nào đã xong và chỉ ra việc cần làm.
+8. **Đối chiếu sau cùng.** Đọc lại bảng phân vùng, so với bố cục dự kiến từng byte.
+9. **Không nới quyền.** Công cụ hệ thống (`reagentc`, `bcdedit`, `diskpart`) gọi bằng đường dẫn tuyệt đối trong
+   System32, tham số truyền tách rời, không qua shell.
+
+TsuDisk **từ chối có giải thích** mọi bố cục cần dời dữ liệu (vùng trống không liền kề), ổ FAT32/exFAT, ổ động, đĩa
+chỉ-đọc, và Recovery không chứa WinRE đang dùng (trừ khi bạn chủ động chọn `--recovery tao-lai-rong`).
+
+## Kiểm thử
+
+- **57 test đơn vị** trên Linux/Windows: mô phỏng đĩa trong bộ nhớ, tiêm lỗi từng bước để kiểm hoàn tác, và một ca
+  tái hiện đúng từng byte lần mở rộng ổ C: thật ngày 16/11/2026 (EFI | MSR | C: | Recovery | 60 GB trống | G: | E:).
+- **E2E trên ổ ảo VHDX** (`tests/e2e/run-e2e.ps1`), chạy trong CI Windows và trên máy dev: dựng đĩa 3 GB có EFI,
+  dữ liệu, Recovery, vùng trống; chạy `tsudisk` thật; kiểm phân vùng khác không xê dịch và tệp canh gác khớp SHA-256.
+
+```bash
+dotnet test tests/TsuDisk.Core.Tests                         # mọi nền tảng
+dotnet publish src/TsuDisk.Cli -c Release -o artifacts/publish   # ra tsudisk.exe
+```
+
+## Kiến trúc
+
+Ports & Adapters: `TsuDisk.Core` (logic thuần, `net10.0`, test trên Linux) - `TsuDisk.Windows` (Storage Management
+API, công cụ hệ thống) - `TsuDisk.Cli` (`tsudisk.exe`). Chi tiết: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+Lộ trình tính năng và các dự án tham khảo: [`docs/ROADMAP.md`](docs/ROADMAP.md).
+
+Muốn tự làm bằng tay từng lệnh: [`docs/HUONG-DAN-MO-RONG-O-C.md`](docs/HUONG-DAN-MO-RONG-O-C.md).
+
+## Đánh số phiên bản
+
+`YY.M.DDNN` theo `.standards/docs/VERSIONING.md`: `26.11.1601` là bản thứ 01 ngày 16/11/2026.
+
+## Giấy phép
+
+Apache 2.0 - xem [`LICENSE`](LICENSE) và [`NOTICE`](NOTICE). Quyền riêng tư: [`PRIVACY.md`](PRIVACY.md).
+Báo lỗ hổng: [`SECURITY.md`](SECURITY.md).

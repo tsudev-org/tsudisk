@@ -1,0 +1,85 @@
+---
+import Trang from '../layouts/Trang.astro';
+import { banMoiNhat, RELEASES_URL } from '../lib/noi-dung';
+
+const ban = await banMoiNhat();
+
+const tinhNang = [
+  { t: 'Phân tích vùng trống', d: 'Liệt kê mọi đĩa, phân vùng và vùng chưa phân bổ. Với từng vùng trống, chỉ ra ổ nào gộp được mà không phải dời dữ liệu, và vì sao các ổ khác thì không.' },
+  { t: 'Mở rộng ổ khi Recovery chắn đường', d: 'Disk Management làm mờ nút Extend Volume khi phân vùng Recovery nằm giữa ổ C: và vùng trống. TsuDisk dời Recovery ra sau C: theo quy trình Microsoft KB5028997, rồi mở rộng.' },
+  { t: 'Xem kế hoạch trước', d: 'Lệnh ke-hoach in từng bước sẽ chạy, bước nào ghi đĩa, ổ tăng bao nhiêu. Không có gì xảy ra cho tới khi bạn gõ lại chữ cái ổ để xác nhận.' },
+  { t: 'Bảo toàn WinRE', d: 'Tắt WinRE trước khi đụng phân vùng Recovery, giữ ảnh khôi phục an toàn trên ổ hệ thống, tạo Recovery mới 1 GB rồi bật lại. Không mất chức năng Reset this PC.' },
+  { t: 'Tự hoàn tác khi lỗi', d: 'Lỗi giữa chừng thì chạy các bước bù theo thứ tự ngược: tạo lại Recovery đúng chỗ cũ, bật lại WinRE. Nhật ký ghi sau từng bước để mất điện vẫn biết phải làm gì.' },
+  { t: 'Chạy online, không khởi động lại', d: 'Mở rộng NTFS khi Windows đang chạy. Máy ảo, WSL, cơ sở dữ liệu, terminal đang mở không bị gián đoạn.' },
+];
+
+const camKet = [
+  { t: 'Không chạm phân vùng khác', d: 'Mọi phân vùng ngoài kế hoạch giữ nguyên vị trí, kích thước, loại - kiểm trên mô phỏng trước khi chạy và trên đĩa thật sau khi chạy.' },
+  { t: 'Không dời dữ liệu', d: 'Bố cục cần dời dữ liệu bị từ chối kèm giải thích, thay vì làm liều. EFI, MSR, ổ động, Storage Spaces không bao giờ bị đụng.' },
+  { t: 'Dừng khi đĩa đã đổi', d: 'Dấu vân tay bố cục: có công cụ khác vừa sửa đĩa giữa lúc lập kế hoạch và lúc chạy thì dừng trước bước đầu tiên.' },
+  { t: 'Kiểm chứng được', d: 'Mã nguồn mở, 57 test đơn vị kèm tiêm lỗi, kiểm thử đầu-cuối trên ổ ảo VHDX trong CI Windows ở mọi thay đổi.' },
+];
+---
+<Trang moTa="TsuDisk quản lý phân vùng ổ cứng Windows an toàn: phân tích vùng trống, xem kế hoạch trước, mở rộng ổ C: kể cả khi Recovery chắn đường." duongDan="/">
+  <section class="mo-dau">
+    <div class="khung">
+      <span class="nhan">Miễn phí, mã nguồn mở, cho Windows 10 và 11</span>
+      <h1>Mở rộng ổ C: <span class="chu-tim">không dời một byte dữ liệu nào</span></h1>
+      <p class="mo-dau__phu">TsuDisk phân tích bố cục đĩa, lập kế hoạch xem trước, rồi gộp vùng trống vào ổ cần thêm dung lượng - kể cả khi phân vùng Recovery nằm chắn đường. Mỗi bước được kiểm lại, ghi nhật ký và tự hoàn tác khi lỗi. Một tệp <code>tsudisk.exe</code>, không cần cài .NET.</p>
+      <div class="mo-dau__nut">
+        <a class="nut nut--chinh" href="/tai-ve/">Tải về{ban ? ` bản ${ban.phienBan}` : ''}</a>
+        <a class="nut nut--phu" href="/huong-dan/">Hướng dẫn sử dụng</a>
+      </div>
+      <p class="mo-dau__ghi-chu">Hạng sản phẩm C: chạy trọn vẹn không cần Internet, không tài khoản, không gửi dữ liệu đi đâu.</p>
+    </div>
+  </section>
+
+  <section class="muc" aria-labelledby="vi-du">
+    <div class="khung">
+      <h2 id="vi-du">Một lần chạy thật</h2>
+      <p class="muc__dan">Máy có 60 GB trống nhưng phân vùng Recovery 917 MB nằm giữa C: và vùng trống, nên Disk Management không cho Extend Volume.</p>
+      <pre tabindex="0"><code>PS&gt; tsudisk ke-hoach C:
+KẾ HOẠCH: mở rộng C: trên đĩa 0, tăng 59,89 GB
+  1.       Quét hệ thống tệp C: (chỉ đọc)
+  2.       Lưu ảnh bảng phân vùng, BCD và ảnh WinRE vào thư mục nhật ký
+  3.       Tắt WinRE (Windows chép Winre.wim về ổ hệ thống)
+  4. [GHI] Xóa phân vùng 4 - Phân vùng khôi phục (Recovery) (917 MB)
+  5. [GHI] Mở rộng C: từ 265,11 GB lên 325,01 GB
+  6. [GHI] Tạo phân vùng Recovery mới 1 GB ngay sau C:
+  7.       Bật lại WinRE vào phân vùng Recovery mới
+  8.       Đọc lại bảng phân vùng, đối chiếu với kết quả dự kiến</code></pre>
+      <p>G: và E: phía sau giữ nguyên từng byte. Toàn bộ chạy khi Windows đang hoạt động, không khởi động lại.</p>
+    </div>
+  </section>
+
+  <section class="muc" aria-labelledby="tinh-nang">
+    <div class="khung">
+      <h2 id="tinh-nang">Làm được gì</h2>
+      <ul class="the-luoi">
+        {tinhNang.map((x) => <li class="the"><h3>{x.t}</h3><p>{x.d}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="muc" aria-labelledby="cam-ket">
+    <div class="khung">
+      <h2 id="cam-ket">An toàn trước hết</h2>
+      <p class="muc__dan">Công cụ phân vùng gây mất dữ liệu khi chạm nhầm phân vùng, khi bị đứt giữa chừng, hoặc khi đĩa đã bị thay đổi mà không biết. TsuDisk chặn cả ba. <a href="/an-toan/">Đọc chi tiết cơ chế an toàn</a>.</p>
+      <ul class="the-luoi">
+        {camKet.map((x) => <li class="the"><h3>{x.t}</h3><p>{x.d}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="muc" aria-labelledby="bat-dau">
+    <div class="khung">
+      <h2 id="bat-dau">Bắt đầu</h2>
+      <p class="muc__dan">{ban ? `Bản mới nhất ${ban.phienBan}, phát hành ngày ${ban.ngay}.` : 'Bản phát hành đầu tiên đang được chuẩn bị; có thể tự build từ mã nguồn ngay hôm nay.'} Luôn sao lưu dữ liệu quan trọng trước khi thay đổi ổ đĩa.</p>
+      <div class="mo-dau__nut">
+        <a class="nut nut--chinh" href="/tai-ve/">Tải về</a>
+        <a class="nut nut--phu" href="/huong-dan/thu-cong/">Làm bằng tay từng lệnh</a>
+        <a class="nut nut--phu" href={RELEASES_URL} target="_blank" rel="noopener noreferrer">Trang phát hành trên GitHub</a>
+      </div>
+    </div>
+  </section>
+</Trang>

@@ -1,0 +1,16 @@
+{
+  "_ghi_chu": "Cấu hình dây chuyền thương hiệu (website/scripts/brand-assets.mjs). TsuDisk dùng logo tsudev (chưa có logo sản phẩm riêng - BRAND_ASSETS.md mục 15). Ảnh gốc: source/logo-tsudev.png, SHA-256 2ad933bde3f5bc81325fd21896b036df883787b12723020e544b2b8d582577ba (bản gốc chính thức ở tsudev-org/tsudev packages/brand/source/). CI chạy --check.",
+  "id": "tsudev",
+  "name": "TsuDisk",
+  "source": "source/logo-tsudev.png",
+  "mode": "tile",
+  "tileRadius": 0.22,
+  "solidBg": "#000000",
+  "ogGlow": "#1b2430",
+  "ogAccent": "#e5e7eb",
+  "domain": "disk.tsudev.com",
+  "ogLines": [
+    "Quản lý phân vùng ổ cứng Windows an toàn",
+    "Mở rộng ổ C: kể cả khi Recovery chắn đường"
+  ]
+}

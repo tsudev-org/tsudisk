@@ -1,0 +1,103 @@
+name: CI
+
+# Linux: build toan giai phap (EnableWindowsTargeting) + toan bo test don vi cua Core.
+# Windows: dong goi tsudisk.exe, chay lenh chi doc tren o that cua runner, roi chay E2E tren O AO VHDX
+# (runner GitHub co quyen quan tri) - day la noi duy nhat Storage API/diskpart/Resize duoc chay that tu dong.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  test:
+    name: Build va test (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6
+        with:
+          global-json-file: global.json
+      - name: Build (canh bao = loi)
+        run: dotnet build TsuDisk.slnx -c Release
+      - name: Test don vi + do bao phu
+        run: dotnet test tests/TsuDisk.Core.Tests -c Release --no-build --settings tests/coverage.runsettings --collect:"XPlat Code Coverage" --results-directory coverage
+      - name: Kiem tra VersionPrefix dung khuon YY.M.DDNN
+        run: |
+          v=$(sed -n 's:.*<VersionPrefix>\(.*\)</VersionPrefix>.*:\1:p' Directory.Build.props | head -1)
+          echo "VersionPrefix = $v"
+          echo "$v" | grep -Eq '^[0-9]{2}\.([1-9]|1[0-2])\.(0[1-9]|[12][0-9]|3[01])[0-9]{2}$' || { echo "Sai khuon VERSIONING.md muc 2"; exit 1; }
+
+  windows:
+    name: Dong goi + E2E tren o ao (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6
+        with:
+          global-json-file: global.json
+      - name: Dong goi tsudisk.exe
+        run: dotnet publish src/TsuDisk.Cli -c Release -r win-x64 -o publish
+      - name: Lenh chi doc tren runner
+        shell: pwsh
+        run: |
+          ./publish/tsudisk.exe phien-ban
+          ./publish/tsudisk.exe danh-sach
+          if ($LASTEXITCODE -ne 0) { throw "danh-sach that bai" }
+          ./publish/tsudisk.exe phan-tich
+          ./publish/tsudisk.exe danh-sach --json | ConvertFrom-Json | Out-Null
+      - name: E2E tren o ao VHDX
+        shell: powershell
+        run: ./tests/e2e/run-e2e.ps1 -Exe ./publish/tsudisk.exe
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: tsudisk-win-x64
+          path: publish/tsudisk.exe
+          retention-days: 7
+
+  website:
+    name: Website (build + kiem tra)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: website
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - run: npm ci
+      - name: Tai san thuong hieu khop anh goc (brand-assets --check)
+        run: node scripts/brand-assets.mjs --check
+      - name: Build + check-dist
+        run: npm run build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cai Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Kha nang truy cap (axe-core WCAG 2.2 AA, Sang + Toi)
+        run: npm run check:a11y
+      - name: Bo chon giao dien (CSP production)
+        run: npm run check:theme

@@ -1,0 +1,10 @@
+---
+import TaiLieu from '../../components/TaiLieu.astro';
+import { renderMd } from '../../lib/noi-dung';
+
+// Một nguồn: docs/HUONG-DAN-MO-RONG-O-C.md.
+const { html } = renderMd('docs/HUONG-DAN-MO-RONG-O-C.md');
+---
+<TaiLieu tieuDe="Làm bằng tay từng lệnh" moTa="Hướng dẫn mở rộng ổ C: bằng vùng trống khi Recovery chắn đường, làm bằng tay từng lệnh PowerShell và diskpart, có kiểm tra sau mỗi bước." duongDan="/huong-dan/thu-cong/" nguon="docs/HUONG-DAN-MO-RONG-O-C.md">
+  <Fragment set:html={html} />
+</TaiLieu>

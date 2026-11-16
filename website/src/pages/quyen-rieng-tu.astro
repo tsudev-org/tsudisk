@@ -1,0 +1,8 @@
+---
+import TaiLieu from '../components/TaiLieu.astro';
+import { renderMd } from '../lib/noi-dung';
+const { html } = renderMd('PRIVACY.md');
+---
+<TaiLieu tieuDe="Quyền riêng tư" moTa="Tuyên bố quyền riêng tư của TsuDisk: đọc gì trên máy, ghi nhật ký ở đâu, và vì sao chương trình không gửi bất kỳ dữ liệu nào ra khỏi máy." duongDan="/quyen-rieng-tu/" nguon="PRIVACY.md">
+  <Fragment set:html={html} />
+</TaiLieu>
