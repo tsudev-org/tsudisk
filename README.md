@@ -1,4 +1,4 @@
-<img src="assets/tsudev-logo-144.png" alt="tsudev" height="56">
+<img src="assets/brand/app/icon-128.png" alt="TsuDisk" height="56">
 
 # TsuDisk
 
@@ -110,7 +110,7 @@ Muốn tự làm bằng tay từng lệnh: [`docs/HUONG-DAN-MO-RONG-O-C.md`](doc
 
 ## Đánh số phiên bản
 
-`YY.M.DDNN` theo `.standards/docs/VERSIONING.md`: `26.11.1603` là bản thứ 03 ngày 16/11/2026.
+`YY.M.DDNN` theo `.standards/docs/VERSIONING.md`: `26.11.1701` là bản thứ 01 ngày 17/11/2026.
 
 ## Giấy phép
 

@@ -71,7 +71,6 @@ cd website && npm ci && npm run build                           # website
 | --- | --- | --- |
 | `src/` không theo cây `components/features/...` | Giải pháp .NET chia theo project biên dịch | Giữ, đã ghi `docs/ARCHITECTURE.md` |
 | Chưa ký số `tsudisk.exe` | Chờ SignPath Foundation (D5 của hệ sinh thái) | Thêm bước ký khi D5 duyệt |
-| Logo dùng logo tsudev, chưa có logo sản phẩm riêng | `BRAND_ASSETS.md` mục 15 cần chủ dự án duyệt | Khi có logo: thay `assets/brand/source/` + `brand.json`, chạy `node website/scripts/brand-assets.mjs` |
 
 ### B.5. Việc riêng của repo cần biết trước khi sửa
 
