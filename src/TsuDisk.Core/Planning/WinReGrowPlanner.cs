@@ -19,8 +19,8 @@ public sealed record WinReGrowRequest
     /// <summary>Tran thu nho o dung truoc: lon hon la bat thuong voi muc dich nay, tu choi.</summary>
     public const long MaxShrink = 4 * Units.GiB;
 
-    /// <summary>O bi thu nho phai con trong it nhat chung nay SAU khi thu nho.</summary>
-    public const long MinFreeAfterShrink = 2 * Units.GiB;
+    /// <summary>O bi thu nho phai con trong it nhat min(2 GiB, 25% dung luong o) SAU khi thu nho.</summary>
+    public static long MinFreeAfterShrink(long partitionSize) => Math.Min(2 * Units.GiB, partitionSize / 4);
 }
 
 /// <summary>
@@ -110,10 +110,11 @@ public static class WinReGrowPlanner
             }
             if (delta > WinReGrowRequest.MaxShrink)
                 return PlanResult.Refuse(RefusalCode.InvalidOption, $"Cần thu nhỏ {before.DriveLetter}: {Units.Format(delta)}, vượt trần {Units.Format(WinReGrowRequest.MaxShrink)}.");
-            if (before.FreeBytes is { } bf && bf - delta < WinReGrowRequest.MinFreeAfterShrink)
+            var minFree = WinReGrowRequest.MinFreeAfterShrink(before.Size);
+            if (before.FreeBytes is { } bf && bf - delta < minFree)
             {
                 return PlanResult.Refuse(RefusalCode.InvalidOption,
-                    $"{before.DriveLetter}: chỉ còn trống {Units.Format(bf)}; sau khi nhường {Units.Format(delta)} sẽ dưới {Units.Format(WinReGrowRequest.MinFreeAfterShrink)}. Dọn bớt dữ liệu trước.");
+                    $"{before.DriveLetter}: chỉ còn trống {Units.Format(bf)}; sau khi nhường {Units.Format(delta)} sẽ dưới {Units.Format(minFree)}. Dọn bớt dữ liệu trước.");
             }
             var newSize = before.Size - delta;
             var newOffset = before.Offset + newSize;

@@ -42,7 +42,9 @@ internal static class Render
 
     public static void Plan(Plan plan)
     {
-        Console.WriteLine($"KẾ HOẠCH {plan.Id}: mở rộng {plan.TargetLetter}: trên đĩa {plan.DiskNumber}, tăng {Units.Format(plan.GainBytes)}");
+        Console.WriteLine(plan.Operation == WinReGrowPlanner.Operation
+            ? $"KẾ HOẠCH {plan.Id}: nới rộng phân vùng Recovery (WinRE) trên đĩa {plan.DiskNumber}, thêm {Units.Format(plan.GainBytes)}"
+            : $"KẾ HOẠCH {plan.Id}: mở rộng {plan.TargetLetter}: trên đĩa {plan.DiskNumber}, tăng {Units.Format(plan.GainBytes)}");
         foreach (var note in plan.Notes)
             Console.WriteLine($"  * {note}");
         Console.WriteLine();
@@ -50,7 +52,9 @@ internal static class Render
             Console.WriteLine($"  {step.Index}. {(step.ChangesDisk ? "[GHI]" : "     ")} {step.Title}");
         Console.WriteLine();
         Console.WriteLine("  Bất biến an toàn đã kiểm (trên mô phỏng): mọi phân vùng khác giữ nguyên vị trí, kích thước, loại;");
-        Console.WriteLine("  không chạm EFI/MSR; không chồng lấn; offset căn lề 1 MiB.");
+        Console.WriteLine(plan.Operation == WinReGrowPlanner.Operation
+            ? "  không chạm EFI/MSR; không chồng lấn; offset căn lề 1 MiB; chỉ thu nhỏ phần trống ở cuối ổ, tối đa 4 GB."
+            : "  không chạm EFI/MSR; không chồng lấn; offset căn lề 1 MiB.");
         Console.WriteLine();
     }
 

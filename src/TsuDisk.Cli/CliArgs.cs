@@ -14,6 +14,8 @@ internal sealed class CliArgs
         ["phan-tich"] = "phan-tich", ["analyze"] = "phan-tich",
         ["ke-hoach"] = "ke-hoach", ["plan"] = "ke-hoach",
         ["mo-rong"] = "mo-rong", ["extend"] = "mo-rong",
+        ["ke-hoach-winre"] = "ke-hoach-winre", ["plan-winre"] = "ke-hoach-winre",
+        ["mo-rong-winre"] = "mo-rong-winre", ["grow-winre"] = "mo-rong-winre",
         ["nhat-ky"] = "nhat-ky", ["journal"] = "nhat-ky",
         ["winre"] = "winre",
         ["suc-khoe"] = "suc-khoe", ["health"] = "suc-khoe",
