@@ -41,6 +41,7 @@ Tùy chọn của `ke-hoach` / `mo-rong`:
 | `--recovery-mb N` | Kích thước Recovery mới, 512-4096 MB, mặc định 1024 (đủ chỗ cho các bản cập nhật WinRE) |
 | `--recovery tao-lai-rong` | Cho phép xóa và tạo lại **rỗng** một Recovery không chứa WinRE đang dùng |
 | `--chi-o-ao` | Chỉ thao tác trên ổ ảo VHD/VHDX (kiểm thử) |
+| `--dia N` | (`danh-sach`, `phan-tich`) chỉ xem đĩa số N |
 | `--thu-muc-nhat-ky DIR` | Nơi lưu nhật ký, mặc định `%ProgramData%\TsuDisk\nhat-ky` |
 | `--json` | In kế hoạch hoặc bố cục dạng JSON để tích hợp |
 
@@ -81,7 +82,7 @@ chỉ-đọc, và Recovery không chứa WinRE đang dùng (trừ khi bạn ch�
 
 ## Kiểm thử
 
-- **57 test đơn vị** trên Linux/Windows: mô phỏng đĩa trong bộ nhớ, tiêm lỗi từng bước để kiểm hoàn tác, và một ca
+- **Test đơn vị** trên Linux/Windows: mô phỏng đĩa trong bộ nhớ, tiêm lỗi từng bước để kiểm hoàn tác, và một ca
   tái hiện đúng từng byte lần mở rộng ổ C: thật ngày 16/11/2026 (EFI | MSR | C: | Recovery | 60 GB trống | G: | E:).
 - **E2E trên ổ ảo VHDX** (`tests/e2e/run-e2e.ps1`), chạy trong CI Windows và trên máy dev: dựng đĩa 3 GB có EFI,
   dữ liệu, Recovery, vùng trống; chạy `tsudisk` thật; kiểm phân vùng khác không xê dịch và tệp canh gác khớp SHA-256.

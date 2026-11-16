@@ -49,7 +49,7 @@ xuất tại repo `tsudev-standards` theo `.standards/docs/SYNC.md` mục 1.
 ### B.2. Chạy trong 5 phút
 
 ```bash
-dotnet test tests/TsuDisk.Core.Tests                            # 57 test, chạy được trên Linux
+dotnet test tests/TsuDisk.Core.Tests                            # test đơn vị, chạy được trên Linux
 dotnet publish src/TsuDisk.Cli -c Release -o artifacts/publish  # ra tsudisk.exe (win-x64, một tệp)
 # E2E trên ổ ảo VHDX (Windows, PowerShell Admin):
 #   powershell -ExecutionPolicy Bypass -File tests\e2e\run-e2e.ps1 -Exe artifacts\publish\tsudisk.exe
