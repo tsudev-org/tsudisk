@@ -14,6 +14,8 @@ namespace TsuDisk.Core.Safety;
 /// <item>Doi chu cai/nhan: chi o du lieu, khong doi chu cai o he thong/khoi dong, chu cai C-Z khong trung, nhan hop le;
 /// phan vung do van giu nguyen offset/kich thuoc/loai.</item>
 /// <item>Tao phan vung: nam tron trong mot vung trong cua bo cuc cu; dinh dang: chi phan vung vua tao trong cung ke hoach.</item>
+/// <item>Xoa o du lieu (ADR-0005): chi trong thao tac delete-partition, dung MOT o du lieu co chu cai, khong he thong/khoi dong,
+/// buoc ghi dung chu cai + kich thuoc + so phan vung cua o do.</item>
 /// </list>
 /// </summary>
 public static class SafetyGuard
@@ -74,6 +76,9 @@ public static class SafetyGuard
                 case StepKind.FormatVolume:
                     violations.AddRange(CheckFormat(step, plan, existing));
                     break;
+                case StepKind.DeleteDataPartition:
+                    violations.AddRange(CheckDeleteData(step, plan, existing));
+                    break;
             }
             if (existing is not null && PartitionTypes.IsProtected(existing.Kind))
                 violations.Add($"Bước {step.Index}: chạm vào phân vùng được bảo vệ {existing.DisplayName}.");
@@ -100,6 +105,28 @@ public static class SafetyGuard
         var minFree = Planning.ShrinkRequest.MinFreeAfter(existing.IsSystem || existing.IsBoot, size);
         if (existing.FreeBytes is not { } free || free - (existing.Size - size) < minFree)
             yield return $"Bước {step.Index}: {existing.DisplayName} sẽ còn dưới {Units.Format(minFree)} trống sau khi thu nhỏ.";
+    }
+
+    /// <summary>ADR-0005: mot o du lieu co chu cai, khong he thong/khoi dong, khop tung truong; chi trong delete-partition.</summary>
+    private static IEnumerable<string> CheckDeleteData(PlanStep step, Plan plan, PartitionInfo? existing)
+    {
+        if (plan.Operation != Planning.DeletePartitionPlanner.Operation)
+            yield return $"Bước {step.Index}: xóa ổ dữ liệu chỉ được phép trong thao tác xóa phân vùng (ADR-0005).";
+        if (plan.Steps.Count(s => s.ChangesDisk) != 1)
+            yield return $"Bước {step.Index}: kế hoạch xóa phân vùng chỉ được có đúng một bước ghi đĩa.";
+        if (existing is null || existing.Kind != PartitionKind.BasicData)
+        {
+            yield return $"Bước {step.Index}: chỉ được xóa ổ dữ liệu cơ bản.";
+            yield break;
+        }
+        if (existing.IsSystem || existing.IsBoot)
+            yield return $"Bước {step.Index}: cấm xóa ổ hệ thống/khởi động {existing.DisplayName}.";
+        if (existing.DriveLetter is null || step.DriveLetter != existing.DriveLetter)
+            yield return $"Bước {step.Index}: chữ cái trong kế hoạch không khớp ổ sẽ xóa (chỉ xóa ổ có chữ cái).";
+        if (step.Size != existing.Size || step.PartitionNumber != existing.PartitionNumber)
+            yield return $"Bước {step.Index}: kích thước/số phân vùng trong kế hoạch không khớp {existing.DisplayName}.";
+        if ((step.NewLabel ?? "") != (existing.Label ?? ""))
+            yield return $"Bước {step.Index}: nhãn trong kế hoạch không khớp {existing.DisplayName}.";
     }
 
     private static IEnumerable<string> CheckCreate(PlanStep step, DiskLayout before, PartitionInfo? existing)
@@ -174,6 +201,7 @@ public static class SafetyGuard
             switch (step.Kind)
             {
                 case StepKind.DeletePartition when plan.Steps.All(s => s.Kind != StepKind.CreateRecovery || s.Offset != step.Offset):
+                case StepKind.DeleteDataPartition:
                     if (found is not null)
                         violations.Add($"Phân vùng tại offset {step.Offset} lẽ ra đã bị xóa nhưng vẫn còn.");
                     break;

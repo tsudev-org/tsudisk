@@ -56,9 +56,18 @@ public static class RecoveryAdvisor
             advice.Add($"Có thể còn một phân vùng mới chưa định dạng (RAW) tại offset {createStep.Offset}. Chạy `tsudisk danh-sach`; " +
                 "nếu có, xóa nó trong Disk Management (Delete Volume) rồi lập lại kế hoạch. Phân vùng có sẵn không bị ảnh hưởng.");
         }
+        var deleteData = journal.Plan.Steps.FirstOrDefault(s => s.Kind == StepKind.DeleteDataPartition);
+        if (deleteData is not null && (Done(StepKind.DeleteDataPartition) || Unfinished(StepKind.DeleteDataPartition)))
+        {
+            var restore = journal.Plan.Before.FindByOffset(deleteData.Offset!.Value) is { } victim
+                ? string.Join(" ; ", DeletePartitionPlanner.ManualRestoreCommands(journal.Plan.Before, victim))
+                : "(xem plan.json)";
+            advice.Add($"Ổ {deleteData.DriveLetter}: có thể đã bị xóa. Chạy `tsudisk danh-sach`: nếu đúng là đã mất mà bạn đổi ý, " +
+                $"KHÔNG ghi gì vào vùng trống đó và chạy diskpart (Admin): {restore} - dữ liệu cũ sẽ hiện lại.");
+        }
         if (advice.Count == 0)
             advice.Add("Không phát hiện bước dở dang nào làm đĩa ở trạng thái thiếu. Chạy `tsudisk danh-sach` để xác nhận bố cục.");
-        advice.Add("Dữ liệu trên các phân vùng khác KHÔNG bị chạm: TsuDisk chỉ thay đổi phân vùng Recovery và ổ đích.");
+        advice.Add("Dữ liệu trên các phân vùng khác KHÔNG bị chạm: TsuDisk chỉ thay đổi phân vùng Recovery và ổ đích của kế hoạch.");
         return advice;
     }
 }

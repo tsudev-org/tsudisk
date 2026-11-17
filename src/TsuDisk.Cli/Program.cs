@@ -28,6 +28,8 @@ try
         "tao-phan-vung" => Commands.CreatePartition(cli, planOnly: false),
         "ke-hoach-thu-nho" => Commands.Shrink(cli, planOnly: true),
         "thu-nho" => Commands.Shrink(cli, planOnly: false),
+        "ke-hoach-xoa" => Commands.DeletePartition(cli, planOnly: true),
+        "xoa-phan-vung" => Commands.DeletePartition(cli, planOnly: false),
         "nhat-ky" => Commands.Journal(cli),
         "winre" => Commands.WinRe(),
         "suc-khoe" => Commands.Health(cli),
@@ -180,8 +182,48 @@ internal static partial class Commands
         return ShowAndRun(cli, CreatePartitionPlanner.Plan(Backend.ReadLayout(diskNumber), Backend.DriveLettersInUse(), request), planOnly, "TAO");
     }
 
+    /// <summary>
+    /// xoa-phan-vung (ADR-0005): xac nhan bang "X: nhan" go lai dung tung ky tu; chay tu dong phai co --xac-nhan khop,
+    /// --dong-y khong du. Thu muc nhat ky va tsudisk.exe khong duoc nam tren o sap xoa.
+    /// </summary>
+    public static int DeletePartition(CliArgs cli, bool planOnly)
+    {
+        if (cli.Positionals.Count != 1)
+            throw new UsageException("Cần đúng một ổ, ví dụ: tsudisk xoa-phan-vung E:");
+        var letter = CliArgs.ParseDriveLetter(cli.Positionals[0]);
+        var layout = Backend.ListDisks().Select(d => Backend.ReadLayout(d.Number)).FirstOrDefault(l => l.FindByLetter(letter) is not null)
+            ?? throw new DiskOperationException($"Không có ổ {letter}: trên đĩa nào.");
+        var target = layout.FindByLetter(letter)!;
+        var result = DeletePartitionPlanner.Plan(layout, new DeletePartitionRequest(letter) { VirtualDiskOnly = cli.Has("chi-o-ao") });
+        if (result.Success && !planOnly)
+        {
+            var logRoot = Path.GetFullPath(cli.Value("thu-muc-nhat-ky") ?? DefaultLogRoot);
+            if (char.ToUpperInvariant(logRoot[0]) == letter)
+                throw new UsageException($"Thư mục nhật ký/sao lưu {logRoot} nằm trên chính ổ {letter}: sắp xóa - chọn --thu-muc-nhat-ky ở ổ khác.");
+            if (Environment.ProcessPath is [var exeDrive, ':', ..] && char.ToUpperInvariant(exeDrive) == letter)
+                throw new UsageException($"tsudisk.exe đang chạy từ ổ {letter}: - chép nó sang ổ khác rồi chạy lại.");
+        }
+        return ShowAndRun(cli, result, planOnly, DeletePartitionPlanner.ConfirmationText(target), () => ConfirmDelete(cli, target));
+    }
+
+    private static bool ConfirmDelete(CliArgs cli, PartitionInfo target)
+    {
+        var expected = DeletePartitionPlanner.ConfirmationText(target);
+        if (cli.Value("xac-nhan") is { } given)
+        {
+            if (DeletePartitionPlanner.ConfirmationMatches(target, given))
+                return true;
+            throw new UsageException($"--xac-nhan \"{given}\" không khớp \"{expected}\" - không xóa gì.");
+        }
+        if (cli.Has("dong-y"))
+            throw new UsageException($"Xóa ổ không nhận --dong-y: truyền --xac-nhan \"{expected}\" để chạy tự động.");
+        Console.InputEncoding = Encoding.UTF8;
+        Console.Write($"XÓA ổ {target.DriveLetter}: - gõ chính xác \"{expected}\" rồi Enter để thực hiện, Enter trống để hủy: ");
+        return DeletePartitionPlanner.ConfirmationMatches(target, Console.ReadLine());
+    }
+
     /// <summary>Luong chung: in ke hoach (hoac ly do tu choi), xac nhan bang mot tu khoa, chay, bao cao, ma thoat.</summary>
-    private static int ShowAndRun(CliArgs cli, PlanResult result, bool planOnly, string confirmWord)
+    private static int ShowAndRun(CliArgs cli, PlanResult result, bool planOnly, string confirmWord, Func<bool>? confirm = null)
     {
         if (!result.Success)
         {
@@ -205,7 +247,7 @@ internal static partial class Commands
             return ExitCodes.NeedsAdmin;
         }
         var dryRun = cli.Has("chay-thu");
-        if (!dryRun && !cli.Has("dong-y") && !Confirm(confirmWord))
+        if (!dryRun && !(confirm is not null ? confirm() : cli.Has("dong-y") || Confirm(confirmWord)))
         {
             Console.WriteLine("Đã hủy - không có thay đổi nào.");
             return ExitCodes.Ok;
@@ -292,6 +334,8 @@ internal static partial class Commands
               tsudisk doi-ten <X:> [--chu-cai Y] [--nhan TÊN]  Thực hiện đổi (cần quyền quản trị); --nhan "" để xóa nhãn
               tsudisk ke-hoach-thu-nho <X:> --giam-mb N   Kế hoạch thu nhỏ ổ NTFS, nhường N MB vùng trống ra sau ổ, KHÔNG thay đổi gì
               tsudisk thu-nho <X:> --giam-mb N            Thực hiện thu nhỏ (cần quyền quản trị); gõ lại chữ cái ổ để xác nhận
+              tsudisk ke-hoach-xoa <X:>                   Kế hoạch xóa một ổ dữ liệu, in cách khôi phục, KHÔNG thay đổi gì
+              tsudisk xoa-phan-vung <X:> [--xac-nhan "X: nhãn"]  Thực hiện (cần quyền quản trị); gõ lại "X: nhãn" để xác nhận
               tsudisk ke-hoach-tao-phan-vung --dia N [--vung K] [--kich-thuoc-mb M] [--he-tep NTFS|exFAT|FAT32] [--nhan TÊN] [--chu-cai Y]
                                                           Kế hoạch tạo + định dạng phân vùng dữ liệu trong vùng trống, KHÔNG thay đổi gì
               tsudisk tao-phan-vung --dia N [như trên]    Thực hiện (cần quyền quản trị); gõ TAO để xác nhận
@@ -311,7 +355,7 @@ internal static partial class Commands
               --chi-o-ao                 Chỉ cho phép thao tác trên ổ ảo VHD/VHDX (kiểm thử)
               --thu-muc-nhat-ky DIR      Nơi lưu nhật ký và bản sao lưu (mặc định %ProgramData%\TsuDisk\nhat-ky)
 
-            Bí danh tiếng Anh: list, analyze, plan, extend, plan-winre, grow-winre, plan-rename, rename, plan-shrink, shrink, plan-create, create, journal, health, verify-gpt, check-mbr2gpt, backup, version, help; --dry-run, --yes, --disk, --virtual-only, --log-dir, --letter, --label, --extent, --size-mb, --fs, --shrink-mb.
+            Bí danh tiếng Anh: list, analyze, plan, extend, plan-winre, grow-winre, plan-rename, rename, plan-shrink, shrink, plan-delete, delete, plan-create, create, journal, health, verify-gpt, check-mbr2gpt, backup, version, help; --dry-run, --yes, --disk, --virtual-only, --log-dir, --letter, --label, --extent, --size-mb, --fs, --shrink-mb, --confirm.
             Mã thoát: 0 xong, 1 từ chối/lỗi, 2 sai cú pháp, 3 thiếu quyền quản trị, 4 thất bại đã hoàn tác, 5 cần xử lý.
             """);
         return ExitCodes.Ok;

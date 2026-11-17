@@ -73,6 +73,27 @@ public sealed class WindowsDiskBackend : IDiskBackend
         }
     }
 
+    /// <summary>
+    /// ADR-0005: khoa doc quyen + go gan ket roi moi xoa, KHONG co duong diskpart override. Xoa trong luc giu khoa that bai
+    /// (dich vu luu tru can tu khoa) thi nha khoa va thu lai dung mot lan ngay lap tuc - volume da go gan ket.
+    /// </summary>
+    public void DeleteDataPartition(int diskNumber, int partitionNumber, char driveLetter)
+    {
+        using (var held = VolumeLock.Acquire(driveLetter))
+        {
+            try
+            {
+                StorageApi.Delete(diskNumber, partitionNumber);
+                return;
+            }
+            catch (DiskOperationException)
+            {
+                // roi xuong thu lai sau khi nha khoa
+            }
+        }
+        StorageApi.Delete(diskNumber, partitionNumber);
+    }
+
     public void ResizePartition(int diskNumber, int partitionNumber, long newSize) =>
         StorageApi.Resize(diskNumber, partitionNumber, newSize);
 

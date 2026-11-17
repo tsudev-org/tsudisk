@@ -44,6 +44,8 @@ tsudisk ke-hoach-doi-ten E: --chu-cai F --nhan "Dữ liệu"   # Kế hoạch đ
 tsudisk doi-ten E: --chu-cai F --nhan "Dữ liệu"            # Thực hiện (Admin), gõ lại chữ cái ổ cũ để xác nhận
 tsudisk ke-hoach-thu-nho D: --giam-mb 20480    # Kế hoạch thu nhỏ ổ NTFS, nhường 20 GB vùng trống ngay sau ổ
 tsudisk thu-nho D: --giam-mb 20480             # Thực hiện (Admin), gõ lại chữ cái ổ để xác nhận
+tsudisk ke-hoach-xoa E:           # Kế hoạch xóa ổ dữ liệu E:, in lệnh khôi phục, KHÔNG thay đổi gì
+tsudisk xoa-phan-vung E:          # Thực hiện (Admin), gõ lại "E: <nhãn>" để xác nhận; ổ đang được dùng thì dừng
 tsudisk ke-hoach-tao-phan-vung --dia 0 --vung 1 --nhan "Kho"  # Kế hoạch tạo + định dạng ổ mới trong vùng trống
 tsudisk tao-phan-vung --dia 0 --vung 1 --nhan "Kho"           # Thực hiện (Admin), gõ TAO để xác nhận
 tsudisk nhat-ky                   # Xem lần chạy gần nhất và việc cần làm nếu bị đứt giữa chừng
@@ -53,12 +55,12 @@ tsudisk kiem-tra-mbr2gpt          # Đĩa Windows MBR chuyển sang GPT được
 tsudisk sao-luu                   # Sao lưu sector GPT thô + bố cục + SHA-256 (Admin)
 ```
 
-Tùy chọn của `ke-hoach` / `mo-rong` / `doi-ten` / `thu-nho` / `tao-phan-vung`:
+Tùy chọn của `ke-hoach` / `mo-rong` / `doi-ten` / `thu-nho` / `tao-phan-vung` / `xoa-phan-vung`:
 
 | Tùy chọn | Ý nghĩa |
 | --- | --- |
 | `--chay-thu` | Chỉ chạy bước không ghi đĩa: quét hệ thống tệp, sao lưu bảng phân vùng và BCD |
-| `--dong-y` | Không hỏi xác nhận (kịch bản tự động) |
+| `--dong-y` | Không hỏi xác nhận (kịch bản tự động); `xoa-phan-vung` không nhận - dùng `--xac-nhan "X: nhãn"` |
 | `--recovery-mb N` | Kích thước Recovery mới, 512-4096 MB, mặc định 1024 (đủ chỗ cho các bản cập nhật WinRE) |
 | `--recovery tao-lai-rong` | Cho phép xóa và tạo lại **rỗng** một Recovery không chứa WinRE đang dùng |
 | `--chu-cai Y` | (`doi-ten`) chữ cái mới, C-Z, chưa được dùng ở đâu; không đổi được chữ cái ổ Windows |

@@ -106,6 +106,29 @@ public sealed class PlanRunner(IDiskBackend backend, IJournalStore store, TimePr
                     () => backend.CreateRecoveryPartition(disk, victim.Offset, oldSize, style)));
                 return null;
             }
+            case StepKind.DeleteDataPartition:
+            {
+                var victim = RequirePartition(disk, step.Offset!.Value, step.PartitionNumber);
+                if (victim.Kind != PartitionKind.BasicData || victim.IsSystem || victim.IsBoot || victim.Size != step.Size
+                    || victim.DriveLetter != step.DriveLetter || (victim.Label ?? "") != (step.NewLabel ?? ""))
+                {
+                    throw new DiskOperationException($"Phân vùng {victim.PartitionNumber} không còn đúng là ổ {step.DriveLetter}: \"{step.NewLabel}\" " +
+                        $"{Units.Format(step.Size!.Value)} như kế hoạch (chữ cái/nhãn/kích thước đã đổi) - dừng, không xóa.");
+                }
+                var style = plan.Before.Disk.Style;
+                var letter = step.DriveLetter!.Value;
+                backend.DeleteDataPartition(disk, victim.PartitionNumber, letter);
+                // Bu chi khi buoc doi chieu sau loi: tao lai DUNG offset + kich thuoc (du lieu chua bi ghi de) roi gan lai chu cai.
+                compensations.Add(new Compensation("recreate-data", $"Tạo lại ổ {letter}: tại vị trí cũ (offset {victim.Offset})", () =>
+                {
+                    if (backend.ReadLayout(disk).FindByOffset(victim.Offset) is null)
+                        backend.CreateDataPartition(disk, victim.Offset, victim.Size, style);
+                    var back = RequirePartition(disk, victim.Offset, null);
+                    if (back.DriveLetter != letter && !backend.DriveLettersInUse().Contains(letter))
+                        backend.SetDriveLetter(disk, back.PartitionNumber, back.DriveLetter, letter);
+                }));
+                return $"Đã xóa ổ {letter}: ({Units.Format(victim.Size)} trống).";
+            }
             case StepKind.ExtendPartition:
             {
                 var target = RequirePartition(disk, step.Offset!.Value, step.PartitionNumber);
