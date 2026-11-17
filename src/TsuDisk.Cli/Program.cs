@@ -22,6 +22,8 @@ try
         "mo-rong" => Commands.Extend(cli, planOnly: false),
         "ke-hoach-winre" => Commands.GrowWinRe(cli, planOnly: true),
         "mo-rong-winre" => Commands.GrowWinRe(cli, planOnly: false),
+        "ke-hoach-doi-ten" => Commands.Rename(cli, planOnly: true),
+        "doi-ten" => Commands.Rename(cli, planOnly: false),
         "nhat-ky" => Commands.Journal(cli),
         "winre" => Commands.WinRe(),
         "suc-khoe" => Commands.Health(cli),
@@ -120,6 +122,23 @@ internal static partial class Commands
             },
         };
         return ShowAndRun(cli, WinReGrowPlanner.Plan(Backend.ReadLayout(diskNumber), winRe, request), planOnly, "WINRE");
+    }
+
+    public static int Rename(CliArgs cli, bool planOnly)
+    {
+        if (cli.Positionals.Count != 1)
+            throw new UsageException("Cần đúng một ổ, ví dụ: tsudisk doi-ten E: --chu-cai F --nhan \"Dữ liệu\"");
+        var letter = CliArgs.ParseDriveLetter(cli.Positionals[0]);
+        var request = new RenameRequest(letter,
+            cli.Value("chu-cai") is { } next ? CliArgs.ParseDriveLetter(next) : null,
+            cli.Value("nhan"))
+        {
+            VirtualDiskOnly = cli.Has("chi-o-ao"),
+            SystemDrive = Environment.GetEnvironmentVariable("SystemDrive") is [var sys, ..] ? sys : null,
+        };
+        var layout = Backend.ListDisks().Select(d => Backend.ReadLayout(d.Number)).FirstOrDefault(l => l.FindByLetter(letter) is not null)
+            ?? throw new DiskOperationException($"Không có ổ {letter}: trên đĩa nào.");
+        return ShowAndRun(cli, RenamePlanner.Plan(layout, Backend.DriveLettersInUse(), request), planOnly, letter.ToString());
     }
 
     /// <summary>Luong chung: in ke hoach (hoac ly do tu choi), xac nhan bang mot tu khoa, chay, bao cao, ma thoat.</summary>
@@ -230,6 +249,8 @@ internal static partial class Commands
               tsudisk mo-rong <X:> [tùy chọn]             Lập kế hoạch, hỏi xác nhận, rồi thực hiện (cần quyền quản trị)
               tsudisk ke-hoach-winre [tùy chọn]           Kế hoạch nới rộng Recovery cho WinRE (lỗi cập nhật 0x80070643, KB5034441)
               tsudisk mo-rong-winre [tùy chọn]            Thực hiện nới rộng Recovery; gõ WINRE để xác nhận (cần quyền quản trị)
+              tsudisk ke-hoach-doi-ten <X:> [--chu-cai Y] [--nhan TÊN]  Kế hoạch đổi chữ cái và/hoặc nhãn ổ dữ liệu, KHÔNG thay đổi gì
+              tsudisk doi-ten <X:> [--chu-cai Y] [--nhan TÊN]  Thực hiện đổi (cần quyền quản trị); --nhan "" để xóa nhãn
               tsudisk nhat-ky [tệp journal.json]          Xem lần chạy gần nhất và việc cần làm nếu bị đứt giữa chừng
               tsudisk winre                               Trạng thái Windows Recovery Environment
               tsudisk suc-khoe [--dia N] [--json]         Sức khỏe ổ: trạng thái, nhiệt độ, độ mòn, lỗi đọc/ghi (S.M.A.R.T.)
@@ -237,7 +258,7 @@ internal static partial class Commands
               tsudisk sao-luu [--dia N] [--thu-muc-nhat-ky DIR]  Sao lưu sector GPT thô + bố cục + SHA-256 - quản trị
               tsudisk phien-ban | tro-giup
 
-            Tùy chọn cho ke-hoach / mo-rong:
+            Tùy chọn cho ke-hoach / mo-rong / doi-ten:
               --chay-thu                 Chỉ chạy các bước không ghi đĩa (quét, sao lưu) để kiểm tra
               --dong-y                   Không hỏi xác nhận (dùng trong kịch bản tự động)
               --recovery-mb N            Kích thước Recovery mới (512-4096; mo-rong mặc định 1024, mo-rong-winre mặc định đủ 250 MB trống)
@@ -245,7 +266,7 @@ internal static partial class Commands
               --chi-o-ao                 Chỉ cho phép thao tác trên ổ ảo VHD/VHDX (kiểm thử)
               --thu-muc-nhat-ky DIR      Nơi lưu nhật ký và bản sao lưu (mặc định %ProgramData%\TsuDisk\nhat-ky)
 
-            Bí danh tiếng Anh: list, analyze, plan, extend, plan-winre, grow-winre, journal, health, verify-gpt, backup, version, help; --dry-run, --yes, --disk, --virtual-only, --log-dir.
+            Bí danh tiếng Anh: list, analyze, plan, extend, plan-winre, grow-winre, plan-rename, rename, journal, health, verify-gpt, backup, version, help; --dry-run, --yes, --disk, --virtual-only, --log-dir, --letter, --label.
             Mã thoát: 0 xong, 1 từ chối/lỗi, 2 sai cú pháp, 3 thiếu quyền quản trị, 4 thất bại đã hoàn tác, 5 cần xử lý.
             """);
         return ExitCodes.Ok;

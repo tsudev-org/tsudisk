@@ -49,6 +49,18 @@ public interface IDiskBackend
     /// trong lien ke, co gia tri thi phai la boi so 1 MiB.
     /// </summary>
     void CreateRecoveryPartition(int diskNumber, long offset, long? size, PartitionStyle style);
+
+    /// <summary>Moi chu cai dang duoc dung tren may (moi dia, o mang, subst) - in hoa.</summary>
+    IReadOnlySet<char> DriveLettersInUse();
+
+    /// <summary>
+    /// Doi chu cai cua phan vung tu <paramref name="oldLetter"/> (null = phan vung dang khong co chu cai, chi gan them) sang
+    /// <paramref name="newLetter"/>. That bai giua chung thi ban that phai tu gan lai chu cai cu truoc khi nem loi.
+    /// </summary>
+    void SetDriveLetter(int diskNumber, int partitionNumber, char? oldLetter, char newLetter);
+
+    /// <summary>Doi nhan he thong tep cua volume nam tren phan vung; chuoi rong = xoa nhan.</summary>
+    void SetVolumeLabel(int diskNumber, int partitionNumber, string label);
 }
 
 public sealed class DiskOperationException : Exception

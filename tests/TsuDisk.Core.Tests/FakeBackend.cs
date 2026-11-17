@@ -110,6 +110,40 @@ internal sealed class FakeBackend(DiskLayout initial, WinReStatus winRe) : IDisk
             false, false, "NTFS", "Recovery", null);
         Layout = Layout with { Partitions = [.. Layout.Partitions, created] };
     }
+
+    /// <summary>Chu cai dang dung ngoai dia nay (o mang, subst, dia khac).</summary>
+    public HashSet<char> OtherLetters { get; } = [];
+
+    /// <summary>Gia lap Windows gan sai chu cai (de kiem buoc kiem chung sau khi doi + hoan tac).</summary>
+    public char? LetterActuallyAssigned { get; set; }
+
+    public IReadOnlySet<char> DriveLettersInUse() =>
+        Layout.Partitions.Where(p => p.DriveLetter is not null).Select(p => p.DriveLetter!.Value).Concat(OtherLetters).ToHashSet();
+
+    public void SetDriveLetter(int diskNumber, int partitionNumber, char? oldLetter, char newLetter)
+    {
+        Enter("set-letter");
+        var part = Layout.Partitions.Single(p => p.PartitionNumber == partitionNumber);
+        if (part.DriveLetter != oldLetter)
+            throw new DiskOperationException($"Phân vùng không mang {oldLetter}:");
+        if (Layout.Partitions.Any(p => p.PartitionNumber != partitionNumber && p.DriveLetter == newLetter) || OtherLetters.Contains(newLetter))
+            throw new DiskOperationException($"{newLetter}: đang dùng.");
+        var assigned = LetterActuallyAssigned ?? newLetter;
+        LetterActuallyAssigned = null;
+        Layout = Layout with
+        {
+            Partitions = [.. Layout.Partitions.Select(p => p.PartitionNumber == partitionNumber ? p with { DriveLetter = assigned } : p)],
+        };
+    }
+
+    public void SetVolumeLabel(int diskNumber, int partitionNumber, string label)
+    {
+        Enter("set-label");
+        Layout = Layout with
+        {
+            Partitions = [.. Layout.Partitions.Select(p => p.PartitionNumber == partitionNumber ? p with { Label = label.Length == 0 ? null : label } : p)],
+        };
+    }
 }
 
 internal sealed class MemoryJournalStore : IJournalStore

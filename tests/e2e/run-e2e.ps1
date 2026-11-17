@@ -166,6 +166,31 @@ try {
     $r = Invoke-TsuDisk @('kiem-tra-gpt', '--dia', "$($disk.Number)")
     Assert-True ($r.Code -eq 0) 'GPT van toan ven sau khi noi rong Recovery'
 
+    Write-Host "`n=== Ca 10: doi nhan (tieng Viet co dau) + chu cai DATA2 ==="
+    $used = @(Get-Volume | Where-Object DriveLetter | ForEach-Object { [string]$_.DriveLetter }) + @(Get-PSDrive -PSProvider FileSystem | ForEach-Object Name)
+    $NewLetter = 84..90 | ForEach-Object { [string][char]$_ } | Where-Object { $used -notcontains $_ } | Select-Object -First 1
+    # Script luu ASCII (PowerShell 5.1 doc tep khong BOM theo ANSI): dung ma ky tu cho "Du lieu 2" co dau.
+    $label = 'D' + [char]0x1EEF + ' li' + [char]0x1EC7 + 'u 2'
+    $d2Before10 = Get-Partition -DiskNumber $disk.Number | Where-Object Offset -eq $data2Offset
+    $r = Invoke-TsuDisk @('ke-hoach-doi-ten', $L2, '--chu-cai', $NewLetter, '--nhan', $label, '--chi-o-ao')
+    Assert-True ($r.Code -eq 0) "ke-hoach-doi-ten $L2 -> ${NewLetter}: lap duoc ke hoach"
+    Assert-True ((Get-Partition -DiskNumber $disk.Number | Where-Object Offset -eq $data2Offset).DriveLetter -eq $data2.DriveLetter) 'ke-hoach-doi-ten khong doi gi'
+    $r = Invoke-TsuDisk @('doi-ten', $L2, '--chu-cai', $NewLetter, '--nhan', $label, '--chi-o-ao', '--dong-y', '--thu-muc-nhat-ky', $Logs)
+    Assert-True ($r.Code -eq 0) 'doi-ten thanh cong (exit 0)'
+    $d2After10 = Get-Partition -DiskNumber $disk.Number | Where-Object Offset -eq $data2Offset
+    Assert-True ([string]$d2After10.DriveLetter -eq $NewLetter) "DATA2 mang chu cai moi ${NewLetter}:"
+    Assert-True ((Get-Volume -DriveLetter $NewLetter).FileSystemLabel -eq $label) 'Nhan moi dung tung ky tu (Unicode)'
+    Assert-True ($d2After10.Size -eq $d2Before10.Size) 'DATA2 giu nguyen kich thuoc'
+    $sentinel = Join-Path "${NewLetter}:\" 'sentinel.bin'
+    Assert-True ((Get-FileHash $sentinel -Algorithm SHA256).Hash -eq $hashBefore9) 'Du lieu DATA2 nguyen ven o chu cai moi'
+    $r = Invoke-TsuDisk @('doi-ten', "${NewLetter}:", '--chu-cai', $L1, '--chi-o-ao', '--dong-y')
+    Assert-True ($r.Code -eq 1 -and $r.Output -match 'LetterInUse') 'tu choi chu cai dang dung (LetterInUse)'
+    $r = Invoke-TsuDisk @('ke-hoach-doi-ten', $env:SystemDrive, '--chu-cai', $NewLetter)
+    Assert-True ($r.Code -eq 1 -and $r.Output -match 'ProtectedTarget') 'tu choi doi chu cai o he thong (ProtectedTarget)'
+    # PowerShell 5.1 bo doi so rong khi goi exe: dung dang --nhan= de xoa nhan.
+    $r = Invoke-TsuDisk @('doi-ten', "${NewLetter}:", '--nhan=', '--chi-o-ao', '--dong-y', '--thu-muc-nhat-ky', $Logs)
+    Assert-True ($r.Code -eq 0 -and [string]::IsNullOrEmpty((Get-Volume -DriveLetter $NewLetter).FileSystemLabel)) 'xoa nhan thanh cong'
+
     Write-Host "`n=== Ca 7: doc nhat ky ==="
     $first = (Get-ChildItem $Logs -Recurse -Filter journal.json | Sort-Object FullName | Select-Object -First 1).FullName
     $r = Invoke-TsuDisk @('nhat-ky', $first)

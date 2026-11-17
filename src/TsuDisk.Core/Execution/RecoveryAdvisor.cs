@@ -43,6 +43,13 @@ public static class RecoveryAdvisor
             advice.Add("WinRE có thể đang tắt. Chạy `reagentc /enable` trong cửa sổ quản trị rồi `reagentc /info` để kiểm tra " +
                 "(WinRE vẫn chạy được từ Winre.wim trên ổ hệ thống).");
         }
+        var letterStep = journal.Plan.Steps.FirstOrDefault(s => s.Kind == StepKind.SetDriveLetter);
+        if (letterStep is not null && Unfinished(StepKind.SetDriveLetter))
+        {
+            advice.Add($"Ổ {letterStep.DriveLetter}: có thể đang không có chữ cái (đổi sang {letterStep.NewDriveLetter}: bị đứt). Chạy " +
+                $"`tsudisk danh-sach`: nếu phân vùng {letterStep.PartitionNumber} không có chữ cái, mở Disk Management -> " +
+                $"Change Drive Letter and Paths -> Add {letterStep.DriveLetter}:. Dữ liệu không bị ảnh hưởng.");
+        }
         if (advice.Count == 0)
             advice.Add("Không phát hiện bước dở dang nào làm đĩa ở trạng thái thiếu. Chạy `tsudisk danh-sach` để xác nhận bố cục.");
         advice.Add("Dữ liệu trên các phân vùng khác KHÔNG bị chạm: TsuDisk chỉ thay đổi phân vùng Recovery và ổ đích.");

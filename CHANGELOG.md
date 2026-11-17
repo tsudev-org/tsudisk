@@ -2,6 +2,13 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
+## [26.11.1702] - 17/11/2026
+
+- Lệnh `ke-hoach-doi-ten`, `doi-ten`: đổi chữ cái và/hoặc nhãn ổ dữ liệu (`--chu-cai F --nhan "Dữ liệu"`, `--nhan=` để
+  xóa nhãn). Từ chối chữ cái đang dùng ở bất kỳ đâu (ổ khác, ổ mạng, subst) và gợi ý chữ cái còn trống; không bao giờ
+  đổi chữ cái ổ Windows hay phân vùng EFI/Recovery; kiểm độ dài và ký tự nhãn theo hệ thống tệp. Đổi nhãn trước, chữ
+  cái sau; lỗi giữa chừng thì tự gán lại chữ cái và nhãn cũ. Vị trí, kích thước, dữ liệu của mọi phân vùng giữ nguyên.
+
 ## [26.11.1701] - 17/11/2026
 
 - Logo riêng của TsuDisk: `tsudisk.exe` có icon ứng dụng; website dùng biểu tượng mới ở đầu trang, favicon, icon

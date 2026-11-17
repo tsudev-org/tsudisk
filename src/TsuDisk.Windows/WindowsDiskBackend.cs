@@ -81,6 +81,14 @@ public sealed class WindowsDiskBackend : IDiskBackend
 
     public long GetMinPartitionSize(int diskNumber, int partitionNumber) => StorageApi.GetMinSize(diskNumber, partitionNumber);
 
+    public IReadOnlySet<char> DriveLettersInUse() => StorageApi.LettersInUse();
+
+    public void SetDriveLetter(int diskNumber, int partitionNumber, char? oldLetter, char newLetter) =>
+        StorageApi.SetDriveLetter(diskNumber, partitionNumber, oldLetter, newLetter);
+
+    public void SetVolumeLabel(int diskNumber, int partitionNumber, string label) =>
+        StorageApi.SetVolumeLabel(diskNumber, partitionNumber, label);
+
     private void RunDiskpart(IReadOnlyList<string> lines)
     {
         var directory = _runDirectory ?? Path.Combine(Path.GetTempPath(), "tsudisk");

@@ -40,13 +40,15 @@ tsudisk mo-rong C: --chay-thu     # Chạy các bước không ghi đĩa (quét,
 tsudisk mo-rong C:                # Thực hiện: hỏi xác nhận bằng cách gõ lại chữ cái ổ
 tsudisk ke-hoach-winre            # Kế hoạch nới rộng Recovery khi Windows Update báo lỗi 0x80070643 (KB5034441)
 tsudisk mo-rong-winre             # Thực hiện (Admin), gõ WINRE để xác nhận
+tsudisk ke-hoach-doi-ten E: --chu-cai F --nhan "Dữ liệu"   # Kế hoạch đổi chữ cái và/hoặc nhãn ổ, KHÔNG thay đổi gì
+tsudisk doi-ten E: --chu-cai F --nhan "Dữ liệu"            # Thực hiện (Admin), gõ lại chữ cái ổ cũ để xác nhận
 tsudisk nhat-ky                   # Xem lần chạy gần nhất và việc cần làm nếu bị đứt giữa chừng
 tsudisk suc-khoe                  # Sức khỏe ổ: trạng thái, nhiệt độ, độ mòn, lỗi đọc/ghi (S.M.A.R.T.)
 tsudisk kiem-tra-gpt              # Kiểm tra toàn vẹn bảng GPT trên đĩa (Admin)
 tsudisk sao-luu                   # Sao lưu sector GPT thô + bố cục + SHA-256 (Admin)
 ```
 
-Tùy chọn của `ke-hoach` / `mo-rong`:
+Tùy chọn của `ke-hoach` / `mo-rong` / `doi-ten`:
 
 | Tùy chọn | Ý nghĩa |
 | --- | --- |
@@ -54,12 +56,14 @@ Tùy chọn của `ke-hoach` / `mo-rong`:
 | `--dong-y` | Không hỏi xác nhận (kịch bản tự động) |
 | `--recovery-mb N` | Kích thước Recovery mới, 512-4096 MB, mặc định 1024 (đủ chỗ cho các bản cập nhật WinRE) |
 | `--recovery tao-lai-rong` | Cho phép xóa và tạo lại **rỗng** một Recovery không chứa WinRE đang dùng |
+| `--chu-cai Y` | (`doi-ten`) chữ cái mới, C-Z, chưa được dùng ở đâu; không đổi được chữ cái ổ Windows |
+| `--nhan TÊN` | (`doi-ten`) nhãn mới: NTFS/exFAT tối đa 32 ký tự, FAT32 tối đa 11 ký tự không dấu; `--nhan=` để xóa nhãn |
 | `--chi-o-ao` | Chỉ thao tác trên ổ ảo VHD/VHDX (kiểm thử) |
 | `--dia N` | (`danh-sach`, `phan-tich`) chỉ xem đĩa số N |
 | `--thu-muc-nhat-ky DIR` | Nơi lưu nhật ký, mặc định `%ProgramData%\TsuDisk\nhat-ky` |
 | `--json` | In kế hoạch hoặc bố cục dạng JSON để tích hợp |
 
-Bí danh tiếng Anh: `list`, `analyze`, `plan`, `extend`, `plan-winre`, `grow-winre`, `journal`, `health`, `verify-gpt`, `backup`, `--dry-run`, `--yes`, `--disk`, `--virtual-only`.
+Bí danh tiếng Anh: `list`, `analyze`, `plan`, `extend`, `plan-winre`, `grow-winre`, `plan-rename`, `rename`, `journal`, `health`, `verify-gpt`, `backup`, `--dry-run`, `--yes`, `--disk`, `--virtual-only`, `--letter`, `--label`.
 
 ### Mã thoát
 

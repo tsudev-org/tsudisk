@@ -159,6 +159,38 @@ public sealed class PlanRunner(IDiskBackend backend, IJournalStore store, TimePr
                     ? $"WinRE nằm trên phân vùng {recovery.PartitionNumber}."
                     : $"Cảnh báo: WinRE đang bật nhưng nằm ở đĩa {status.DiskNumber} phân vùng {status.PartitionNumber}, không phải Recovery mới.";
             }
+            case StepKind.SetVolumeLabel:
+            {
+                var target = RequireRenameTarget(disk, step);
+                var oldLabel = target.Label ?? "";
+                backend.SetVolumeLabel(disk, target.PartitionNumber, step.NewLabel!);
+                compensations.Add(new Compensation("restore-label", $"Đặt lại nhãn \"{oldLabel}\"",
+                    () => backend.SetVolumeLabel(disk, target.PartitionNumber, oldLabel)));
+                var now = RequirePartition(disk, step.Offset!.Value, target.PartitionNumber);
+                if (!string.Equals(now.Label ?? "", step.NewLabel, StringComparison.OrdinalIgnoreCase))
+                    throw new DiskOperationException($"Sau khi đổi, nhãn thật là \"{now.Label}\".");
+                return null;
+            }
+            case StepKind.SetDriveLetter:
+            {
+                var target = RequireRenameTarget(disk, step);
+                var next = step.NewDriveLetter!.Value;
+                if (backend.DriveLettersInUse().Contains(next))
+                    throw new DiskOperationException($"Chữ cái {next}: vừa bị chiếm kể từ lúc lập kế hoạch - dừng.");
+                var old = target.DriveLetter!.Value;
+                backend.SetDriveLetter(disk, target.PartitionNumber, old, next);
+                // Bu theo chu cai THAT luc hoan tac (Windows co the da gan khac, hoac chua gan gi).
+                compensations.Add(new Compensation("restore-letter", $"Gán lại chữ cái {old}:", () =>
+                {
+                    var actual = RequirePartition(disk, step.Offset!.Value, target.PartitionNumber).DriveLetter;
+                    if (actual != old)
+                        backend.SetDriveLetter(disk, target.PartitionNumber, actual, old);
+                }));
+                var now = RequirePartition(disk, step.Offset!.Value, target.PartitionNumber);
+                if (now.DriveLetter != next)
+                    throw new DiskOperationException($"Sau khi đổi, ổ mang chữ cái {now.DriveLetter}: thay vì {next}:.");
+                return null;
+            }
             case StepKind.VerifyLayout:
             {
                 var violations = SafetyGuard.CheckActual(plan, backend.ReadLayout(disk));
@@ -178,6 +210,15 @@ public sealed class PlanRunner(IDiskBackend backend, IJournalStore store, TimePr
         if (expectedNumber is { } n && found.PartitionNumber != n)
             throw new DiskOperationException($"Phân vùng tại offset {offset} mang số {found.PartitionNumber}, kế hoạch ghi {n} - dừng.");
         return found;
+    }
+
+    /// <summary>Doi chu cai/nhan: phan vung tai offset phai con dung chu cai, dung kich thuoc, dung loai nhu ke hoach.</summary>
+    private PartitionInfo RequireRenameTarget(int disk, PlanStep step)
+    {
+        var target = RequirePartition(disk, step.Offset!.Value, step.PartitionNumber);
+        if (target.DriveLetter != step.DriveLetter || target.Size != step.Size || target.Kind != PartitionKind.BasicData)
+            throw new DiskOperationException($"Phân vùng {target.PartitionNumber} không còn đúng là ổ {step.DriveLetter}: như kế hoạch - dừng.");
+        return target;
     }
 
     private sealed record Compensation(string Key, string Title, Action Undo);
