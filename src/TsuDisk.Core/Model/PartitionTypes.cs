@@ -43,6 +43,9 @@ public static class PartitionTypes
 
     public const byte MbrRecovery = 0x27;
 
+    /// <summary>MBR 0x07 (IFS: NTFS/exFAT) - loai Windows gan cho phan vung du lieu moi.</summary>
+    public const byte MbrIfs = 0x07;
+
     public static PartitionKind FromGpt(Guid type)
     {
         if (type == EfiSystem) return PartitionKind.EfiSystem;

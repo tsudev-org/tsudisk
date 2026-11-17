@@ -89,6 +89,12 @@ public sealed class WindowsDiskBackend : IDiskBackend
     public void SetVolumeLabel(int diskNumber, int partitionNumber, string label) =>
         StorageApi.SetVolumeLabel(diskNumber, partitionNumber, label);
 
+    public void CreateDataPartition(int diskNumber, long offset, long size, PartitionStyle style) =>
+        StorageApi.CreateDataPartition(diskNumber, offset, size, style);
+
+    public void FormatVolume(int diskNumber, int partitionNumber, string fileSystem, string label, char? driveLetter) =>
+        StorageApi.FormatVolume(diskNumber, partitionNumber, fileSystem, label, driveLetter);
+
     private void RunDiskpart(IReadOnlyList<string> lines)
     {
         var directory = _runDirectory ?? Path.Combine(Path.GetTempPath(), "tsudisk");

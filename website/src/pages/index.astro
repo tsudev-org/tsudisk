@@ -14,6 +14,7 @@ const tinhNang = [
   { t: 'Kiểm tra và sao lưu GPT', d: 'Đọc thẳng bảng GPT trên đĩa, kiểm CRC32 của hai header và hai bảng entry, đối chiếu với Windows. Sao lưu sector thô đầu và cuối đĩa kèm SHA-256 trước mỗi thay đổi.' },
   { t: 'Sửa lỗi cập nhật 0x80070643', d: 'Windows Update không cài được bản vá WinRE vì phân vùng Recovery thiếu chỗ (KB5034441)? Lệnh mo-rong-winre nhường đúng phần thiếu từ cuối ổ đứng trước, tạo Recovery lớn hơn và bật lại WinRE.' },
   { t: 'Đổi chữ cái và nhãn ổ', d: 'Lệnh doi-ten đổi chữ cái và tên ổ dữ liệu (nhận tiếng Việt có dấu trên NTFS). Từ chối chữ cái đang dùng, không bao giờ đổi chữ cái ổ Windows, lỗi giữa chừng thì gán lại chữ cái và tên cũ.' },
+  { t: 'Tạo ổ mới từ vùng trống', d: 'Lệnh tao-phan-vung tạo và định dạng ổ NTFS, exFAT hoặc FAT32 ngay trong vùng chưa phân bổ. Chỉ định dạng phân vùng vừa tạo; vùng trống còn dấu dữ liệu của phân vùng cũ thì dừng, không định dạng đè.' },
   { t: 'Chạy online, không khởi động lại', d: 'Mở rộng NTFS khi Windows đang chạy. Máy ảo, WSL, cơ sở dữ liệu, terminal đang mở không bị gián đoạn.' },
 ];
 

@@ -46,6 +46,7 @@ internal static class Render
         {
             WinReGrowPlanner.Operation => $"KẾ HOẠCH {plan.Id}: nới rộng phân vùng Recovery (WinRE) trên đĩa {plan.DiskNumber}, thêm {Units.Format(plan.GainBytes)}",
             RenamePlanner.Operation => $"KẾ HOẠCH {plan.Id}: đổi chữ cái/nhãn {plan.TargetLetter}: trên đĩa {plan.DiskNumber}",
+            CreatePartitionPlanner.Operation => $"KẾ HOẠCH {plan.Id}: tạo ổ {plan.TargetLetter}: {Units.Format(plan.GainBytes)} trong vùng trống của đĩa {plan.DiskNumber}",
             _ => $"KẾ HOẠCH {plan.Id}: mở rộng {plan.TargetLetter}: trên đĩa {plan.DiskNumber}, tăng {Units.Format(plan.GainBytes)}",
         });
         foreach (var note in plan.Notes)
@@ -59,6 +60,7 @@ internal static class Render
         {
             WinReGrowPlanner.Operation => "  không chạm EFI/MSR; không chồng lấn; offset căn lề 1 MiB; chỉ thu nhỏ phần trống ở cuối ổ, tối đa 4 GB.",
             RenamePlanner.Operation => "  ổ được đổi cũng giữ nguyên vị trí, kích thước, loại; chữ cái C-Z không trùng; không đổi chữ cái ổ hệ thống.",
+            CreatePartitionPlanner.Operation => "  phân vùng mới nằm trọn trong vùng trống, căn lề 1 MiB; chỉ định dạng phân vùng vừa tạo và còn RAW.",
             _ => "  không chạm EFI/MSR; không chồng lấn; offset căn lề 1 MiB.",
         });
         Console.WriteLine();
