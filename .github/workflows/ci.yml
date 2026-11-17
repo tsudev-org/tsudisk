@@ -55,6 +55,11 @@ jobs:
           global-json-file: global.json
       - name: Dong goi tsudisk.exe
         run: dotnet publish src/TsuDisk.Cli -c Release -r win-x64 -o publish
+      - name: Thong tin phien ban trong exe (DISTRIBUTION_TRUST 1.1.4)
+        shell: pwsh
+        run: |
+          $v = ([xml](Get-Content Directory.Build.props)).Project.PropertyGroup.VersionPrefix | Where-Object { $_ } | Select-Object -First 1
+          ./scripts/kiem-thong-tin-exe.ps1 -Exe publish/tsudisk.exe -Version $v
       - name: Lenh chi doc tren runner
         shell: pwsh
         run: |

@@ -6,6 +6,10 @@
     <TargetFramework>net10.0-windows10.0.17763.0</TargetFramework>
     <RootNamespace>TsuDisk.Cli</RootNamespace>
     <AssemblyName>tsudisk</AssemblyName>
+    <!-- FileDescription trong exe (Windows hien o Properties/SmartScreen). DISTRIBUTION_TRUST.md muc 1.1.4. -->
+    <AssemblyTitle>TsuDisk - quản lý phân vùng ổ cứng Windows an toàn</AssemblyTitle>
+    <!-- ProductVersion = dung chuoi phien ban san pham (VERSIONING.md 2.5); nguon goc build da co attestation. -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <!-- Icon exe sinh tu anh goc assets/brand/source/logo-tsudisk.png (website/scripts/brand-assets.mjs). -->
     <ApplicationIcon>../../assets/brand/app/app.ico</ApplicationIcon>
