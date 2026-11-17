@@ -15,7 +15,11 @@
 | #36 (MỞ, CI xanh) | `packaging/tools/winget-submit.mjs` (nộp qua GitHub REST API: fork nếu chưa có, đồng bộ upstream, một commit, PR New package/New version, bỏ qua khi đã có PR; `--dry-run`), job `winget` (needs `cong-bo`, Environment `packages`, không chạy thẻ thử). Manifest 1.12.0 + `PublisherSupportUrl`, `PrivacyUrl`, `Moniker` - đã kiểm bằng JSON schema 1.12.0 |
 | PR phiếu này | ADR-0006 (chuyển MBR -> GPT) ở trạng thái **Đề xuất**, ROADMAP trỏ đúng số ADR |
 
-## 2. Việc cần chủ dự án (agent bị chặn - quyền tự động không cho làm)
+## 2. Việc cần chủ dự án - ĐÃ XONG 18/11/2026
+
+Đã nạp `VT_API_KEY` (repo) + `WINGET_TOKEN` mới (env `packages`, token cũ bị lộ đã xóa - xem STATE mục Sự cố); 2 cảnh
+báo CodeQL đóng "Won't fix", luồng #36 đã resolve. Khóa VirusTotal không đổi được (gói miễn phí) - chấp nhận rủi ro.
+Giữ lại để tham khảo:
 
 1. **Nạp secret** (agent không được phép tự chạy; KHÔNG `cat` tệp):
    `gh secret set VT_API_KEY -R tsudev-org/tsudisk < ~/.config/tsudev/virustotal.env`
