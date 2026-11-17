@@ -75,6 +75,10 @@ scoop install tsudev/tsudisk</code></pre>
       <p>Mỗi bản phát hành có tệp <code>SHA256SUMS.txt</code> và chứng thực nguồn gốc build của GitHub. PowerShell:</p>
       <pre tabindex="0"><code>Get-FileHash .\{vd} -Algorithm SHA256
 gh attestation verify .\{vd} --repo {REPO}</code></pre>
+      <p>Từ bản 26.11.1801, <code>SHA256SUMS.txt</code> còn được ký bằng Sigstore (không khóa riêng, danh tính là quy trình phát hành công khai của repo) và mỗi bản kèm danh mục thành phần phần mềm (SBOM, định dạng SPDX). Kiểm chữ ký bằng <a href="https://docs.sigstore.dev/cosign/system_config/installation/" target="_blank" rel="noopener noreferrer">cosign</a>:</p>
+      <pre tabindex="0"><code>cosign verify-blob SHA256SUMS.txt --bundle SHA256SUMS.txt.sigstore.json `
+  --certificate-identity-regexp '^https://github.com/{REPO}/\.github/workflows/release\.yml@refs/tags/v' `
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com</code></pre>
       <div class="chu-y">
         <p><strong>Chỉ tải từ trang này hoặc từ <a href={`${REPO_URL}/releases`} target="_blank" rel="noopener noreferrer">github.com/{REPO}</a>.</strong> Một công cụ ghi bảng phân vùng chạy với quyền quản trị là mục tiêu hấp dẫn để giả mạo.</p>
         <p>Bản Windows chưa có chứng thư Authenticode (đang chờ duyệt chương trình ký mã miễn phí) nên SmartScreen có thể cảnh báo ở lần chạy đầu: chọn <em>Thông tin thêm</em>, rồi <em>Vẫn chạy</em> sau khi đã kiểm SHA-256.</p>
