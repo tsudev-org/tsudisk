@@ -3,17 +3,15 @@
 > Agent đọc file này ở đầu mỗi phiên và cập nhật ở cuối mỗi phiên.
 > Quy trình: `.standards/docs/AGENT_PROTOCOL.md`.
 
-> **Phiên kế tiếp**: đọc `~/projects/logs/handover/20261117-P2_ke-hoach-phan-phoi-tin-cay-da-nen-tang.md` hàng 8
-> (`tsudisk`) ở mục 3 + `.standards/docs/DISTRIBUTION_TRUST.md`. P1 còn: nộp winget, VirusTotal
-> (token đã có, xem phiếu 20261118-01 mục 2) - `packaging/package.json` + manifest winget đã có (#32), còn bước nộp; P2 MSIX khi có giao diện WPF + tài khoản Partner Center; P4 ký mã.
+> **Phiên kế tiếp**: đọc `logs/handover/20261118-02_phien-5-virustotal-winget.md`. Chờ 👤: nạp `VT_API_KEY` +
+> `WINGET_TOKEN` (env `packages`), đóng 2 cảnh báo CodeQL ở #36 rồi merge; sau đó gắn thẻ `v26.11.1802`.
 
 ## Hàng đợi task (làm từ trên xuống)
 
-- [ ] Phiếu bàn giao đầy đủ cho phiên kế tiếp: `logs/handover/20261118-01_phien-4-mbr2gpt-xoa-chuoi-cung-ung.md`.
-- [ ] VirusTotal rồi winget: token đã có ở `~/.config/tsudev/{virustotal,winget}.env` - nạp secret và làm theo phiếu
-      20261118-01 mục 2 (KHÔNG in nội dung tệp).
+- [ ] Phiếu bàn giao đầy đủ cho phiên kế tiếp: `logs/handover/20261118-02_phien-5-virustotal-winget.md`.
+- [ ] 👤 Nạp secret + merge #36 (phiếu 20261118-02 mục 2), rồi phát hành `v26.11.1802` và theo dõi PR winget-pkgs.
 - [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): chuyển MBR -> GPT (ADR-0006)
-      (kiểm trên máy ảo Hyper-V vì CI VHDX không có Windows trên đĩa MBR); giao diện WPF.
+      (ADR-0006 Đề xuất - chờ duyệt + kiểm Hyper-V Gen 1 -> Gen 2); giao diện WPF (bản đầu chỉ đọc).
 - [ ] Giai đoạn 3: bộ cài, ký SignPath (D5).
 - [ ] Nợ thương hiệu: biến thể 16px đơn giản hóa; ảnh gốc lớn hơn/SVG (`docs/BRAND.md`).
 
@@ -23,6 +21,10 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 18/11/2026 - Release qua NHÁP -> VirusTotal (workflow dùng chung) -> xuất bản; thẻ beta/rc là Pre-release - #35,
+  kiểm bằng `v26.11.1802-beta.1` (xanh). Environment `packages` (chỉ thẻ `v*`). Job winget + `winget-submit.mjs` ở #36
+  (mở, CI xanh, chờ đóng cảnh báo CodeQL). ADR-0006 MBR -> GPT ở trạng thái Đề xuất.
 
 - 18/11/2026 - 26.11.1801: `xoa-phan-vung` (ADR-0005) - #31; test 151 -> 163, E2E ca 14. Phát hành theo quy trình mới
   (#30): SBOM SPDX, SHA256SUMS ký Sigstore, attestation exe + SBOM - đã kiểm cả ba. `packaging/package.json` + manifest
@@ -62,6 +64,7 @@
 - 16/11/2026 - Thu nhỏ chỉ cho WinRE: `docs/adr/0003-thu-nho-chi-cho-winre.md`
 - 17/11/2026 - Thu nhỏ NTFS tổng quát (mở rộng ADR-0003): `docs/adr/0004-thu-nho-o-tong-quat.md`
 - 18/11/2026 - Xóa phân vùng dữ liệu, không tự tạo lại (Windows xóa trắng đầu phân vùng mới): `docs/adr/0005-xoa-phan-vung-du-lieu.md`
+- 18/11/2026 - (Đề xuất) Chuyển MBR -> GPT bằng mbr2gpt chính thức, không tự viết bộ chuyển: `docs/adr/0006-chuyen-mbr-sang-gpt.md`
 
 ## Sự cố bảo mật
 
