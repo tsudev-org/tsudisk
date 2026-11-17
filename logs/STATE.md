@@ -16,6 +16,7 @@
 
 | Task | Agent | Bắt đầu |
 | --- | --- | --- |
+| Giai đoạn 2: đổi chữ cái + nhãn ổ (nhánh `feat/doi-chu-cai-nhan-o`) | agent-tsudisk | 10:32 17/11/2026 |
 
 ## Đã hoàn thành (mới nhất trên cùng)
 

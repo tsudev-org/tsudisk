@@ -33,6 +33,7 @@ TsuDisk **không sao chép mã** của dự án GPL nào (Apache-2.0 không tư�
 ### Giai đoạn 2 - Giao diện và thao tác rủi ro thấp
 
 Đã xong ở 26.11.1602: kiểm tra sức khỏe ổ (chặn ghi khi hỏng), kiểm tra toàn vẹn GPT đọc thô, sao lưu sector GPT thô.
+Đã xong ở 26.11.1702: đổi chữ cái, nhãn ổ (`doi-ten`).
 
 | Tính năng | Rủi ro | Ghi chú |
 | --- | --- | --- |
@@ -40,7 +41,7 @@ TsuDisk **không sao chép mã** của dự án GPL nào (Apache-2.0 không tư�
 | ~~Sao lưu bảng GPT thô (kiểu `sgdisk --backup`)~~ ĐÃ XONG; khôi phục tự động | Cao | Khôi phục chỉ khi có ADR riêng, xác nhận hai lần |
 | ~~Mở rộng riêng phân vùng WinRE (lỗi 0x80070643 của KB5034441)~~ ĐÃ XONG ở 26.11.1603 | Vừa | `mo-rong-winre`, thu nhỏ có trần 4 GB |
 | ~~Sức khỏe ổ: S.M.A.R.T./`MSFT_StorageReliabilityCounter`~~ ĐÃ XONG | Thấp | Chặn ghi khi ổ báo lỗi |
-| Đổi chữ cái ổ, nhãn ổ | Thấp | Storage API |
+| ~~Đổi chữ cái ổ, nhãn ổ~~ ĐÃ XONG ở 26.11.1702 | Thấp | `doi-ten`: Storage API `AddAccessPath`/`RemoveAccessPath`, `SetFileSystemLabel` |
 | Thu nhỏ ổ NTFS (`GetSupportedSize` min) | Vừa | Kiểm hệ thống tệp, chống phân mảnh không dời được |
 | Tạo/định dạng phân vùng dữ liệu trong vùng trống | Vừa | Chỉ trong vùng trống, không chạm phân vùng có sẵn |
 | Xóa phân vùng dữ liệu | Vừa | Xác nhận gõ tên nhãn + chữ cái; sao lưu bảng trước |

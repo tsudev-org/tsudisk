@@ -94,6 +94,85 @@ internal static class StorageApi
         EnsureSuccess(partition.InvokeMethod("DeleteObject", null, null), "DeleteObject");
     }
 
+    /// <summary>Chu cai dang dung: moi volume Storage API biet + GetLogicalDrives (o mang, subst cua phien hien tai).</summary>
+    public static IReadOnlySet<char> LettersInUse()
+    {
+        var letters = new HashSet<char>();
+        foreach (var volume in Query("SELECT DriveLetter FROM MSFT_Volume"))
+        {
+            using (volume)
+            {
+                var letter = Convert.ToChar(volume["DriveLetter"] ?? '\0', CultureInfo.InvariantCulture);
+                if (char.IsAsciiLetter(letter))
+                    letters.Add(char.ToUpperInvariant(letter));
+            }
+        }
+        foreach (var drive in DriveInfo.GetDrives())
+        {
+            if (drive.Name.Length > 0 && char.IsAsciiLetter(drive.Name[0]))
+                letters.Add(char.ToUpperInvariant(drive.Name[0]));
+        }
+        return letters;
+    }
+
+    /// <summary>
+    /// MSFT_Partition.RemoveAccessPath("X:\") roi AddAccessPath("Y:\"). Gan chu cai moi loi thi gan lai chu cai cu ngay
+    /// trong ham nay truoc khi nem loi - o khong bao gio bi bo lai khong co chu cai vi TsuDisk.
+    /// </summary>
+    public static void SetDriveLetter(int diskNumber, int partitionNumber, char? oldLetter, char newLetter)
+    {
+        if (oldLetter is { } removed)
+            InvokeAccessPath(diskNumber, partitionNumber, "RemoveAccessPath", removed);
+        try
+        {
+            InvokeAccessPath(diskNumber, partitionNumber, "AddAccessPath", newLetter);
+        }
+        catch (Exception ex) when (ex is DiskOperationException or ManagementException)
+        {
+            if (oldLetter is not { } restoreLetter)
+                throw new DiskOperationException($"Gán {newLetter}: thất bại - {ex.Message}", ex);
+            try
+            {
+                InvokeAccessPath(diskNumber, partitionNumber, "AddAccessPath", restoreLetter);
+            }
+            catch (Exception restore) when (restore is DiskOperationException or ManagementException)
+            {
+                throw new DiskOperationException(
+                    $"Gán {newLetter}: thất bại ({ex.Message}) và KHÔNG gán lại được {oldLetter}: ({restore.Message}) - gán lại bằng Disk Management.", ex);
+            }
+            throw new DiskOperationException($"Gán {newLetter}: thất bại, đã gán lại {oldLetter}: - {ex.Message}", ex);
+        }
+    }
+
+    private static void InvokeAccessPath(int diskNumber, int partitionNumber, string method, char letter)
+    {
+        using var partition = Partition(diskNumber, partitionNumber);
+        using var input = partition.GetMethodParameters(method);
+        input["AccessPath"] = Inv($"{char.ToUpperInvariant(letter)}:\\");
+        EnsureSuccess(partition.InvokeMethod(method, input, null), method);
+    }
+
+    /// <summary>MSFT_Volume.SetFileSystemLabel tren volume nam tren phan vung (tim theo AccessPaths, khong theo chu cai).</summary>
+    public static void SetVolumeLabel(int diskNumber, int partitionNumber, string label)
+    {
+        string[] accessPaths;
+        using (var partition = Partition(diskNumber, partitionNumber))
+            accessPaths = partition["AccessPaths"] as string[] ?? [];
+        var volumes = Query("SELECT * FROM MSFT_Volume");
+        try
+        {
+            var volume = volumes.FirstOrDefault(v => v["Path"] is string path && accessPaths.Contains(path, StringComparer.OrdinalIgnoreCase))
+                ?? throw new DiskOperationException($"Không tìm thấy volume của phân vùng {partitionNumber} trên đĩa {diskNumber}.");
+            using var input = volume.GetMethodParameters("SetFileSystemLabel");
+            input["FileSystemLabel"] = label;
+            EnsureSuccess(volume.InvokeMethod("SetFileSystemLabel", input, null), "SetFileSystemLabel");
+        }
+        finally
+        {
+            volumes.ForEach(v => v.Dispose());
+        }
+    }
+
     /// <summary>MSFT_Volume.Repair voi Scan=true: quet truc tuyen, chi doc. Output 0 = NoErrorsFound.</summary>
     public static (bool Healthy, string Detail) ScanVolume(char driveLetter)
     {

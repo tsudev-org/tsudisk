@@ -55,6 +55,18 @@ public static class LayoutSimulator
                         FreeBytes: null));
                     break;
                 }
+                case StepKind.SetDriveLetter:
+                {
+                    var index = partitions.FindIndex(p => p.Offset == step.Offset);
+                    partitions[index] = partitions[index] with { DriveLetter = step.NewDriveLetter };
+                    break;
+                }
+                case StepKind.SetVolumeLabel:
+                {
+                    var index = partitions.FindIndex(p => p.Offset == step.Offset);
+                    partitions[index] = partitions[index] with { Label = string.IsNullOrEmpty(step.NewLabel) ? null : step.NewLabel };
+                    break;
+                }
                 default:
                     throw new InvalidOperationException($"Bước {step.Kind} được đánh dấu thay đổi đĩa nhưng mô phỏng không hỗ trợ.");
             }

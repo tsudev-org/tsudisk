@@ -25,6 +25,10 @@ public enum StepKind
     EnableWinRe,
     /// <summary>Doc lai bo cuc va doi chieu voi bo cuc du kien + bat bien an toan.</summary>
     VerifyLayout,
+    /// <summary>Doi chu cai o (RemoveAccessPath + AddAccessPath). Chi o du lieu, cam o he thong/khoi dong (RenamePlanner).</summary>
+    SetDriveLetter,
+    /// <summary>Doi nhan he thong tep (MSFT_Volume.SetFileSystemLabel). Khong doi hinh hoc phan vung.</summary>
+    SetVolumeLabel,
 }
 
 /// <summary>Mot buoc cua ke hoach. Cac truong tham so la tuy chon, tuy loai buoc.</summary>
@@ -36,7 +40,13 @@ public sealed record PlanStep(
     int? PartitionNumber = null,
     long? Offset = null,
     long? Size = null,
-    char? DriveLetter = null);
+    char? DriveLetter = null,
+    char? NewDriveLetter = null,
+    string? NewLabel = null)
+{
+    /// <summary>Buoc chi doi sieu du lieu cua o (chu cai, nhan): phan vung van phai giu nguyen offset/kich thuoc/loai.</summary>
+    public bool IsMetadataOnly => Kind is StepKind.SetDriveLetter or StepKind.SetVolumeLabel;
+}
 
 /// <summary>Ke hoach da lap: bat bien, tu mo ta day du, luu duoc ra JSON de xem truoc/kiem toan.</summary>
 public sealed record Plan(
@@ -52,9 +62,12 @@ public sealed record Plan(
     IReadOnlyList<string> Notes,
     long GainBytes)
 {
-    /// <summary>Offset cac phan vung ma ke hoach duoc phep cham vao (doi kich thuoc/xoa/tao).</summary>
+    /// <summary>
+    /// Offset cac phan vung ma ke hoach duoc phep doi HINH HOC (doi kich thuoc/xoa/tao). Buoc chi doi chu cai/nhan khong
+    /// nam o day: phan vung do van bi bat bien "giu nguyen offset, kich thuoc, loai" kiem nhu moi phan vung khac.
+    /// </summary>
     public IReadOnlySet<long> TouchedOffsets => Steps
-        .Where(s => s.ChangesDisk && s.Offset is not null)
+        .Where(s => s.ChangesDisk && !s.IsMetadataOnly && s.Offset is not null)
         .Select(s => s.Offset!.Value)
         .ToHashSet();
 }
@@ -73,6 +86,7 @@ public enum RefusalCode
     RecoveryTooSmallGap,
     InvalidOption,
     SafetyViolation,
+    LetterInUse,
 }
 
 public sealed record Refusal(RefusalCode Code, string Message, IReadOnlyList<string> Hints);

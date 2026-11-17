@@ -11,6 +11,8 @@ namespace TsuDisk.Core.Safety;
 /// <item>Khong buoc nao cham phan vung duoc bao ve (EFI, MSR, o dong, Storage Spaces, Extended).</item>
 /// <item>Chi xoa duoc phan vung Recovery; chi mo rong duoc o du lieu, va khong bao gio thu nho.</item>
 /// <item>Khong chong lan, khong vuot vung dung duoc cua dia, moi offset moi deu can le 1 MiB.</item>
+/// <item>Doi chu cai/nhan: chi o du lieu, khong doi chu cai o he thong/khoi dong, chu cai C-Z khong trung, nhan hop le;
+/// phan vung do van giu nguyen offset/kich thuoc/loai.</item>
 /// </list>
 /// </summary>
 public static class SafetyGuard
@@ -31,7 +33,8 @@ public static class SafetyGuard
                 violations.Add($"Bước {step.Index} ({step.Kind}) thiếu offset/kích thước hợp lệ.");
                 continue;
             }
-            if (!Units.IsAligned(offset, Units.PartitionAlignment))
+            // Can le chi la dieu kien cho offset MOI; doi ten khong tao offset nao (o MBR cu bat dau o sector 63 van doi duoc).
+            if (!step.IsMetadataOnly && !Units.IsAligned(offset, Units.PartitionAlignment))
                 violations.Add($"Bước {step.Index}: offset {offset} không căn lề 1 MiB.");
 
             var existing = before.FindByOffset(offset);
@@ -58,6 +61,9 @@ public static class SafetyGuard
                 case StepKind.CreateRecovery when existing is not null && plan.Steps.All(s => s.Kind != StepKind.DeletePartition || s.Offset != offset):
                     violations.Add($"Bước {step.Index}: tạo phân vùng đè lên {existing.DisplayName}.");
                     break;
+                case StepKind.SetDriveLetter or StepKind.SetVolumeLabel:
+                    violations.AddRange(CheckRename(step, existing));
+                    break;
             }
             if (existing is not null && PartitionTypes.IsProtected(existing.Kind))
                 violations.Add($"Bước {step.Index}: chạm vào phân vùng được bảo vệ {existing.DisplayName}.");
@@ -65,8 +71,39 @@ public static class SafetyGuard
 
         violations.AddRange(CheckUntouchedPreserved(before, plan.ExpectedAfter, plan.TouchedOffsets, exactSizes: true));
         violations.AddRange(CheckGeometry(plan.ExpectedAfter));
+        violations.AddRange(CheckUniqueLetters(plan.ExpectedAfter));
         return violations;
     }
+
+    private static IEnumerable<string> CheckRename(PlanStep step, PartitionInfo? existing)
+    {
+        if (existing is null || existing.Kind != PartitionKind.BasicData || existing.FileSystem is null)
+        {
+            yield return $"Bước {step.Index}: chỉ đổi chữ cái/nhãn của ổ dữ liệu có hệ thống tệp.";
+            yield break;
+        }
+        if (step.DriveLetter is not { } current || existing.DriveLetter != current)
+            yield return $"Bước {step.Index}: chữ cái hiện tại trong kế hoạch không khớp {existing.DisplayName}.";
+        if (step.Kind == StepKind.SetDriveLetter)
+        {
+            if (existing.IsSystem || existing.IsBoot)
+                yield return $"Bước {step.Index}: cấm đổi chữ cái ổ hệ thống/khởi động {existing.DisplayName}.";
+            if (step.NewDriveLetter is not { } next || !Planning.VolumeNaming.IsAssignableLetter(next))
+                yield return $"Bước {step.Index}: chữ cái mới phải trong khoảng C-Z.";
+        }
+        else if (step.NewLabel is not { } label)
+        {
+            yield return $"Bước {step.Index}: thiếu nhãn mới.";
+        }
+        else if (Planning.VolumeNaming.LabelProblem(label, existing.FileSystem) is { } problem)
+        {
+            yield return $"Bước {step.Index}: {problem}";
+        }
+    }
+
+    private static IEnumerable<string> CheckUniqueLetters(DiskLayout layout) =>
+        layout.Partitions.Where(p => p.DriveLetter is not null).GroupBy(p => p.DriveLetter).Where(g => g.Count() > 1)
+            .Select(g => $"Chữ cái {g.Key}: bị gán cho nhiều phân vùng.");
 
     /// <summary>Doi chieu bo cuc THAT sau khi chay voi bo cuc du kien cua ke hoach.</summary>
     public static IReadOnlyList<string> CheckActual(Plan plan, DiskLayout actual)
@@ -76,6 +113,7 @@ public static class SafetyGuard
         var violations = new List<string>();
         violations.AddRange(CheckUntouchedPreserved(plan.Before, actual, plan.TouchedOffsets, exactSizes: true));
         violations.AddRange(CheckGeometry(actual));
+        violations.AddRange(CheckUniqueLetters(actual));
 
         foreach (var step in plan.Steps.Where(s => s.ChangesDisk))
         {
@@ -99,6 +137,13 @@ public static class SafetyGuard
                     }
                     if (step.Kind == StepKind.CreateRecovery && found is not null && found.Kind != PartitionKind.Recovery)
                         violations.Add($"Phân vùng mới tại offset {step.Offset} không mang loại Recovery.");
+                    break;
+                case StepKind.SetDriveLetter when found?.DriveLetter != step.NewDriveLetter:
+                    violations.Add($"Phân vùng tại offset {step.Offset} mang chữ cái {found?.DriveLetter}, lẽ ra là {step.NewDriveLetter}.");
+                    break;
+                // FAT32 luu nhan IN HOA: so khong phan biet hoa thuong.
+                case StepKind.SetVolumeLabel when !string.Equals(found?.Label ?? "", step.NewLabel ?? "", StringComparison.OrdinalIgnoreCase):
+                    violations.Add($"Phân vùng tại offset {step.Offset} mang nhãn \"{found?.Label}\", lẽ ra là \"{step.NewLabel}\".");
                     break;
             }
         }
