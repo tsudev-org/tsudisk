@@ -42,7 +42,12 @@ async function gh(method, path, body, okMissing = false) {
   if (!r.ok) fail(`${method} ${path} -> ${r.status} ${text.slice(0, 300)}`);
   return text ? JSON.parse(text) : {};
 }
-const output = (k, v) => { if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `${k}=${v}\n`); };
+// Chi ghi URL PR dung khuon (khong de du lieu tu API chen them dong vao GITHUB_OUTPUT).
+const PR_URL = /^https:\/\/github\.com\/microsoft\/winget-pkgs\/pull\/[0-9]+$/;
+const output = (k, v) => {
+  if (!PR_URL.test(v)) fail(`URL PR la: ${JSON.stringify(v).slice(0, 120)}`);
+  if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `${k}=${v}\n`);
+};
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const login = (await gh('GET', 'user')).login;
