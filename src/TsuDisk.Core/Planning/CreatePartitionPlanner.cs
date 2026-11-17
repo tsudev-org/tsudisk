@@ -154,6 +154,7 @@ public static class CreatePartitionPlanner
         };
         if (fileSystem == "FAT32")
             notes.Add("FAT32 không chứa được tệp lớn hơn 4 GB.");
+        notes.Add("Windows xóa trắng phần đầu vùng trống khi tạo phân vùng: nếu đây là chỗ của một ổ vừa xóa nhầm, cứu nó bằng TestDisk TRƯỚC khi tạo.");
 
         var plan = new Plan(
             Id: Guid.NewGuid().ToString("N")[..12],

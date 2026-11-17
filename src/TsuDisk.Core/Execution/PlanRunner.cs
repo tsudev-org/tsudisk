@@ -106,6 +106,23 @@ public sealed class PlanRunner(IDiskBackend backend, IJournalStore store, TimePr
                     () => backend.CreateRecoveryPartition(disk, victim.Offset, oldSize, style)));
                 return null;
             }
+            case StepKind.DeleteDataPartition:
+            {
+                var victim = RequirePartition(disk, step.Offset!.Value, step.PartitionNumber);
+                if (victim.Kind != PartitionKind.BasicData || victim.IsSystem || victim.IsBoot || victim.Size != step.Size
+                    || victim.DriveLetter != step.DriveLetter || (victim.Label ?? "") != (step.NewLabel ?? ""))
+                {
+                    throw new DiskOperationException($"Phân vùng {victim.PartitionNumber} không còn đúng là ổ {step.DriveLetter}: \"{step.NewLabel}\" " +
+                        $"{Units.Format(step.Size!.Value)} như kế hoạch (chữ cái/nhãn/kích thước đã đổi) - dừng, không xóa.");
+                }
+                var letter = step.DriveLetter!.Value;
+                backend.DeleteDataPartition(disk, victim.PartitionNumber, letter);
+                // KHONG tu tao lai: Windows xoa trang dau phan vung moi (do o E2E) - tao lai chi lam mat boot sector. Doi chieu
+                // loi sau buoc nay => can nguoi xu ly bang TestDisk (ADR-0005 muc 6).
+                var hint = DeletePartitionPlanner.RecoveryHint(plan.Before, victim);
+                compensations.Add(new Compensation("cannot-undo-delete", $"Ổ {letter}: đã xóa - không tự hoàn tác", () => throw new DiskOperationException(hint)));
+                return $"Đã xóa ổ {letter}: ({Units.Format(victim.Size)} trống).";
+            }
             case StepKind.ExtendPartition:
             {
                 var target = RequirePartition(disk, step.Offset!.Value, step.PartitionNumber);

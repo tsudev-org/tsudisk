@@ -33,6 +33,11 @@ public enum StepKind
     CreatePartition,
     /// <summary>Dinh dang nhanh + gan nhan/chu cai - CHI phan vung vua tao trong cung ke hoach, va chi khi con RAW.</summary>
     FormatVolume,
+    /// <summary>
+    /// Xoa MOT o du lieu co chu cai - CHI trong thao tac delete-partition (ADR-0005). Luc chay kiem lai chu cai + nhan +
+    /// hinh hoc va khoa doc quyen volume; o dang duoc dung thi dung. NewLabel = nhan luc lap ke hoach ("" = khong nhan).
+    /// </summary>
+    DeleteDataPartition,
 }
 
 /// <summary>Mot buoc cua ke hoach. Cac truong tham so la tuy chon, tuy loai buoc.</summary>

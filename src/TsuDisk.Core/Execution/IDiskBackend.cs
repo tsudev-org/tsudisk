@@ -42,6 +42,12 @@ public interface IDiskBackend
 
     void DeletePartition(int diskNumber, int partitionNumber);
 
+    /// <summary>
+    /// Xoa o du lieu (ADR-0005): khoa doc quyen volume <paramref name="driveLetter"/> roi go gan ket truoc khi xoa; con
+    /// chuong trinh nao mo tep tren o thi nem loi "dang duoc dung" va KHONG xoa. Khong bao gio ep xoa (override).
+    /// </summary>
+    void DeleteDataPartition(int diskNumber, int partitionNumber, char driveLetter);
+
     void ResizePartition(int diskNumber, int partitionNumber, long newSize);
 
     /// <summary>
