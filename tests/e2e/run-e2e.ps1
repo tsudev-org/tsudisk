@@ -331,6 +331,14 @@ try {
     New-Partition -DiskNumber $disk2.Number -Offset ([int64]$offKb * 1KB) -Size ([int64]$sizeMb * 1MB) -DriveLetter $tL.TrimEnd(':') | Out-Null
     for ($i = 0; $i -lt 30 -and -not (Test-Path $tailSentinel); $i++) { Start-Sleep -Milliseconds 500 }
     Write-Host "  he tep sau khoi phuc: $((Get-Volume -DriveLetter $tL.TrimEnd(':')).FileSystem)"
+    $raw = [IO.File]::Open("\\.\PhysicalDrive$($disk2.Number)", 'Open', 'Read', 'ReadWrite')
+    try { [void]$raw.Seek($tail.Offset, 'Begin'); [void]$raw.Read($buf, 0, 4096) } finally { $raw.Dispose() }
+    Write-Host "  OEM id sau khi tao lai: '$([Text.Encoding]::ASCII.GetString($buf, 3, 8))'"
+    if (-not (Test-Path $tailSentinel)) {
+        Update-HostStorageCache
+        for ($i = 0; $i -lt 20 -and -not (Test-Path $tailSentinel); $i++) { Start-Sleep -Milliseconds 500 }
+        Write-Host "  sau Update-HostStorageCache: he tep $((Get-Volume -DriveLetter $tL.TrimEnd(':')).FileSystem), Test-Path $(Test-Path $tailSentinel)"
+    }
     Assert-True ((Test-Path $tailSentinel) -and (Get-FileHash $tailSentinel -Algorithm SHA256).Hash -eq $keepHash) 'khoi phuc bang lenh trong ke hoach: du lieu TAIL tro lai nguyen ven'
 
     Write-Host "`n=== Ca 7: doc nhat ky ==="
