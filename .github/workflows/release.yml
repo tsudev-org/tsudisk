@@ -120,3 +120,13 @@ jobs:
           ```
           EOF
           gh release create "$TAG" dist/* --title "TsuDisk $VERSION" --notes-file notes.md
+      - name: Manifest winget (sinh tu packaging/package.json, dinh kem Release)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          node packaging/tools/winget-manifest.mjs --version "$VERSION" --sums dist/SHA256SUMS.txt --out winget-out \
+            --date "$(TZ=Asia/Ho_Chi_Minh date +%F)"
+          (cd winget-out && zip -qr "../tsudisk_${VERSION}_winget-manifest.zip" manifests)
+          gh release upload "$TAG" "tsudisk_${VERSION}_winget-manifest.zip"

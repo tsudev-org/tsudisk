@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "tsudisk",
+  "winget": "tsudev.TsuDisk",
+  "publisher": "tsudev",
+  "homepage": "https://disk.tsudev.com",
+  "license": "Apache-2.0",
+  "description": {
+    "vi": "Quản lý phân vùng ổ cứng Windows an toàn: phân tích, lập kế hoạch, mở rộng ổ C: kể cả khi Recovery chắn đường",
+    "en": "Safe Windows disk partition manager: analyze, plan, and extend C: even when the Recovery partition is in the way"
+  },
+  "release": {
+    "repo": "tsudev-org/tsudisk",
+    "tagRegex": "^v(?<version>[0-9]{2}\\.[1-9][0-9]?\\.[0-3][0-9][0-9]{2})$",
+    "sums": "SHA256SUMS.txt"
+  },
+  "assets": {
+    "windows-x64": {
+      "file": "tsudisk_{version}_windows-x64-portable.exe",
+      "kind": "portable",
+      "bin": "tsudisk.exe",
+      "command": "tsudisk",
+      "minimumOs": "10.0.17763.0"
+    }
+  },
+  "channels": ["scoop", "winget"],
+  "planned": ["msix"]
+}
