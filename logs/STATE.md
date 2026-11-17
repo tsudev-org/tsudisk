@@ -3,13 +3,13 @@
 > Agent đọc file này ở đầu mỗi phiên và cập nhật ở cuối mỗi phiên.
 > Quy trình: `.standards/docs/AGENT_PROTOCOL.md`.
 
-> **Phiên kế tiếp**: đọc `logs/handover/20261118-02_phien-5-virustotal-winget.md`. Chờ 👤: nạp `VT_API_KEY` +
-> `WINGET_TOKEN` (env `packages`), đóng 2 cảnh báo CodeQL ở #36 rồi merge; sau đó gắn thẻ `v26.11.1802`.
+> **Phiên kế tiếp**: đọc `logs/handover/20261118-02_phien-5-virustotal-winget.md` mục 3. Secret đã nạp, cảnh báo
+> CodeQL đã đóng, #36 (job winget) đã/đang merge => việc đầu tiên: gắn thẻ `v26.11.1802` và kiểm theo mục 3.1.
 
 ## Hàng đợi task (làm từ trên xuống)
 
 - [ ] Phiếu bàn giao đầy đủ cho phiên kế tiếp: `logs/handover/20261118-02_phien-5-virustotal-winget.md`.
-- [ ] 👤 Nạp secret + merge #36 (phiếu 20261118-02 mục 2), rồi phát hành `v26.11.1802` và theo dõi PR winget-pkgs.
+- [ ] Phát hành `v26.11.1802` (VirusTotal thật + job winget lần đầu), theo dõi PR winget-pkgs (phiếu 20261118-02 mục 3).
 - [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): chuyển MBR -> GPT (ADR-0006)
       (ADR-0006 Đề xuất - chờ duyệt + kiểm Hyper-V Gen 1 -> Gen 2); giao diện WPF (bản đầu chỉ đọc).
 - [ ] Giai đoạn 3: bộ cài, ký SignPath (D5).
@@ -76,7 +76,7 @@
   nạp lại secret (Environment `packages`), xóa dòng `ghp_` khỏi `~/.bash_history`. Không nằm trong git (không cần
   filter-repo). Token không chạm dữ liệu người dùng (D1). Token CŨ (hết hạn 17/12/2026 18:36 UTC) đã bị xóa - đối
   chiếu danh sách github.com/settings/tokens 18/11/2026: chỉ còn token mới (hết hạn 18/12/2026) và một token
-  `winget tsudev` khác chưa từng dùng. Còn: 👤 xem github.com/settings/security-log có dùng lạ trong lúc lộ không.
+  `winget tsudev` khác chưa từng dùng. Chủ dự án đã xem security-log: không có thao tác lạ trong lúc lộ. ĐÓNG.
   Phòng ngừa: nạp secret chỉ bằng `gh secret set ... < tệp`, ghi tệp bằng `cat > tệp` (không dán token lên dòng lệnh).
 - 17/11/2026 (ghi bổ sung) - Phiên 4 in giá trị `~/.config/tsudev/{winget,virustotal}.env` ra transcript (phiếu
   20261118-01 mục 2). PAT winget cũ đã thay ở sự cố trên. Khóa VirusTotal: tài khoản miễn phí, chủ dự án
