@@ -4,7 +4,11 @@ name: Phat hanh
 #   build (Windows): test, dong goi tsudisk.exe, chay lai E2E VHDX, kiem thong tin phien ban trong exe, dat ten theo
 #     VERSIONING.md v3 ({goi}_{ver}_{os}-{arch}-{loai}).
 #   publish (Linux): SBOM SPDX, SHA256SUMS.txt ky keyless Sigstore (SHA256SUMS.txt.sigstore.json), chung thuc nguon goc
-#     build (GitHub Artifact Attestation) cho exe + SBOM, tao GitHub Release. DISTRIBUTION_TRUST.md muc 2.
+#     build (GitHub Artifact Attestation) cho exe + SBOM, tao GitHub Release o dang NHAP. DISTRIBUTION_TRUST.md muc 2.
+#   virustotal: workflow dung chung tsudev-org/.github quet exe, ghi link bao cao vao Release notes (muc 3).
+#   cong-bo: 0 engine gan co (hoac chua co VT_API_KEY) => xuat ban Release. Bi gan co / loi => giu nhap + mo Issue.
+# The thu `vYY.M.DDNN-beta.N` / `-rc.N` (VERSIONING.md 2.2): VersionPrefix = phan truoc dau '-', Release la Pre-release,
+#   khong sinh manifest winget.
 on:
   push:
     tags: ['v[0-9][0-9].*']
@@ -18,6 +22,7 @@ jobs:
     timeout-minutes: 30
     outputs:
       version: ${{ steps.ver.outputs.version }}
+      prerelease: ${{ steps.ver.outputs.prerelease }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -29,14 +34,20 @@ jobs:
         id: ver
         shell: pwsh
         run: |
+          $tag = "${{ github.ref_name }}"
+          if ($tag -notmatch '^v([0-9]{2}\.[1-9][0-9]?\.[0-3][0-9][0-9]{2})(-((beta|rc)\.[0-9]+))?$') { throw "Tag lech khuon VERSIONING.md 2.2" }
+          $base = $Matches[1]; $suffix = $Matches[3]
           $v = ([xml](Get-Content Directory.Build.props)).Project.PropertyGroup.VersionPrefix | Where-Object { $_ } | Select-Object -First 1
-          if ("v$v" -ne "${{ github.ref_name }}") { throw "Tag ${{ github.ref_name }} khac VersionPrefix $v" }
-          if ("${{ github.ref_name }}" -notmatch '^v[0-9]{2}\.[1-9][0-9]?\.[0-3][0-9][0-9]{2}(-(beta|rc)\.[0-9]+)?$') { throw "Tag lech khuon VERSIONING.md 2.2" }
-          "version=$v" | Out-File -Append $env:GITHUB_OUTPUT
+          if ($base -ne $v) { throw "Tag $tag khac VersionPrefix $v" }
+          "version=$($tag.Substring(1))" | Out-File -Append $env:GITHUB_OUTPUT
+          "suffix=$suffix" | Out-File -Append $env:GITHUB_OUTPUT
+          "prerelease=$(if ($suffix) { 'true' } else { 'false' })" | Out-File -Append $env:GITHUB_OUTPUT
       - name: Test don vi
         run: dotnet test tests/TsuDisk.Core.Tests -c Release
       - name: Dong goi
-        run: dotnet publish src/TsuDisk.Cli -c Release -r win-x64 -o publish
+        env:
+          SUFFIX: ${{ steps.ver.outputs.suffix }}
+        run: dotnet publish src/TsuDisk.Cli -c Release -r win-x64 -o publish -p:VersionSuffix=$env:SUFFIX
       - name: Thong tin phien ban trong exe (DISTRIBUTION_TRUST 1.1.4)
         shell: pwsh
         run: ./scripts/kiem-thong-tin-exe.ps1 -Exe publish/tsudisk.exe -Version "${{ steps.ver.outputs.version }}"
@@ -64,6 +75,7 @@ jobs:
       attestations: write
     env:
       VERSION: ${{ needs.build.outputs.version }}
+      PRERELEASE: ${{ needs.build.outputs.prerelease }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -100,7 +112,7 @@ jobs:
           subject-path: |
             dist/tsudisk_*.exe
             dist/tsudisk_*_sbom.spdx.json
-      - name: Tao GitHub Release
+      - name: Tao GitHub Release (NHAP - chi xuat ban sau khi VirusTotal sach)
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
@@ -119,8 +131,15 @@ jobs:
           gh attestation verify tsudisk_*_windows-x64-portable.exe --repo tsudev-org/tsudisk
           ```
           EOF
-          gh release create "$TAG" dist/* --title "TsuDisk $VERSION" --notes-file notes.md
+          pre=(); [[ "$PRERELEASE" == "true" ]] && pre=(--prerelease)
+          # Chay lai job: Release nhap da co thi chi tai lai tep.
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" dist/* --clobber
+          else
+            gh release create "$TAG" dist/* --draft "${pre[@]}" --title "TsuDisk $VERSION" --notes-file notes.md
+          fi
       - name: Manifest winget (sinh tu packaging/package.json, dinh kem Release)
+        if: needs.build.outputs.prerelease != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
@@ -129,4 +148,60 @@ jobs:
           node packaging/tools/winget-manifest.mjs --version "$VERSION" --sums dist/SHA256SUMS.txt --out winget-out \
             --date "$(TZ=Asia/Ho_Chi_Minh date +%F)"
           (cd winget-out && zip -qr "../tsudisk_${VERSION}_winget-manifest.zip" manifests)
-          gh release upload "$TAG" "tsudisk_${VERSION}_winget-manifest.zip"
+          gh release upload "$TAG" "tsudisk_${VERSION}_winget-manifest.zip" --clobber
+
+  virustotal:
+    needs: publish
+    permissions:
+      contents: write
+    # tsudev-org/.github @ 8a393eb (feat(ci): workflow dung chung quet VirusTotal, #4)
+    uses: tsudev-org/.github/.github/workflows/virustotal.yml@8a393ebd89349300637c8c57e89c12492b174e4d
+    with:
+      tag: ${{ github.ref_name }}
+      patterns: tsudisk_*.exe
+    secrets:
+      VT_API_KEY: ${{ secrets.VT_API_KEY }}
+
+  cong-bo:
+    needs: [build, virustotal]
+    if: needs.virustotal.outputs.flagged != 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Xuat ban Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          FLAGGED: ${{ needs.virustotal.outputs.flagged }}
+          LATEST: ${{ needs.build.outputs.prerelease == 'true' && 'false' || 'true' }}
+        run: |
+          set -euo pipefail
+          gh release edit "$TAG" -R "$GITHUB_REPOSITORY" --draft=false --latest="$LATEST"
+          echo "### Release $TAG da xuat ban (VirusTotal: $FLAGGED)" >> "$GITHUB_STEP_SUMMARY"
+
+  bao-loi:
+    needs: [publish, virustotal, cong-bo]
+    if: failure() && needs.publish.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Mo Issue - Release dang giu o nhap
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          FLAGGED: ${{ needs.virustotal.outputs.flagged }}
+        run: |
+          set -euo pipefail
+          cat > body.md <<EOF
+          Release \`$TAG\` đang giữ ở **nháp**, chưa xuất bản (VirusTotal: \`${FLAGGED:-loi}\`).
+
+          - Lượt chạy: $RUN
+          - Bị gắn cờ: nộp báo nhầm theo \`.standards/docs/DISTRIBUTION_TRUST.md\` mục 3, ghi kết quả vào \`logs/\`.
+          - Lỗi khác (hết giờ chờ, API): chạy lại job \`virustotal\` của lượt trên.
+          EOF
+          gh issue create -R "$GITHUB_REPOSITORY" --title "Phát hành $TAG giữ ở nháp" --body-file body.md
