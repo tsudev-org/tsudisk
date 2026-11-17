@@ -152,25 +152,69 @@ internal static class StorageApi
         EnsureSuccess(partition.InvokeMethod(method, input, null), method);
     }
 
-    /// <summary>MSFT_Volume.SetFileSystemLabel tren volume nam tren phan vung (tim theo AccessPaths, khong theo chu cai).</summary>
-    public static void SetVolumeLabel(int diskNumber, int partitionNumber, string label)
+    /// <summary>MSFT_Disk.CreatePartition dung offset + kich thuoc, loai du lieu co ban, khong gan chu cai (gan sau khi dinh dang).</summary>
+    public static void CreateDataPartition(int diskNumber, long offset, long size, PartitionStyle style)
+    {
+        using var disk = Query(Inv($"SELECT * FROM MSFT_Disk WHERE Number = {diskNumber}")).SingleOrDefault()
+            ?? throw new DiskOperationException($"Không tìm thấy đĩa {diskNumber}.");
+        using var input = disk.GetMethodParameters("CreatePartition");
+        input["Offset"] = checked((ulong)offset);
+        input["Size"] = checked((ulong)size);
+        input["AssignDriveLetter"] = false;
+        if (style == PartitionStyle.Gpt)
+            input["GptType"] = "{" + PartitionTypes.BasicData.ToString() + "}";
+        else
+            input["MbrType"] = (ushort)PartitionTypes.MbrIfs;
+        EnsureSuccess(disk.InvokeMethod("CreatePartition", input, null), "CreatePartition");
+    }
+
+    /// <summary>MSFT_Volume.Format (nhanh) tren volume cua phan vung, roi AddAccessPath chu cai.</summary>
+    public static void FormatVolume(int diskNumber, int partitionNumber, string fileSystem, string label, char? driveLetter)
+    {
+        // Volume cua phan vung vua tao co the xuat hien tre vai giay sau CreatePartition.
+        for (var attempt = 0; ; attempt++)
+        {
+            var volume = FindVolume(diskNumber, partitionNumber);
+            if (volume is not null)
+            {
+                using (volume)
+                {
+                    using var input = volume.GetMethodParameters("Format");
+                    input["FileSystem"] = fileSystem;
+                    input["FileSystemLabel"] = label;
+                    input["Full"] = false;
+                    EnsureSuccess(volume.InvokeMethod("Format", input, null), "Format");
+                }
+                break;
+            }
+            if (attempt >= 20)
+                throw new DiskOperationException($"Không thấy volume của phân vùng {partitionNumber} trên đĩa {diskNumber} để định dạng.");
+            Thread.Sleep(500);
+        }
+        if (driveLetter is { } letter)
+            InvokeAccessPath(diskNumber, partitionNumber, "AddAccessPath", letter);
+    }
+
+    private static ManagementObject? FindVolume(int diskNumber, int partitionNumber)
     {
         string[] accessPaths;
         using (var partition = Partition(diskNumber, partitionNumber))
             accessPaths = partition["AccessPaths"] as string[] ?? [];
         var volumes = Query("SELECT * FROM MSFT_Volume");
-        try
-        {
-            var volume = volumes.FirstOrDefault(v => v["Path"] is string path && accessPaths.Contains(path, StringComparer.OrdinalIgnoreCase))
-                ?? throw new DiskOperationException($"Không tìm thấy volume của phân vùng {partitionNumber} trên đĩa {diskNumber}.");
-            using var input = volume.GetMethodParameters("SetFileSystemLabel");
-            input["FileSystemLabel"] = label;
-            EnsureSuccess(volume.InvokeMethod("SetFileSystemLabel", input, null), "SetFileSystemLabel");
-        }
-        finally
-        {
-            volumes.ForEach(v => v.Dispose());
-        }
+        var match = volumes.FirstOrDefault(v => v["Path"] is string path && accessPaths.Contains(path, StringComparer.OrdinalIgnoreCase));
+        foreach (var other in volumes.Where(v => !ReferenceEquals(v, match)))
+            other.Dispose();
+        return match;
+    }
+
+    /// <summary>MSFT_Volume.SetFileSystemLabel tren volume nam tren phan vung (tim theo AccessPaths, khong theo chu cai).</summary>
+    public static void SetVolumeLabel(int diskNumber, int partitionNumber, string label)
+    {
+        using var volume = FindVolume(diskNumber, partitionNumber)
+            ?? throw new DiskOperationException($"Không tìm thấy volume của phân vùng {partitionNumber} trên đĩa {diskNumber}.");
+        using var input = volume.GetMethodParameters("SetFileSystemLabel");
+        input["FileSystemLabel"] = label;
+        EnsureSuccess(volume.InvokeMethod("SetFileSystemLabel", input, null), "SetFileSystemLabel");
     }
 
     /// <summary>MSFT_Volume.Repair voi Scan=true: quet truc tuyen, chi doc. Output 0 = NoErrorsFound.</summary>

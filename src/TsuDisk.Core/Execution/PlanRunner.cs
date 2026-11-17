@@ -191,6 +191,40 @@ public sealed class PlanRunner(IDiskBackend backend, IJournalStore store, TimePr
                     throw new DiskOperationException($"Sau khi đổi, ổ mang chữ cái {now.DriveLetter}: thay vì {next}:.");
                 return null;
             }
+            case StepKind.CreatePartition:
+            {
+                var offset = step.Offset!.Value;
+                var size = step.Size!.Value;
+                if (backend.ReadLayout(disk).Partitions.Any(p => p.Offset < offset + size && p.End > offset))
+                    throw new DiskOperationException($"Vùng từ offset {offset} không còn trống - bố cục đã đổi, dừng.");
+                // Dang ky TRUOC khi tao: lenh tao loi giua chung van co the de lai phan vung do dang.
+                compensations.Add(new Compensation("delete-new", $"Xóa phân vùng vừa tạo tại offset {offset}",
+                    () => DeleteCreated(disk, plan, step)));
+                backend.CreateDataPartition(disk, offset, size, plan.Before.Disk.Style);
+                var created = backend.ReadLayout(disk).FindByOffset(offset)
+                    ?? throw new DiskOperationException($"Không thấy phân vùng mới tại offset {offset}.");
+                if (created.Kind != PartitionKind.BasicData || Math.Abs(created.Size - size) > SafetyGuard.SizeTolerance)
+                    throw new DiskOperationException($"Phân vùng mới không đúng loại/kích thước ({Units.Format(created.Size)}).");
+                return $"Phân vùng {created.PartitionNumber}, {Units.Format(created.Size)}";
+            }
+            case StepKind.FormatVolume:
+            {
+                var target = RequirePartition(disk, step.Offset!.Value, null);
+                if (plan.Before.FindByOffset(target.Offset) is not null)
+                    throw new DiskOperationException("Phân vùng này có từ trước kế hoạch - cấm định dạng.");
+                if (target.FileSystem is not (null or "RAW"))
+                {
+                    throw new DiskOperationException($"Phân vùng mới hiện ra hệ tệp {target.FileSystem} - vùng trống này có thể còn dữ liệu của " +
+                        "một phân vùng đã xóa trước đây. KHÔNG định dạng; phân vùng sẽ được gỡ để giữ nguyên dữ liệu đó (khôi phục bằng TestDisk nếu cần).");
+                }
+                if (step.NewDriveLetter is { } wanted && backend.DriveLettersInUse().Contains(wanted))
+                    throw new DiskOperationException($"Chữ cái {wanted}: vừa bị chiếm kể từ lúc lập kế hoạch - dừng.");
+                backend.FormatVolume(disk, target.PartitionNumber, step.FileSystem!, step.NewLabel ?? "", step.NewDriveLetter);
+                var now = RequirePartition(disk, target.Offset, null);
+                if (!string.Equals(now.FileSystem, step.FileSystem, StringComparison.OrdinalIgnoreCase) || now.DriveLetter != step.NewDriveLetter)
+                    throw new DiskOperationException($"Sau khi định dạng: hệ tệp {now.FileSystem ?? "RAW"}, chữ cái {now.DriveLetter} - không như kế hoạch.");
+                return $"{now.FileSystem}, {now.DriveLetter}:";
+            }
             case StepKind.VerifyLayout:
             {
                 var violations = SafetyGuard.CheckActual(plan, backend.ReadLayout(disk));
@@ -210,6 +244,19 @@ public sealed class PlanRunner(IDiskBackend backend, IJournalStore store, TimePr
         if (expectedNumber is { } n && found.PartitionNumber != n)
             throw new DiskOperationException($"Phân vùng tại offset {offset} mang số {found.PartitionNumber}, kế hoạch ghi {n} - dừng.");
         return found;
+    }
+
+    /// <summary>Buoc bu cua CreatePartition: chi xoa khi chac chan la phan vung vua tao; khong co gi tai offset thi thoi.</summary>
+    private void DeleteCreated(int disk, Plan plan, PlanStep step)
+    {
+        var offset = step.Offset!.Value;
+        var found = backend.ReadLayout(disk).FindByOffset(offset);
+        if (found is null)
+            return;
+        if (plan.Before.FindByOffset(offset) is not null || found.Kind != PartitionKind.BasicData
+            || Math.Abs(found.Size - step.Size!.Value) > SafetyGuard.SizeTolerance)
+            throw new DiskOperationException($"Phân vùng tại offset {offset} không khớp phân vùng vừa tạo - KHÔNG xóa.");
+        backend.DeletePartition(disk, found.PartitionNumber);
     }
 
     /// <summary>Doi chu cai/nhan: phan vung tai offset phai con dung chu cai, dung kich thuoc, dung loai nhu ke hoach.</summary>

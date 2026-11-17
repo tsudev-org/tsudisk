@@ -195,6 +195,8 @@ public class WinReGrowTests
         public IReadOnlySet<char> DriveLettersInUse() => inner.DriveLettersInUse();
         public void SetDriveLetter(int diskNumber, int partitionNumber, char? oldLetter, char newLetter) => inner.SetDriveLetter(diskNumber, partitionNumber, oldLetter, newLetter);
         public void SetVolumeLabel(int diskNumber, int partitionNumber, string label) => inner.SetVolumeLabel(diskNumber, partitionNumber, label);
+        public void CreateDataPartition(int diskNumber, long offset, long size, PartitionStyle style) => inner.CreateDataPartition(diskNumber, offset, size, style);
+        public void FormatVolume(int diskNumber, int partitionNumber, string fileSystem, string label, char? driveLetter) => inner.FormatVolume(diskNumber, partitionNumber, fileSystem, label, driveLetter);
 
         public void CreateRecoveryPartition(int diskNumber, long offset, long? size, PartitionStyle style)
         {

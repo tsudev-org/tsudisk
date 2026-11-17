@@ -50,6 +50,12 @@ public static class RecoveryAdvisor
                 $"`tsudisk danh-sach`: nếu phân vùng {letterStep.PartitionNumber} không có chữ cái, mở Disk Management -> " +
                 $"Change Drive Letter and Paths -> Add {letterStep.DriveLetter}:. Dữ liệu không bị ảnh hưởng.");
         }
+        var createStep = journal.Plan.Steps.FirstOrDefault(s => s.Kind == StepKind.CreatePartition);
+        if (createStep is not null && (Done(StepKind.CreatePartition) || Unfinished(StepKind.CreatePartition)) && !Done(StepKind.FormatVolume))
+        {
+            advice.Add($"Có thể còn một phân vùng mới chưa định dạng (RAW) tại offset {createStep.Offset}. Chạy `tsudisk danh-sach`; " +
+                "nếu có, xóa nó trong Disk Management (Delete Volume) rồi lập lại kế hoạch. Phân vùng có sẵn không bị ảnh hưởng.");
+        }
         if (advice.Count == 0)
             advice.Add("Không phát hiện bước dở dang nào làm đĩa ở trạng thái thiếu. Chạy `tsudisk danh-sach` để xác nhận bố cục.");
         advice.Add("Dữ liệu trên các phân vùng khác KHÔNG bị chạm: TsuDisk chỉ thay đổi phân vùng Recovery và ổ đích.");

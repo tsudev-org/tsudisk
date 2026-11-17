@@ -61,6 +61,12 @@ public interface IDiskBackend
 
     /// <summary>Doi nhan he thong tep cua volume nam tren phan vung; chuoi rong = xoa nhan.</summary>
     void SetVolumeLabel(int diskNumber, int partitionNumber, string label);
+
+    /// <summary>Tao phan vung du lieu co ban (GPT basic data / MBR 0x07), dung offset + kich thuoc, KHONG gan chu cai.</summary>
+    void CreateDataPartition(int diskNumber, long offset, long size, PartitionStyle style);
+
+    /// <summary>Dinh dang nhanh volume tren phan vung roi gan chu cai (neu co). Chi goi tren phan vung vua tao, con RAW.</summary>
+    void FormatVolume(int diskNumber, int partitionNumber, string fileSystem, string label, char? driveLetter);
 }
 
 public sealed class DiskOperationException : Exception

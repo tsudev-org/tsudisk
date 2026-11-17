@@ -33,7 +33,8 @@ TsuDisk **không sao chép mã** của dự án GPL nào (Apache-2.0 không tư�
 ### Giai đoạn 2 - Giao diện và thao tác rủi ro thấp
 
 Đã xong ở 26.11.1602: kiểm tra sức khỏe ổ (chặn ghi khi hỏng), kiểm tra toàn vẹn GPT đọc thô, sao lưu sector GPT thô.
-Đã xong ở 26.11.1702: đổi chữ cái, nhãn ổ (`doi-ten`).
+Đã xong ở 26.11.1702: đổi chữ cái, nhãn ổ (`doi-ten`). Đã xong ở 26.11.1703: tạo + định dạng phân vùng trong vùng
+trống (`tao-phan-vung`).
 
 | Tính năng | Rủi ro | Ghi chú |
 | --- | --- | --- |
@@ -43,7 +44,7 @@ TsuDisk **không sao chép mã** của dự án GPL nào (Apache-2.0 không tư�
 | ~~Sức khỏe ổ: S.M.A.R.T./`MSFT_StorageReliabilityCounter`~~ ĐÃ XONG | Thấp | Chặn ghi khi ổ báo lỗi |
 | ~~Đổi chữ cái ổ, nhãn ổ~~ ĐÃ XONG ở 26.11.1702 | Thấp | `doi-ten`: Storage API `AddAccessPath`/`RemoveAccessPath`, `SetFileSystemLabel` |
 | Thu nhỏ ổ NTFS (`GetSupportedSize` min) | Vừa | Kiểm hệ thống tệp, chống phân mảnh không dời được |
-| Tạo/định dạng phân vùng dữ liệu trong vùng trống | Vừa | Chỉ trong vùng trống, không chạm phân vùng có sẵn |
+| ~~Tạo/định dạng phân vùng dữ liệu trong vùng trống~~ ĐÃ XONG ở 26.11.1703 | Vừa | `tao-phan-vung`: chỉ trong vùng trống, chỉ định dạng phân vùng vừa tạo còn RAW |
 | Xóa phân vùng dữ liệu | Vừa | Xác nhận gõ tên nhãn + chữ cái; sao lưu bảng trước |
 | Kiểm tra `mbr2gpt /validate` và chuyển MBR sang GPT | Vừa | Bọc công cụ chính thức, chỉ đĩa hệ thống |
 

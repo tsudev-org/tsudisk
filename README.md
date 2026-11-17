@@ -42,13 +42,15 @@ tsudisk ke-hoach-winre            # Kế hoạch nới rộng Recovery khi Windo
 tsudisk mo-rong-winre             # Thực hiện (Admin), gõ WINRE để xác nhận
 tsudisk ke-hoach-doi-ten E: --chu-cai F --nhan "Dữ liệu"   # Kế hoạch đổi chữ cái và/hoặc nhãn ổ, KHÔNG thay đổi gì
 tsudisk doi-ten E: --chu-cai F --nhan "Dữ liệu"            # Thực hiện (Admin), gõ lại chữ cái ổ cũ để xác nhận
+tsudisk ke-hoach-tao-phan-vung --dia 0 --vung 1 --nhan "Kho"  # Kế hoạch tạo + định dạng ổ mới trong vùng trống
+tsudisk tao-phan-vung --dia 0 --vung 1 --nhan "Kho"           # Thực hiện (Admin), gõ TAO để xác nhận
 tsudisk nhat-ky                   # Xem lần chạy gần nhất và việc cần làm nếu bị đứt giữa chừng
 tsudisk suc-khoe                  # Sức khỏe ổ: trạng thái, nhiệt độ, độ mòn, lỗi đọc/ghi (S.M.A.R.T.)
 tsudisk kiem-tra-gpt              # Kiểm tra toàn vẹn bảng GPT trên đĩa (Admin)
 tsudisk sao-luu                   # Sao lưu sector GPT thô + bố cục + SHA-256 (Admin)
 ```
 
-Tùy chọn của `ke-hoach` / `mo-rong` / `doi-ten`:
+Tùy chọn của `ke-hoach` / `mo-rong` / `doi-ten` / `tao-phan-vung`:
 
 | Tùy chọn | Ý nghĩa |
 | --- | --- |
@@ -58,12 +60,15 @@ Tùy chọn của `ke-hoach` / `mo-rong` / `doi-ten`:
 | `--recovery tao-lai-rong` | Cho phép xóa và tạo lại **rỗng** một Recovery không chứa WinRE đang dùng |
 | `--chu-cai Y` | (`doi-ten`) chữ cái mới, C-Z, chưa được dùng ở đâu; không đổi được chữ cái ổ Windows |
 | `--nhan TÊN` | (`doi-ten`) nhãn mới: NTFS/exFAT tối đa 32 ký tự, FAT32 tối đa 11 ký tự không dấu; `--nhan=` để xóa nhãn |
+| `--vung K` | (`tao-phan-vung`) vùng trống thứ K trên đĩa (đĩa có nhiều vùng trống thì bắt buộc; kế hoạch bị từ chối sẽ liệt kê các vùng) |
+| `--kich-thuoc-mb N` | (`tao-phan-vung`) kích thước ổ mới, mặc định chiếm hết vùng trống; tối thiểu 64 MB |
+| `--he-tep NTFS\|exFAT\|FAT32` | (`tao-phan-vung`) mặc định NTFS; FAT32 tối đa 32 GB. Chữ cái mặc định là chữ trống đầu tiên từ D |
 | `--chi-o-ao` | Chỉ thao tác trên ổ ảo VHD/VHDX (kiểm thử) |
 | `--dia N` | (`danh-sach`, `phan-tich`) chỉ xem đĩa số N |
 | `--thu-muc-nhat-ky DIR` | Nơi lưu nhật ký, mặc định `%ProgramData%\TsuDisk\nhat-ky` |
 | `--json` | In kế hoạch hoặc bố cục dạng JSON để tích hợp |
 
-Bí danh tiếng Anh: `list`, `analyze`, `plan`, `extend`, `plan-winre`, `grow-winre`, `plan-rename`, `rename`, `journal`, `health`, `verify-gpt`, `backup`, `--dry-run`, `--yes`, `--disk`, `--virtual-only`, `--letter`, `--label`.
+Bí danh tiếng Anh: `list`, `analyze`, `plan`, `extend`, `plan-winre`, `grow-winre`, `plan-rename`, `rename`, `plan-create`, `create`, `journal`, `health`, `verify-gpt`, `backup`, `--dry-run`, `--yes`, `--disk`, `--virtual-only`, `--letter`, `--label`, `--extent`, `--size-mb`, `--fs`.
 
 ### Mã thoát
 

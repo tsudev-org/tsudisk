@@ -2,6 +2,14 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
+## [26.11.1703] - 17/11/2026
+
+- Lệnh `ke-hoach-tao-phan-vung`, `tao-phan-vung`: tạo và định dạng nhanh một ổ dữ liệu mới (NTFS, exFAT, FAT32) trong
+  vùng trống, gán nhãn (nhận tiếng Việt có dấu với NTFS/exFAT) và chữ cái. Phải chỉ rõ đĩa (`--dia`); đĩa có nhiều vùng
+  trống thì chọn bằng `--vung`. Ổ mới nằm trọn trong vùng trống, không chạm phân vùng có sẵn; chỉ định dạng phân vùng
+  vừa tạo và còn RAW - nếu vùng trống còn dấu hệ tệp của một phân vùng đã xóa trước đây, TsuDisk không định dạng đè mà
+  gỡ phân vùng vừa tạo để giữ dữ liệu cũ. Lỗi giữa chừng thì xóa đúng phân vùng vừa tạo.
+
 ## [26.11.1702] - 17/11/2026
 
 - Lệnh `ke-hoach-doi-ten`, `doi-ten`: đổi chữ cái và/hoặc nhãn ổ dữ liệu (`--chu-cai F --nhan "Dữ liệu"`, `--nhan=` để

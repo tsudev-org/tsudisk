@@ -49,6 +49,7 @@ function Get-Layout([int]$DiskNumber) { Get-Partition -DiskNumber $DiskNumber | 
 
 $RecoveryGuid = '{de94bba4-06d1-4d40-a16a-bfd50179d6ac}'
 $disk = $null
+$Vhd2 = $null
 try {
     Write-Host "=== Dung o ao $Vhd ==="
     Invoke-Diskpart @(
@@ -191,6 +192,55 @@ try {
     $r = Invoke-TsuDisk @('doi-ten', "${NewLetter}:", '--nhan=', '--chi-o-ao', '--dong-y', '--thu-muc-nhat-ky', $Logs)
     Assert-True ($r.Code -eq 0 -and [string]::IsNullOrEmpty((Get-Volume -DriveLetter $NewLetter).FileSystemLabel)) 'xoa nhan thanh cong'
 
+    Write-Host "`n=== Ca 11: tao + dinh dang phan vung trong vung trong (o ao thu hai) ==="
+    $Vhd2 = Join-Path $WorkDir 'e2e-tao.vhdx'
+    Invoke-Diskpart @(
+        "create vdisk file=`"$Vhd2`" maximum=1024 type=expandable",
+        "select vdisk file=`"$Vhd2`"",
+        "attach vdisk",
+        "convert gpt",
+        "create partition primary size=200",
+        "format quick fs=ntfs label=KEEP",
+        "assign"
+    ) | Out-Null
+    $disk2 = Get-DiskImage -ImagePath $Vhd2 | Get-Disk
+    $keep = Get-Partition -DiskNumber $disk2.Number | Where-Object DriveLetter
+    $keepSentinel = Join-Path "$($keep.DriveLetter):\" 'keep.bin'
+    [IO.File]::WriteAllBytes($keepSentinel, $bytes)
+    $keepHash = (Get-FileHash $keepSentinel -Algorithm SHA256).Hash
+    $n2 = "$($disk2.Number)"
+    $r = Invoke-TsuDisk @('ke-hoach-tao-phan-vung', '--chi-o-ao')
+    Assert-True ($r.Code -eq 2) 'thieu --dia -> sai cu phap (exit 2), khong tu doan dia'
+    $sysDisk = (Get-Disk | Where-Object IsSystem | Select-Object -First 1).Number
+    if ($null -ne $sysDisk) {
+        $r = Invoke-TsuDisk @('ke-hoach-tao-phan-vung', '--dia', "$sysDisk", '--chi-o-ao')
+        Assert-True ($r.Code -eq 1) 'chi-o-ao tu choi dia he thong that'
+    }
+    $r = Invoke-TsuDisk @('ke-hoach-tao-phan-vung', '--dia', $n2, '--chi-o-ao')
+    Assert-True ($r.Code -eq 0) 'ke-hoach-tao-phan-vung lap duoc ke hoach'
+    $label2 = 'K' + [char]0x1EF3 + ' ni' + [char]0x1EC7 + 'm'
+    $r = Invoke-TsuDisk @('tao-phan-vung', '--dia', $n2, '--kich-thuoc-mb', '300', '--he-tep', 'exFAT', '--nhan', $label2, '--chi-o-ao', '--dong-y', '--thu-muc-nhat-ky', $Logs)
+    Assert-True ($r.Code -eq 0) 'tao-phan-vung exFAT 300 MB thanh cong (exit 0)'
+    $new = Get-Partition -DiskNumber $disk2.Number | Where-Object { $_.Offset -gt $keep.Offset } | Sort-Object Offset | Select-Object -First 1
+    Assert-True ($null -ne $new -and $new.Size -eq 300MB -and $new.DriveLetter) "phan vung moi 300 MB co chu cai ($($new.DriveLetter):)"
+    Assert-True ($new.Offset -eq $keep.Offset + $keep.Size) 'phan vung moi bat dau ngay sau KEEP'
+    $vol = Get-Volume -DriveLetter $new.DriveLetter
+    Assert-True ($vol.FileSystem -eq 'exFAT' -and $vol.FileSystemLabel -eq $label2) 'he tep exFAT, nhan Unicode dung'
+    $probe = Join-Path "$($new.DriveLetter):\" 'probe.bin'
+    [IO.File]::WriteAllBytes($probe, $bytes)
+    Assert-True ((Get-FileHash $probe -Algorithm SHA256).Hash -eq $keepHash) 'ghi/doc duoc tren phan vung moi'
+    $keepAfter = Get-Partition -DiskNumber $disk2.Number | Where-Object Offset -eq $keep.Offset
+    Assert-True ($keepAfter.Size -eq $keep.Size) 'KEEP giu nguyen vi tri va kich thuoc'
+    Assert-True ((Get-FileHash $keepSentinel -Algorithm SHA256).Hash -eq $keepHash) 'Du lieu KEEP nguyen ven'
+    $r = Invoke-TsuDisk @('tao-phan-vung', '--dia', $n2, '--nhan', 'REST', '--chi-o-ao', '--dong-y', '--thu-muc-nhat-ky', $Logs)
+    Assert-True ($r.Code -eq 0) 'tao-phan-vung NTFS chiem phan con lai thanh cong'
+    $rest = Get-Partition -DiskNumber $disk2.Number | Sort-Object Offset | Select-Object -Last 1
+    Assert-True ($rest.DriveLetter -and (Get-Volume -DriveLetter $rest.DriveLetter).FileSystem -eq 'NTFS') 'phan vung cuoi NTFS co chu cai'
+    $r = Invoke-TsuDisk @('ke-hoach-tao-phan-vung', '--dia', $n2, '--chi-o-ao')
+    Assert-True ($r.Code -eq 1 -and $r.Output -match 'NothingToGain') 'het vung trong -> tu choi NothingToGain'
+    $r = Invoke-TsuDisk @('kiem-tra-gpt', '--dia', $n2)
+    Assert-True ($r.Code -eq 0) 'GPT o ao thu hai toan ven sau khi tao phan vung'
+
     Write-Host "`n=== Ca 7: doc nhat ky ==="
     $first = (Get-ChildItem $Logs -Recurse -Filter journal.json | Sort-Object FullName | Select-Object -First 1).FullName
     $r = Invoke-TsuDisk @('nhat-ky', $first)
@@ -198,6 +248,7 @@ try {
 }
 finally {
     Write-Host "`n=== Don dep ==="
+    if ($Vhd2) { try { Invoke-Diskpart @("select vdisk file=`"$Vhd2`"", 'detach vdisk') | Out-Null } catch { Write-Host "detach 2: $_" } }
     try { Invoke-Diskpart @("select vdisk file=`"$Vhd`"", 'detach vdisk') | Out-Null } catch { Write-Host "detach: $_" }
     Remove-Item -Recurse -Force $WorkDir -ErrorAction SilentlyContinue
 }

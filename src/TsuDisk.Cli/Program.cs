@@ -24,6 +24,8 @@ try
         "mo-rong-winre" => Commands.GrowWinRe(cli, planOnly: false),
         "ke-hoach-doi-ten" => Commands.Rename(cli, planOnly: true),
         "doi-ten" => Commands.Rename(cli, planOnly: false),
+        "ke-hoach-tao-phan-vung" => Commands.CreatePartition(cli, planOnly: true),
+        "tao-phan-vung" => Commands.CreatePartition(cli, planOnly: false),
         "nhat-ky" => Commands.Journal(cli),
         "winre" => Commands.WinRe(),
         "suc-khoe" => Commands.Health(cli),
@@ -141,6 +143,22 @@ internal static partial class Commands
         return ShowAndRun(cli, RenamePlanner.Plan(layout, Backend.DriveLettersInUse(), request), planOnly, letter.ToString());
     }
 
+    public static int CreatePartition(CliArgs cli, bool planOnly)
+    {
+        var diskNumber = cli.IntValue("dia")
+            ?? throw new UsageException("Cần chỉ rõ đĩa bằng --dia N (xem số đĩa bằng tsudisk danh-sach) - TsuDisk không tự đoán đĩa để tạo phân vùng.");
+        var request = new CreatePartitionRequest
+        {
+            ExtentIndex = cli.IntValue("vung"),
+            Size = cli.IntValue("kich-thuoc-mb") is { } mb ? mb * Units.MiB : null,
+            FileSystem = cli.Value("he-tep") ?? "NTFS",
+            Label = cli.Value("nhan") ?? "",
+            Letter = cli.Value("chu-cai") is { } letter ? CliArgs.ParseDriveLetter(letter) : null,
+            VirtualDiskOnly = cli.Has("chi-o-ao"),
+        };
+        return ShowAndRun(cli, CreatePartitionPlanner.Plan(Backend.ReadLayout(diskNumber), Backend.DriveLettersInUse(), request), planOnly, "TAO");
+    }
+
     /// <summary>Luong chung: in ke hoach (hoac ly do tu choi), xac nhan bang mot tu khoa, chay, bao cao, ma thoat.</summary>
     private static int ShowAndRun(CliArgs cli, PlanResult result, bool planOnly, string confirmWord)
     {
@@ -251,6 +269,9 @@ internal static partial class Commands
               tsudisk mo-rong-winre [tùy chọn]            Thực hiện nới rộng Recovery; gõ WINRE để xác nhận (cần quyền quản trị)
               tsudisk ke-hoach-doi-ten <X:> [--chu-cai Y] [--nhan TÊN]  Kế hoạch đổi chữ cái và/hoặc nhãn ổ dữ liệu, KHÔNG thay đổi gì
               tsudisk doi-ten <X:> [--chu-cai Y] [--nhan TÊN]  Thực hiện đổi (cần quyền quản trị); --nhan "" để xóa nhãn
+              tsudisk ke-hoach-tao-phan-vung --dia N [--vung K] [--kich-thuoc-mb M] [--he-tep NTFS|exFAT|FAT32] [--nhan TÊN] [--chu-cai Y]
+                                                          Kế hoạch tạo + định dạng phân vùng dữ liệu trong vùng trống, KHÔNG thay đổi gì
+              tsudisk tao-phan-vung --dia N [như trên]    Thực hiện (cần quyền quản trị); gõ TAO để xác nhận
               tsudisk nhat-ky [tệp journal.json]          Xem lần chạy gần nhất và việc cần làm nếu bị đứt giữa chừng
               tsudisk winre                               Trạng thái Windows Recovery Environment
               tsudisk suc-khoe [--dia N] [--json]         Sức khỏe ổ: trạng thái, nhiệt độ, độ mòn, lỗi đọc/ghi (S.M.A.R.T.)
@@ -258,7 +279,7 @@ internal static partial class Commands
               tsudisk sao-luu [--dia N] [--thu-muc-nhat-ky DIR]  Sao lưu sector GPT thô + bố cục + SHA-256 - quản trị
               tsudisk phien-ban | tro-giup
 
-            Tùy chọn cho ke-hoach / mo-rong / doi-ten:
+            Tùy chọn cho ke-hoach / mo-rong / doi-ten / tao-phan-vung:
               --chay-thu                 Chỉ chạy các bước không ghi đĩa (quét, sao lưu) để kiểm tra
               --dong-y                   Không hỏi xác nhận (dùng trong kịch bản tự động)
               --recovery-mb N            Kích thước Recovery mới (512-4096; mo-rong mặc định 1024, mo-rong-winre mặc định đủ 250 MB trống)
@@ -266,7 +287,7 @@ internal static partial class Commands
               --chi-o-ao                 Chỉ cho phép thao tác trên ổ ảo VHD/VHDX (kiểm thử)
               --thu-muc-nhat-ky DIR      Nơi lưu nhật ký và bản sao lưu (mặc định %ProgramData%\TsuDisk\nhat-ky)
 
-            Bí danh tiếng Anh: list, analyze, plan, extend, plan-winre, grow-winre, plan-rename, rename, journal, health, verify-gpt, backup, version, help; --dry-run, --yes, --disk, --virtual-only, --log-dir, --letter, --label.
+            Bí danh tiếng Anh: list, analyze, plan, extend, plan-winre, grow-winre, plan-rename, rename, plan-create, create, journal, health, verify-gpt, backup, version, help; --dry-run, --yes, --disk, --virtual-only, --log-dir, --letter, --label, --extent, --size-mb, --fs.
             Mã thoát: 0 xong, 1 từ chối/lỗi, 2 sai cú pháp, 3 thiếu quyền quản trị, 4 thất bại đã hoàn tác, 5 cần xử lý.
             """);
         return ExitCodes.Ok;

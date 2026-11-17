@@ -67,6 +67,36 @@ public static class LayoutSimulator
                     partitions[index] = partitions[index] with { Label = string.IsNullOrEmpty(step.NewLabel) ? null : step.NewLabel };
                     break;
                 }
+                case StepKind.CreatePartition:
+                {
+                    var gpt = layout.Disk.Style == PartitionStyle.Gpt;
+                    var used = partitions.Select(p => p.PartitionNumber).ToHashSet();
+                    partitions.Add(new PartitionInfo(
+                        DiskNumber: layout.Disk.Number,
+                        PartitionNumber: Enumerable.Range(1, 128).First(n => !used.Contains(n)),
+                        Offset: step.Offset!.Value,
+                        Size: step.Size!.Value,
+                        GptType: gpt ? PartitionTypes.BasicData : null,
+                        MbrType: gpt ? null : PartitionTypes.MbrIfs,
+                        DriveLetter: null,
+                        IsSystem: false,
+                        IsBoot: false,
+                        FileSystem: null,
+                        Label: null,
+                        FreeBytes: null));
+                    break;
+                }
+                case StepKind.FormatVolume:
+                {
+                    var index = partitions.FindIndex(p => p.Offset == step.Offset);
+                    partitions[index] = partitions[index] with
+                    {
+                        FileSystem = step.FileSystem,
+                        Label = string.IsNullOrEmpty(step.NewLabel) ? null : step.NewLabel,
+                        DriveLetter = step.NewDriveLetter,
+                    };
+                    break;
+                }
                 default:
                     throw new InvalidOperationException($"Bước {step.Kind} được đánh dấu thay đổi đĩa nhưng mô phỏng không hỗ trợ.");
             }

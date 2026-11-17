@@ -136,6 +136,38 @@ internal sealed class FakeBackend(DiskLayout initial, WinReStatus winRe) : IDisk
         };
     }
 
+    /// <summary>Lenh tao tao xong phan vung roi moi bao loi (gia lap loi giua chung).</summary>
+    public bool FailAfterCreate { get; set; }
+
+    /// <summary>Phan vung moi "hien ra" he tep cu (vung trong con boot sector cua phan vung da xoa).</summary>
+    public string? RevealedFileSystem { get; set; }
+
+    public void CreateDataPartition(int diskNumber, long offset, long size, PartitionStyle style)
+    {
+        Enter("create-partition");
+        if (Layout.Partitions.Any(p => p.Offset < offset + size && p.End > offset))
+            throw new DiskOperationException("Vùng đích không trống.");
+        var used = Layout.Partitions.Select(p => p.PartitionNumber).ToHashSet();
+        var number = Enumerable.Range(1, 128).First(n => !used.Contains(n));
+        var gpt = style == PartitionStyle.Gpt;
+        var created = new PartitionInfo(diskNumber, number, offset, size, gpt ? PartitionTypes.BasicData : null, gpt ? null : PartitionTypes.MbrIfs,
+            null, false, false, RevealedFileSystem, null, null);
+        Layout = Layout with { Partitions = [.. Layout.Partitions, created] };
+        if (FailAfterCreate)
+            throw new DiskOperationException("Lỗi tiêm vào: sau khi tạo");
+    }
+
+    public void FormatVolume(int diskNumber, int partitionNumber, string fileSystem, string label, char? driveLetter)
+    {
+        Enter("format");
+        Layout = Layout with
+        {
+            Partitions = [.. Layout.Partitions.Select(p => p.PartitionNumber == partitionNumber
+                ? p with { FileSystem = fileSystem, Label = label.Length == 0 ? null : label, DriveLetter = driveLetter }
+                : p)],
+        };
+    }
+
     public void SetVolumeLabel(int diskNumber, int partitionNumber, string label)
     {
         Enter("set-label");

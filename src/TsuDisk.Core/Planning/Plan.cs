@@ -29,6 +29,10 @@ public enum StepKind
     SetDriveLetter,
     /// <summary>Doi nhan he thong tep (MSFT_Volume.SetFileSystemLabel). Khong doi hinh hoc phan vung.</summary>
     SetVolumeLabel,
+    /// <summary>Tao phan vung du lieu (RAW, chua chu cai) CHI trong vung trong cua bo cuc luc lap ke hoach.</summary>
+    CreatePartition,
+    /// <summary>Dinh dang nhanh + gan nhan/chu cai - CHI phan vung vua tao trong cung ke hoach, va chi khi con RAW.</summary>
+    FormatVolume,
 }
 
 /// <summary>Mot buoc cua ke hoach. Cac truong tham so la tuy chon, tuy loai buoc.</summary>
@@ -42,7 +46,8 @@ public sealed record PlanStep(
     long? Size = null,
     char? DriveLetter = null,
     char? NewDriveLetter = null,
-    string? NewLabel = null)
+    string? NewLabel = null,
+    string? FileSystem = null)
 {
     /// <summary>Buoc chi doi sieu du lieu cua o (chu cai, nhan): phan vung van phai giu nguyen offset/kich thuoc/loai.</summary>
     public bool IsMetadataOnly => Kind is StepKind.SetDriveLetter or StepKind.SetVolumeLabel;
