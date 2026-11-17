@@ -125,9 +125,10 @@ public class Mbr2GptTests
     public void New_log_lines_keep_only_appended_mbr2gpt_lines()
     {
         const string before = "old MBR2GPT: stale\r\n";
-        var after = before + "Info Other: noise\r\nInfo MBR2GPT: Attempting to validate disk 1\r\nError MBR2GPT: Cannot find OS partition(s) for disk 1\r\n";
-        Assert.Equal(["Info MBR2GPT: Attempting to validate disk 1", "Error MBR2GPT: Cannot find OS partition(s) for disk 1"],
+        var after = before + "Info Other: noise\r\nInfo MBR2GPT: Attempting to validate disk 1\r\n\r\nError    Cannot find OS partition(s) for disk 1\r\n";
+        Assert.Equal(["Info MBR2GPT: Attempting to validate disk 1", "Error    Cannot find OS partition(s) for disk 1"],
             Mbr2GptCheck.NewLogLines(before, after));
+        Assert.Empty(Mbr2GptCheck.NewLogLines(before, before + "Info Other: noise\r\n"));
         // Tep bi xoay vong (noi dung moi khong bat dau bang noi dung cu): lay toan bo, cat con maxLines dong cuoi.
         var rotated = string.Join("\n", Enumerable.Range(0, 50).Select(i => $"MBR2GPT: {i}"));
         var lines = Mbr2GptCheck.NewLogLines(before, rotated, maxLines: 10);

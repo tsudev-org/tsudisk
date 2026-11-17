@@ -142,14 +142,17 @@ public static class Mbr2GptCheck
 
     /// <summary>
     /// Phan setupact.log do lan chay nay ghi them: phan sau noi dung cu neu tep chi bi noi them, nguoc lai (tep bi
-    /// xoay vong) lay toan bo noi dung moi. Chi giu dong lien quan MBR2GPT, toi da <paramref name="maxLines"/> dong cuoi.
+    /// xoay vong) lay toan bo noi dung moi. Bat dau tu dong dau tien nhac MBR2GPT va giu MOI dong sau do: dong ly do
+    /// tu choi (Error ...) khong phai luc nao cung co tien to MBR2GPT (CI 17/11/2026 da bo sot). Toi da
+    /// <paramref name="maxLines"/> dong cuoi.
     /// </summary>
     public static IReadOnlyList<string> NewLogLines(string before, string after, int maxLines = 40)
     {
         var added = after.StartsWith(before, StringComparison.Ordinal) ? after[before.Length..] : after;
         var lines = added.Split('\n')
             .Select(l => l.TrimEnd('\r', '\0'))
-            .Where(l => l.Length > 0 && l.Contains("MBR2GPT", StringComparison.OrdinalIgnoreCase))
+            .Where(l => l.Length > 0)
+            .SkipWhile(l => !l.Contains("MBR2GPT", StringComparison.OrdinalIgnoreCase))
             .ToList();
         return lines.Count <= maxLines ? lines : lines[^maxLines..];
     }
