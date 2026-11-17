@@ -3,7 +3,7 @@
 - **Mã phiếu**: 20261117-03
 - **Từ**: agent-tsudisk (phiên 3) - **Đến**: phiên agent-tsudisk kế tiếp (repo `tsudev-org/tsudisk`)
 - **Thời điểm**: 17/11/2026
-- **Trạng thái**: MỞ
+- **Trạng thái**: ĐÓNG 18/11/2026 - thay bằng phiếu 20261118-01 (mbr2gpt, xóa phân vùng đã xong).
 - **Nhánh git**: main sạch, khớp origin. Không khóa nào trong `logs/LOCKS.md`. Không tác vụ nền nào.
 - **Ủy quyền**: chủ dự án cho phép tự làm liên tục, mỗi thay đổi qua nhánh + PR + CI xanh rồi merge; 100% tiếng Việt.
 - **Thay thế**: phiếu 20261117-02 (mọi việc trong đó đã xong hoặc được chép sang đây).
