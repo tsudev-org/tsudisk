@@ -4,17 +4,15 @@
 > Quy trình: `.standards/docs/AGENT_PROTOCOL.md`.
 
 > **Phiên kế tiếp**: đọc `~/projects/logs/handover/20261117-P2_ke-hoach-phan-phoi-tin-cay-da-nen-tang.md` hàng 8
-> (`tsudisk`) ở mục 3 + `.standards/docs/DISTRIBUTION_TRUST.md`. P1 còn: `packaging/package.json`, winget, VirusTotal
-> (cần bí mật `VT_API_KEY`); P2 MSIX khi có giao diện WPF + tài khoản Partner Center; P4 ký mã.
+> (`tsudisk`) ở mục 3 + `.standards/docs/DISTRIBUTION_TRUST.md`. P1 còn: nộp winget, VirusTotal
+> (cần bí mật `VT_API_KEY`) - `packaging/package.json` + manifest winget đã có (#32), còn bước nộp; P2 MSIX khi có giao diện WPF + tài khoản Partner Center; P4 ký mã.
 
 ## Hàng đợi task (làm từ trên xuống)
 
-- [ ] Phiếu bàn giao đầy đủ cho phiên kế tiếp: `logs/handover/20261117-03_giai-doan-2-doi-ten-tao-thu-nho.md`.
-- [ ] Kiểm Scoop excavator tự lên 26.11.1705 với tên tệp mới (scoop-bucket#19); chạy lại `gh attestation verify` cho
-      tệp 26.11.1705 (phiên 4 hết hạn mức trước khi đọc được kết quả).
-- [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): chuyển MBR -> GPT
-      (cần ADR riêng + kiểm trên máy ảo Hyper-V vì CI VHDX không có Windows trên đĩa MBR); xóa phân vùng dữ liệu; giao
-      diện WPF.
+- [ ] Phiếu bàn giao đầy đủ cho phiên kế tiếp: `logs/handover/20261118-01_phien-4-mbr2gpt-xoa-chuoi-cung-ung.md`.
+- [ ] 👤 winget: PAT `public_repo` -> secret `WINGET_TOKEN`; VirusTotal: secret `VT_API_KEY` (phiếu 20261118-01 mục 2).
+- [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): chuyển MBR -> GPT (ADR-0006)
+      (kiểm trên máy ảo Hyper-V vì CI VHDX không có Windows trên đĩa MBR); giao diện WPF.
 - [ ] Giai đoạn 3: bộ cài, winget `tsudev.TsuDisk` (cần PAT `public_repo` làm secret `WINGET_TOKEN`), ký SignPath (D5).
 - [ ] Nợ thương hiệu: biến thể 16px đơn giản hóa; ảnh gốc lớn hơn/SVG (`docs/BRAND.md`).
 
@@ -24,6 +22,10 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 18/11/2026 - 26.11.1801: `xoa-phan-vung` (ADR-0005) - #31; test 151 -> 163, E2E ca 14. Phát hành theo quy trình mới
+  (#30): SBOM SPDX, SHA256SUMS ký Sigstore, attestation exe + SBOM - đã kiểm cả ba. `packaging/package.json` + manifest
+  winget (#32). Bộ quy ước v3.7.0 (#29, phiếu P0 đóng). Website deploy, thẻ `deploy-2026.11.18.1`.
 
 - 17/11/2026 - 26.11.1705: `kiem-tra-mbr2gpt` (chỉ đọc, mbr2gpt /validate + setupact.log) - #27; test 150 -> 151, E2E
   ca 13 đạt trên mbr2gpt thật (mã 7 "Wrong boot partition count"). Website đã deploy (đo 200, có thẻ mới).
@@ -58,6 +60,7 @@
 - 16/11/2026 - Mô hình kế hoạch an toàn: `docs/adr/0002-mo-hinh-ke-hoach-an-toan.md`
 - 16/11/2026 - Thu nhỏ chỉ cho WinRE: `docs/adr/0003-thu-nho-chi-cho-winre.md`
 - 17/11/2026 - Thu nhỏ NTFS tổng quát (mở rộng ADR-0003): `docs/adr/0004-thu-nho-o-tong-quat.md`
+- 18/11/2026 - Xóa phân vùng dữ liệu, không tự tạo lại (Windows xóa trắng đầu phân vùng mới): `docs/adr/0005-xoa-phan-vung-du-lieu.md`
 
 ## Sự cố bảo mật
 
