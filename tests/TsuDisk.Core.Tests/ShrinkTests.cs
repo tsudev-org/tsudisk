@@ -93,6 +93,9 @@ public class ShrinkTests
         Assert.Equal(RefusalCode.UnsupportedFileSystem, Refused(new ShrinkRequest('G', Units.GiB), With('G', p => p with { FileSystem = "ReFS" })));
         Assert.Equal(RefusalCode.InvalidOption, Refused(new ShrinkRequest('G', Units.GiB), With('G', p => p with { FreeBytes = null })));
         Assert.Equal(RefusalCode.InvalidOption, Refused(new ShrinkRequest('G', 32 * Units.MiB)));
+        // Lan dau E2E bat duoc: muc giam lon hon ca o lam AlignDown nem loi so am thay vi tu choi.
+        Assert.Equal(RefusalCode.InvalidOption, Refused(new ShrinkRequest('G', 100_000 * Units.GiB)));
+        Assert.Equal(RefusalCode.InvalidOption, Refused(new ShrinkRequest('G', Units.GiB), With('G', p => p with { FreeBytes = Units.MiB })));
         Assert.Equal(RefusalCode.TargetNotFound, Refused(new ShrinkRequest('Q', Units.GiB)));
         Assert.Equal(RefusalCode.DiskNotWritable, Refused(new ShrinkRequest('G', Units.GiB) { VirtualDiskOnly = true }));
         var recoveryWithLetter = RealMachine20261116() with

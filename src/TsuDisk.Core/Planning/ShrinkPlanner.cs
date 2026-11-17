@@ -62,14 +62,16 @@ public static class ShrinkPlanner
         if (target.FreeBytes is not { } free)
             return PlanResult.Refuse(RefusalCode.InvalidOption, $"Không đọc được dung lượng trống của {letter}: - không thể đánh giá an toàn, từ chối.");
 
+        if (request.Reduce >= target.Size - ShrinkRequest.MinReduce)
+            return PlanResult.Refuse(RefusalCode.InvalidOption, $"{letter}: chỉ có {Units.Format(target.Size)} - không nhường được {Units.Format(request.Reduce)}.");
         var newEnd = Units.AlignDown(target.End - request.Reduce, Units.MiB);
         var newSize = newEnd - target.Offset;
         var gain = target.Size - newSize;
         var isSystem = target.IsSystem || target.IsBoot || request.SystemDrive is { } sys && char.ToUpperInvariant(sys) == letter;
         var minFree = ShrinkRequest.MinFreeAfter(isSystem, newSize);
-        if (newSize <= 0 || free - gain < minFree)
+        if (free - gain < minFree)
         {
-            var maxGain = Math.Max(0, Units.AlignDown(free - minFree, Units.MiB));
+            var maxGain = Units.AlignDown(Math.Max(0, free - minFree), Units.MiB);
             return PlanResult.Refuse(RefusalCode.InvalidOption,
                 $"{letter}: còn trống {Units.Format(free)}; nhường {Units.Format(gain)} sẽ còn dưới {Units.Format(minFree)}" +
                 $"{(isSystem ? " (ổ Windows cần chỗ cho Windows Update)" : "")}.",
