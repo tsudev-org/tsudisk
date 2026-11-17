@@ -321,16 +321,16 @@ try {
     Assert-True ((($keepBefore | ConvertTo-Json) -eq ($keepAfter2 | ConvertTo-Json))) 'cac phan vung khac giu nguyen'
     $r = Invoke-TsuDisk @('kiem-tra-gpt', '--dia', $n2)
     Assert-True ($r.Code -eq 0) 'GPT toan ven sau khi xoa'
-    Invoke-Diskpart @(
-        "select vdisk file=`"$Vhd2`"",
-        "create partition primary offset=$offKb size=$sizeMb",
-        "assign letter=$($tL.TrimEnd(':'))"
-    ) | Out-Null
+    # Chan doan (A): sau khi xoa, sector dau cua vung cu con chu ky NTFS khong (xoa chi go muc trong bang phan vung).
+    $raw = [IO.File]::Open("\\.\PhysicalDrive$($disk2.Number)", 'Open', 'Read', 'ReadWrite')
+    try { $buf = New-Object byte[] 4096; [void]$raw.Seek($tail.Offset, 'Begin'); [void]$raw.Read($buf, 0, 4096) } finally { $raw.Dispose() }
+    $oem = [Text.Encoding]::ASCII.GetString($buf, 3, 8)
+    Write-Host "  OEM id sau khi xoa: '$oem'"
+    Assert-True ($oem -eq 'NTFS    ') 'xoa khong ghi de boot sector cua o (du lieu con tren dia)'
+    # (B): khoi phuc bang Storage API dung offset + kich thuoc (lenh New-Partition in trong ke hoach).
+    New-Partition -DiskNumber $disk2.Number -Offset ([int64]$offKb * 1KB) -Size ([int64]$sizeMb * 1MB) -DriveLetter $tL.TrimEnd(':') | Out-Null
     for ($i = 0; $i -lt 30 -and -not (Test-Path $tailSentinel); $i++) { Start-Sleep -Milliseconds 500 }
-    $restored = Get-Partition -DiskNumber $disk2.Number | Where-Object Offset -eq $tail.Offset
-    Write-Host ("  khoi phuc: phan vung=" + ($restored | Select-Object PartitionNumber, Offset, Size, DriveLetter, GptType | Out-String))
-    if ($restored.DriveLetter) { Get-Volume -DriveLetter $restored.DriveLetter | Format-List DriveLetter, FileSystem, FileSystemLabel, Size | Out-String | Write-Host }
-    Write-Host "  Test-Path $tailSentinel = $(Test-Path $tailSentinel)"
+    Write-Host "  he tep sau khoi phuc: $((Get-Volume -DriveLetter $tL.TrimEnd(':')).FileSystem)"
     Assert-True ((Test-Path $tailSentinel) -and (Get-FileHash $tailSentinel -Algorithm SHA256).Hash -eq $keepHash) 'khoi phuc bang lenh trong ke hoach: du lieu TAIL tro lai nguyen ven'
 
     Write-Host "`n=== Ca 7: doc nhat ky ==="
