@@ -8,7 +8,8 @@
 - [ ] 👤 Chủ dự án: tạo Actions event policy cấp org cho phép `pull_request_target` trước 02/12/2026 (GitHub sẽ chặn
       vĩnh viễn trên repo công khai; brownout 16/11 16:00-18:00 UTC đã làm cổng "Bảo vệ bản quyền" startup_failure).
       Phiên tsudev đang hướng dẫn.
-- [ ] Theo dõi phiếu tsudev 20261117-D2 (logo TsuDisk cho tsudev.com/apps): tsudev#294 chờ `nguyentrangtinhsu` duyệt.
+- [ ] Theo dõi phiếu tsudev 20261117-D2: tsudev#294 đã được chủ dự án DUYỆT 17/11, chờ phiên tsudev merge + deploy.
+- [ ] Phiếu bàn giao đầy đủ cho phiên kế tiếp: `logs/handover/20261117-02_ban-giao-tiep-tuc-giai-doan-2-3.md`.
 - [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): giao diện WPF; đổi chữ cái/nhãn ổ; thu nhỏ ổ tổng quát; tạo/định dạng
       phân vùng trong vùng trống; `mbr2gpt`.
 - [ ] Giai đoạn 3: bộ cài, winget `tsudev.TsuDisk` (cần PAT `public_repo` làm secret `WINGET_TOKEN`), ký SignPath (D5).
