@@ -48,7 +48,7 @@ trống (`tao-phan-vung`). Đã xong ở 26.11.1704: thu nhỏ ổ NTFS tổng q
 | ~~Thu nhỏ ổ NTFS (`GetSupportedSize` min)~~ ĐÃ XONG ở 26.11.1704 | Vừa | `thu-nho`, ADR-0004: giữ đủ chỗ trống, kiểm SizeMin lúc lập kế hoạch và lúc chạy |
 | ~~Tạo/định dạng phân vùng dữ liệu trong vùng trống~~ ĐÃ XONG ở 26.11.1703 | Vừa | `tao-phan-vung`: chỉ trong vùng trống, chỉ định dạng phân vùng vừa tạo còn RAW |
 | ~~Xóa phân vùng dữ liệu~~ ĐÃ XONG ở 26.11.1801 | Vừa | `xoa-phan-vung`, ADR-0005: gõ lại `X: nhãn`, khóa độc quyền ổ, in lệnh khôi phục |
-| ~~Kiểm tra `mbr2gpt /validate`~~ ĐÃ XONG ở 26.11.1705; chuyển MBR sang GPT | Vừa | Bọc công cụ chính thức, chỉ đĩa hệ thống; bước chuyển cần ADR-0005 + kiểm trên máy ảo Hyper-V Gen 1 |
+| ~~Kiểm tra `mbr2gpt /validate`~~ ĐÃ XONG ở 26.11.1705; chuyển MBR sang GPT | Vừa | Bọc công cụ chính thức, chỉ đĩa hệ thống; bước chuyển: ADR-0006 (Đề xuất) + kiểm trên máy ảo Hyper-V Gen 1 -> Gen 2 |
 
 ### Giai đoạn 3 - Phân phối
 
