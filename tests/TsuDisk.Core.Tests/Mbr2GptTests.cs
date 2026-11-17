@@ -143,4 +143,24 @@ public class Mbr2GptTests
         Assert.Contains("\"verdict\": \"Fail\"", json, StringComparison.Ordinal);
         Assert.Contains("\"toolExitCode\": 7", json, StringComparison.Ordinal);
     }
+
+    /// <summary>Dong that do mbr2gpt ghi tren runner windows-latest (CI 17/11/2026, o ao MBR du lieu, ma thoat 7).</summary>
+    private static readonly string[] RealCiLog =
+    [
+        "2026-11-17 16:48:10, Info                         MBR2GPT: Attempting to validate disk 4",
+        "2026-11-17 16:48:10, Info                         ESP partition size will be 104857600",
+        "2026-11-17 16:48:10, Info                         MBR2GPT: Validating layout, disk sector size is: 512 bytes",
+        "2026-11-17 16:48:10, Error                        ValidateLayout: Wrong boot partition count, expected 1 but found 0.",
+        "2026-11-17 16:48:10, Error                        Disk layout validation failed for disk 4",
+    ];
+
+    [Fact]
+    public void Real_ci_log_yields_boot_partition_hint_and_error_lines()
+    {
+        var layout = new DiskLayout(Disk(256 * Units.MiB, PartitionStyle.Mbr), [Mbr(1, 65536, 100 * Units.MiB, PartitionTypes.MbrIfs, letter: 'J')]);
+        var report = Mbr2GptCheck.Interpret(layout, 7, "", RealCiLog);
+        Assert.Contains(report.Findings, f => f.Message.Contains("đúng một phân vùng khởi động", StringComparison.Ordinal));
+        Assert.Equal(RealCiLog[3..], Mbr2GptCheck.ImportantLines(report.ToolLog));
+        Assert.Equal(RealCiLog[..3], Mbr2GptCheck.ImportantLines(RealCiLog[..3]));
+    }
 }

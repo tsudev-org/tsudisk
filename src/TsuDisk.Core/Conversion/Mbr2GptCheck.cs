@@ -111,6 +111,7 @@ public static class Mbr2GptCheck
 
     private static readonly (string[] Keys, string Hint)[] LogHints =
     [
+        (["wrong boot partition count"], "mbr2gpt cần đúng một phân vùng khởi động (active, chứa trình khởi động Windows) trên đĩa này - đĩa dữ liệu không có nên không chuyển được."),
         (["cannot find os partition"], "mbr2gpt không tìm thấy Windows trên đĩa này: chỉ đĩa hệ thống (đang chứa Windows) mới chuyển được."),
         (["encrypt", "bitlocker"], "Có ổ mã hóa BitLocker: chạy `manage-bde -protectors -disable C:` để tạm ngưng rồi kiểm lại."),
         (["extended partition", "logical drive", "logical partition"], "Đĩa có ổ logic trong phân vùng mở rộng - mbr2gpt không chuyển được loại này."),
@@ -138,6 +139,13 @@ public static class Mbr2GptCheck
                 findings.Add(new(false, hint));
         }
         return new Mbr2GptReport(layout.Disk.Number, Mbr2GptVerdict.Fail, exitCode, findings, logLines);
+    }
+
+    /// <summary>Dong dang in ra man hinh: dong Error/Warning; khong co thi 5 dong cuoi. Day du nam trong --json.</summary>
+    public static IReadOnlyList<string> ImportantLines(IReadOnlyList<string> logLines)
+    {
+        var important = logLines.Where(l => l.Contains(", Error", StringComparison.Ordinal) || l.Contains(", Warning", StringComparison.Ordinal)).ToList();
+        return important.Count > 0 ? important : [.. logLines.TakeLast(5)];
     }
 
     /// <summary>

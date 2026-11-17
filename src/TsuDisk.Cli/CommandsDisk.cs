@@ -96,8 +96,8 @@ internal static partial class Commands
             Console.WriteLine($"  [{(f.Blocking ? "CHẶN" : "LƯU Ý")}] {f.Message}");
         if (report.ToolLog.Count > 0)
         {
-            Console.WriteLine(@"  Nhật ký mbr2gpt (%windir%\setupact.log):");
-            foreach (var line in report.ToolLog)
+            Console.WriteLine(@"  Nhật ký mbr2gpt (%windir%\setupact.log, đầy đủ trong --json):");
+            foreach (var line in Mbr2GptCheck.ImportantLines(report.ToolLog))
                 Console.WriteLine($"    {line}");
         }
         if (report.Verdict == Mbr2GptVerdict.Pass)

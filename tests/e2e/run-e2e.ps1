@@ -280,6 +280,9 @@ try {
     $r = Invoke-TsuDisk @('kiem-tra-mbr2gpt', '--dia', "$($disk3.Number)")
     Assert-True ($r.Code -eq 1) 'dia MBR du lieu (khong co Windows) -> khong dat (exit 1)'
     Assert-True ($r.Output -match 'mbr2gpt') 'co ket luan cua mbr2gpt hoac bao thieu cong cu'
+    if (Test-Path "$env:SystemRoot\System32\mbr2gpt.exe") {
+        Assert-True ($r.Output -match ', Error') 'in dong Error cua mbr2gpt tu setupact.log (ly do tu choi)'
+    }
     $r = Invoke-TsuDisk @('kiem-tra-mbr2gpt', '--dia', "$($disk3.Number)", '--json')
     Assert-True ($r.Output -match '"verdict": "(Fail|ToolMissing)"') 'JSON co verdict'
     $disk3After = Get-Disk -Number $disk3.Number
