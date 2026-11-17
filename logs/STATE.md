@@ -5,15 +5,16 @@
 
 > **Phiên kế tiếp**: đọc `~/projects/logs/handover/20261117-P2_ke-hoach-phan-phoi-tin-cay-da-nen-tang.md` hàng 8
 > (`tsudisk`) ở mục 3 + `.standards/docs/DISTRIBUTION_TRUST.md`. P1 còn: nộp winget, VirusTotal
-> (cần bí mật `VT_API_KEY`) - `packaging/package.json` + manifest winget đã có (#32), còn bước nộp; P2 MSIX khi có giao diện WPF + tài khoản Partner Center; P4 ký mã.
+> (token đã có, xem phiếu 20261118-01 mục 2) - `packaging/package.json` + manifest winget đã có (#32), còn bước nộp; P2 MSIX khi có giao diện WPF + tài khoản Partner Center; P4 ký mã.
 
 ## Hàng đợi task (làm từ trên xuống)
 
 - [ ] Phiếu bàn giao đầy đủ cho phiên kế tiếp: `logs/handover/20261118-01_phien-4-mbr2gpt-xoa-chuoi-cung-ung.md`.
-- [ ] 👤 winget: PAT `public_repo` -> secret `WINGET_TOKEN`; VirusTotal: secret `VT_API_KEY` (phiếu 20261118-01 mục 2).
+- [ ] VirusTotal rồi winget: token đã có ở `~/.config/tsudev/{virustotal,winget}.env` - nạp secret và làm theo phiếu
+      20261118-01 mục 2 (KHÔNG in nội dung tệp).
 - [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): chuyển MBR -> GPT (ADR-0006)
       (kiểm trên máy ảo Hyper-V vì CI VHDX không có Windows trên đĩa MBR); giao diện WPF.
-- [ ] Giai đoạn 3: bộ cài, winget `tsudev.TsuDisk` (cần PAT `public_repo` làm secret `WINGET_TOKEN`), ký SignPath (D5).
+- [ ] Giai đoạn 3: bộ cài, ký SignPath (D5).
 - [ ] Nợ thương hiệu: biến thể 16px đơn giản hóa; ảnh gốc lớn hơn/SVG (`docs/BRAND.md`).
 
 ## Đang thực hiện
