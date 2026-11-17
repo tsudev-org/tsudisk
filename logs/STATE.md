@@ -5,10 +5,7 @@
 
 ## Hàng đợi task (làm từ trên xuống)
 
-- [ ] 👤 Chủ dự án: tạo Actions event policy cấp org cho phép `pull_request_target` trước 02/12/2026 (GitHub sẽ chặn
-      vĩnh viễn trên repo công khai; brownout 16/11 16:00-18:00 UTC đã làm cổng "Bảo vệ bản quyền" startup_failure).
-      Phiên tsudev đang hướng dẫn.
-- [ ] Theo dõi phiếu tsudev 20261117-D2: tsudev#294 đã được chủ dự án DUYỆT 17/11, chờ phiên tsudev merge + deploy.
+- [ ] 👤 Theo dõi phiếu tsudev 20261117-D2: tsudev#294 cần chủ dự án DUYỆT LẠI (lượt duyệt cũ bị hủy sau khi giải xung đột).
 - [ ] Phiếu bàn giao đầy đủ cho phiên kế tiếp: `logs/handover/20261117-02_ban-giao-tiep-tuc-giai-doan-2-3.md`.
 - [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): giao diện WPF; đổi chữ cái/nhãn ổ; thu nhỏ ổ tổng quát; tạo/định dạng
       phân vùng trong vùng trống; `mbr2gpt`.
@@ -22,6 +19,7 @@
 
 ## Đã hoàn thành (mới nhất trên cùng)
 
+- 17/11/2026 - Org `tsudev-org` có Actions event policy 15243 cho `pull_request_target` (phiên tsudev); tsudisk không cần thêm.
 - 17/11/2026 - Phiếu tsudev 20261117-D3 ĐÓNG (tsudev#295): tsudev.com/apps có `scoop install tsudev/tsudisk` (đo 200).
 - 17/11/2026 - Gói Scoop `tsudisk` merge (scoop-bucket#15); trang Tải về + README có khối cài bằng Scoop.
 - 17/11/2026 - 26.11.1701: logo riêng TsuDisk (một ảnh gốc, favicon/PWA/og/icon exe/AVIF+WebP), `docs/BRAND.md`.
