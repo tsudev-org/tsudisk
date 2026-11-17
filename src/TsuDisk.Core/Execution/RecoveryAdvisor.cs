@@ -60,10 +60,9 @@ public static class RecoveryAdvisor
         if (deleteData is not null && (Done(StepKind.DeleteDataPartition) || Unfinished(StepKind.DeleteDataPartition)))
         {
             var restore = journal.Plan.Before.FindByOffset(deleteData.Offset!.Value) is { } victim
-                ? string.Join(" ; ", DeletePartitionPlanner.ManualRestoreCommands(journal.Plan.Before, victim))
-                : "(xem plan.json)";
-            advice.Add($"Ổ {deleteData.DriveLetter}: có thể đã bị xóa. Chạy `tsudisk danh-sach`: nếu đúng là đã mất mà bạn đổi ý, " +
-                $"KHÔNG ghi gì vào vùng trống đó và chạy diskpart (Admin): {restore} - dữ liệu cũ sẽ hiện lại.");
+                ? DeletePartitionPlanner.RecoveryHint(journal.Plan.Before, victim)
+                : "Xem vị trí cũ trong plan.json rồi cứu bằng TestDisk; KHÔNG tạo phân vùng mới vào vùng đó.";
+            advice.Add($"Ổ {deleteData.DriveLetter}: có thể đã bị xóa. Chạy `tsudisk danh-sach` để xác nhận. {restore}");
         }
         if (advice.Count == 0)
             advice.Add("Không phát hiện bước dở dang nào làm đĩa ở trạng thái thiếu. Chạy `tsudisk danh-sach` để xác nhận bố cục.");

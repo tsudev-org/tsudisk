@@ -290,7 +290,7 @@ try {
     Assert-True ($disk3After.PartitionStyle -eq 'MBR') 'dia van la MBR (chi doc, khong chuyen)'
     Assert-True ((($before3 | ConvertTo-Json) -eq ($after3 | ConvertTo-Json))) 'bo cuc MBR khong doi'
 
-    Write-Host "`n=== Ca 14: xoa phan vung du lieu (ADR-0005) roi khoi phuc bang lenh in trong ke hoach ==="
+    Write-Host "`n=== Ca 14: xoa phan vung du lieu (ADR-0005) - du lieu con tren dia, huong dan cuu bang TestDisk ==="
     $tailNow = Get-Partition -DiskNumber $disk2.Number | Where-Object Offset -eq $tail.Offset
     $tL = "$($tailNow.DriveLetter):"
     $tailSentinel = Join-Path "$tL\" 'tail.bin'
@@ -298,9 +298,7 @@ try {
     $r = Invoke-TsuDisk @('ke-hoach-xoa', 'C:', '--chi-o-ao')
     Assert-True ($r.Code -eq 1) 'ke-hoach-xoa C: bi tu choi'
     $r = Invoke-TsuDisk @('ke-hoach-xoa', $tL, '--chi-o-ao')
-    Assert-True ($r.Code -eq 0 -and $r.Output -match 'create partition primary offset=(\d+) size=(\d+)') 'ke hoach in lenh khoi phuc diskpart'
-    $offKb = $Matches[1]; $sizeMb = $Matches[2]
-    Assert-True ([int64]$offKb * 1KB -eq $tailNow.Offset -and [int64]$sizeMb * 1MB -eq $tailNow.Size) 'lenh khoi phuc dung offset + kich thuoc'
+    Assert-True ($r.Code -eq 0 -and $r.Output -match "TestDisk" -and $r.Output -match "sector $($tailNow.Offset / 512) ") 'ke hoach chi cach cuu bang TestDisk dung sector bat dau'
     $r = Invoke-TsuDisk @('xoa-phan-vung', $tL, '--chi-o-ao', '--dong-y', '--thu-muc-nhat-ky', $Logs)
     Assert-True ($r.Code -eq 2) '--dong-y khong du de xoa (exit 2)'
     $r = Invoke-TsuDisk @('xoa-phan-vung', $tL, '--chi-o-ao', '--xac-nhan', "$tL SAI", '--thu-muc-nhat-ky', $Logs)
@@ -327,19 +325,6 @@ try {
     $oem = [Text.Encoding]::ASCII.GetString($buf, 3, 8)
     Write-Host "  OEM id sau khi xoa: '$oem'"
     Assert-True ($oem -eq 'NTFS    ') 'xoa khong ghi de boot sector cua o (du lieu con tren dia)'
-    # (B): khoi phuc bang Storage API dung offset + kich thuoc (lenh New-Partition in trong ke hoach).
-    New-Partition -DiskNumber $disk2.Number -Offset ([int64]$offKb * 1KB) -Size ([int64]$sizeMb * 1MB) -DriveLetter $tL.TrimEnd(':') | Out-Null
-    for ($i = 0; $i -lt 30 -and -not (Test-Path $tailSentinel); $i++) { Start-Sleep -Milliseconds 500 }
-    Write-Host "  he tep sau khoi phuc: $((Get-Volume -DriveLetter $tL.TrimEnd(':')).FileSystem)"
-    $raw = [IO.File]::Open("\\.\PhysicalDrive$($disk2.Number)", 'Open', 'Read', 'ReadWrite')
-    try { [void]$raw.Seek($tail.Offset, 'Begin'); [void]$raw.Read($buf, 0, 4096) } finally { $raw.Dispose() }
-    Write-Host "  OEM id sau khi tao lai: '$([Text.Encoding]::ASCII.GetString($buf, 3, 8))'"
-    if (-not (Test-Path $tailSentinel)) {
-        Update-HostStorageCache
-        for ($i = 0; $i -lt 20 -and -not (Test-Path $tailSentinel); $i++) { Start-Sleep -Milliseconds 500 }
-        Write-Host "  sau Update-HostStorageCache: he tep $((Get-Volume -DriveLetter $tL.TrimEnd(':')).FileSystem), Test-Path $(Test-Path $tailSentinel)"
-    }
-    Assert-True ((Test-Path $tailSentinel) -and (Get-FileHash $tailSentinel -Algorithm SHA256).Hash -eq $keepHash) 'khoi phuc bang lenh trong ke hoach: du lieu TAIL tro lai nguyen ven'
 
     Write-Host "`n=== Ca 7: doc nhat ky ==="
     $first = (Get-ChildItem $Logs -Recurse -Filter journal.json | Sort-Object FullName | Select-Object -First 1).FullName

@@ -24,13 +24,17 @@ xóa mục trong bảng phân vùng, không ghi đè dữ liệu).
    còn chương trình nào mở tệp trên ổ (kể cả pagefile) thì dừng với thông báo "ổ đang được dùng" - không bao giờ
    ép gỡ, không dùng `delete partition override`.
 5. Thư mục nhật ký/sao lưu không được nằm trên ổ sắp xóa (CLI kiểm), và tsudisk.exe không chạy từ ổ đó.
-6. Chuỗi bước: sức khỏe -> sao lưu bảng phân vùng/GPT thô -> xóa -> đối chiếu. Bước bù (chỉ khi đối chiếu lỗi): tạo lại
-   phân vùng dữ liệu đúng offset + kích thước cũ rồi gán lại chữ cái - dữ liệu cũ hiện lại vì chưa bị ghi đè.
-7. Kế hoạch in sẵn cách khôi phục thủ công (offset, kích thước, lệnh diskpart) để người dùng tự cứu nếu đổi ý trước
-   khi ghi gì vào vùng trống.
+6. Chuỗi bước: sức khỏe -> sao lưu bảng phân vùng/GPT thô -> xóa -> đối chiếu. **Không có bước bù tự động.** Đo trên
+   E2E 18/11/2026: xóa KHÔNG đụng dữ liệu (boot sector NTFS còn nguyên), nhưng tạo lại phân vùng bằng diskpart hoặc
+   Storage API (`New-Partition`) đều xóa trắng đầu phân vùng mới (boot sector thành 0) - "tạo lại để khôi phục" làm mất
+   luôn khả năng cứu dễ. Đối chiếu lỗi sau khi xóa => trạng thái "cần xử lý" kèm hướng dẫn TestDisk.
+7. Kế hoạch in sẵn cách cứu khi xóa nhầm: KHÔNG tạo phân vùng mới vào vùng đó; dùng TestDisk ghi lại mục bảng phân
+   vùng, kèm số đĩa, sector bắt đầu, độ dài, hệ tệp (sao lưu GPT thô ở bước 2 cũng giữ mục cũ).
 
 ## Hệ quả
 
 - Thêm một nhánh `LayoutSimulator`, một luật `SafetyGuard` (có test kế hoạch sửa tay), test tiêm lỗi cho runner, E2E
-  trên ổ ảo (ổ có tệp mở bị từ chối, xóa thật, khôi phục bằng lệnh in trong kế hoạch).
+  trên ổ ảo (ổ có tệp mở bị từ chối, xóa thật, đọc thô xác nhận boot sector còn nguyên).
+- Hệ quả phụ cho `tao-phan-vung` (ADR không đổi luật, chỉ thêm cảnh báo): tạo phân vùng trong vùng trống làm Windows
+  xóa trắng phần đầu vùng đó - kế hoạch tạo nhắc cứu ổ vừa xóa nhầm bằng TestDisk TRƯỚC khi tạo.
 - Không hỗ trợ xóa ổ logic trong Extended (MBR) và ổ không chữ cái - dùng Disk Management.

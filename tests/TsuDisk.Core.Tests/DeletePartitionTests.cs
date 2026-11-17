@@ -76,13 +76,15 @@ public class DeletePartitionTests
     }
 
     [Fact]
-    public void Manual_restore_commands_recreate_same_geometry()
+    public void Recovery_hint_points_at_testdisk_never_at_recreating()
     {
         var layout = Layout();
         var e = layout.FindByLetter('E')!;
-        var lines = DeletePartitionPlanner.ManualRestoreCommands(layout, e);
-        Assert.Equal(["select disk 0", $"create partition primary offset={e.Offset / 1024} size={e.Size / Units.MiB}", "assign letter=E"], lines);
-        Assert.Contains(Ok('E').Notes, n => n.Contains("create partition primary", StringComparison.Ordinal));
+        var hint = DeletePartitionPlanner.RecoveryHint(layout, e);
+        Assert.Contains("TestDisk", hint, StringComparison.Ordinal);
+        Assert.Contains($"sector {e.Offset / 512}", hint, StringComparison.Ordinal);
+        Assert.DoesNotContain("create partition", hint, StringComparison.Ordinal);
+        Assert.Contains(Ok('E').Notes, n => n == hint);
     }
 
     [Fact]
@@ -174,21 +176,19 @@ public class DeletePartitionTests
     }
 
     [Fact]
-    public void Failed_verification_recreates_the_volume_at_its_old_place()
+    public void Failed_verification_never_recreates_and_asks_for_a_human()
     {
         var plan = Ok('E');
-        var e = plan.Before.FindByLetter('E')!;
         var g = plan.Before.FindByLetter('G')!;
-        // Mot cong cu khac go chu cai G: dung luc xoa -> doi chieu lech -> buoc bu tao lai E:.
+        // Mot cong cu khac doi G: dung luc xoa -> doi chieu lech. Tao lai E: se xoa trang boot sector => cam, chi bao.
         var (backend, journal) = Run(plan, b => b.AfterDeleteData = f => f.ReplaceLayout(f.Layout with
         {
             Partitions = [.. f.Layout.Partitions.Select(p => p.Offset == g.Offset ? p with { Size = p.Size - Units.MiB } : p)],
         }));
 
-        Assert.Equal(RunState.RolledBack, journal.State);
-        var back = backend.Layout.FindByOffset(e.Offset)!;
-        Assert.Equal((e.Size, (char?)'E', PartitionKind.BasicData), (back.Size, back.DriveLetter, back.Kind));
-        Assert.Equal(["create-partition", "set-letter"], backend.Calls[^2..]);
+        Assert.Equal(RunState.NeedsAttention, journal.State);
+        Assert.DoesNotContain("create-partition", backend.Calls);
+        Assert.Contains(journal.Messages, m => m.Contains("TestDisk", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -201,6 +201,6 @@ public class DeletePartitionTests
 
         var advice = RecoveryAdvisor.Advise(new RunJournal("r", plan, RunState.Running, steps, [], "test"));
 
-        Assert.Contains(advice, a => a.Contains("create partition primary", StringComparison.Ordinal));
+        Assert.Contains(advice, a => a.Contains("TestDisk", StringComparison.Ordinal));
     }
 }

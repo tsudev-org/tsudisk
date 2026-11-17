@@ -16,7 +16,7 @@ const tinhNang = [
   { t: 'Đổi chữ cái và nhãn ổ', d: 'Lệnh doi-ten đổi chữ cái và tên ổ dữ liệu (nhận tiếng Việt có dấu trên NTFS). Từ chối chữ cái đang dùng, không bao giờ đổi chữ cái ổ Windows, lỗi giữa chừng thì gán lại chữ cái và tên cũ.' },
   { t: 'Thu nhỏ ổ an toàn', d: 'Lệnh thu-nho nhường bớt dung lượng ổ NTFS thành vùng trống ngay sau ổ. Hỏi trước Windows cho thu tới đâu, luôn chừa đủ chỗ trống (ổ Windows ít nhất 10 GB), lỗi giữa chừng thì nới ổ về cỡ cũ.' },
   { t: 'Tạo ổ mới từ vùng trống', d: 'Lệnh tao-phan-vung tạo và định dạng ổ NTFS, exFAT hoặc FAT32 ngay trong vùng chưa phân bổ. Chỉ định dạng phân vùng vừa tạo; vùng trống còn dấu dữ liệu của phân vùng cũ thì dừng, không định dạng đè.' },
-  { t: 'Xóa ổ có kiểm soát', d: 'Lệnh xoa-phan-vung gỡ một ổ dữ liệu để lấy vùng trống. Phải gõ lại đúng chữ cái và nhãn ổ; còn chương trình nào mở tệp trên ổ thì dừng. Kế hoạch in sẵn lệnh đưa ổ và dữ liệu trở lại nếu bạn đổi ý trước khi ghi gì vào vùng trống.' },
+  { t: 'Xóa ổ có kiểm soát', d: 'Lệnh xoa-phan-vung gỡ một ổ dữ liệu để lấy vùng trống. Phải gõ lại đúng chữ cái và nhãn ổ; còn chương trình nào mở tệp trên ổ thì dừng. Xóa không ghi đè dữ liệu, và kế hoạch in sẵn cách cứu bằng TestDisk nếu bạn chọn nhầm ổ.' },
   { t: 'Kiểm tra chuyển MBR sang GPT', d: 'Lệnh kiem-tra-mbr2gpt chạy công cụ chính thức mbr2gpt của Microsoft ở chế độ chỉ kiểm tra, đọc nhật ký của nó và giải thích bằng tiếng Việt vì sao đĩa Windows MBR chuyển được hoặc chưa (BitLocker, quá 3 phân vùng, thiếu chỗ cho EFI). Không thay đổi gì trên đĩa.' },
   { t: 'Chạy online, không khởi động lại', d: 'Mở rộng NTFS khi Windows đang chạy. Máy ảo, WSL, cơ sở dữ liệu, terminal đang mở không bị gián đoạn.' },
 ];

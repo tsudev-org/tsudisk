@@ -43,23 +43,21 @@ public static class DeletePartitionPlanner
             && string.Equals(t[1..], expected[1..].Normalize(), StringComparison.Ordinal);
     }
 
-    /// <summary>Lenh diskpart tao lai dung phan vung (offset tinh bang KB, kich thuoc bang MB) - in trong ghi chu ke hoach.</summary>
-    public static IReadOnlyList<string> ManualRestoreCommands(DiskLayout layout, PartitionInfo target)
+    /// <summary>
+    /// Cach cuu khi xoa nham. KHONG goi y tao lai phan vung bang Windows: E2E 18/11/2026 do duoc ca diskpart lan Storage
+    /// API xoa trang dau phan vung moi (boot sector thanh 0) - tao lai la mat luon. TestDisk ghi lai muc bang phan vung
+    /// ma khong dung toi du lieu, va doc duoc boot sector du phong o cuoi o NTFS.
+    /// </summary>
+    public static string RecoveryHint(DiskLayout layout, PartitionInfo target)
     {
         ArgumentNullException.ThrowIfNull(layout);
         ArgumentNullException.ThrowIfNull(target);
-        var inv = CultureInfo.InvariantCulture;
-        var lines = new List<string>
-        {
-            string.Create(inv, $"select disk {layout.Disk.Number}"),
-            string.Create(inv, $"create partition primary offset={target.Offset / 1024} size={target.Size / Units.MiB}"),
-        };
-        if (target.GptType is { } gpt && gpt != PartitionTypes.BasicData)
-            lines.Add(string.Create(inv, $"set id={gpt:D}"));
-        else if (target.MbrType is { } mbr && mbr != PartitionTypes.MbrIfs)
-            lines.Add(string.Create(inv, $"set id={mbr:X2}"));
-        lines.Add($"assign letter={target.DriveLetter}");
-        return lines;
+        var sector = Math.Max(layout.Disk.LogicalSectorSize, 512);
+        return string.Create(CultureInfo.InvariantCulture,
+            $"Xóa nhầm {target.DisplayName}? Dữ liệu vẫn nằm trên đĩa (xóa chỉ gỡ mục trong bảng phân vùng). KHÔNG tạo phân vùng " +
+            $"mới, không định dạng, không ghi gì vào vùng trống đó - Windows xóa trắng đầu mỗi phân vùng mới tạo. Cứu bằng TestDisk " +
+            $"(Analyse -> Quick Search -> chọn phân vùng -> Write): đĩa {layout.Disk.Number}, bắt đầu sector {target.Offset / sector} " +
+            $"(byte {target.Offset}), dài {target.Size / sector} sector ({Units.Format(target.Size)}), {target.FileSystem ?? "?"}.");
     }
 
     public static PlanResult Plan(DiskLayout layout, DeletePartitionRequest request, TimeProvider? clock = null)
@@ -100,10 +98,7 @@ public static class DeletePartitionPlanner
             $"MỌI dữ liệu trên {target.DisplayName} sẽ không còn truy cập được. Sao lưu những gì cần giữ trước.",
             $"Vùng trống sinh ra: {Units.Format(target.Size)} - dùng ngay bằng `tsudisk ke-hoach <ổ>` hoặc `tsudisk tao-phan-vung --dia {disk.Number}`.",
         };
-        notes.Add(target.Offset % 1024 == 0 && target.Size % Units.MiB == 0
-            ? "Đổi ý khi CHƯA ghi gì vào vùng trống: diskpart (Admin) với các lệnh sau sẽ đưa ổ và dữ liệu trở lại: "
-                + string.Join(" ; ", ManualRestoreCommands(layout, target))
-            : "Đổi ý khi CHƯA ghi gì vào vùng trống: ổ này không căn lề 1 MiB, khôi phục bằng TestDisk (quét phân vùng mất) thay vì diskpart.");
+        notes.Add(RecoveryHint(layout, target));
 
         var plan = new Plan(
             Id: Guid.NewGuid().ToString("N")[..12],

@@ -115,18 +115,12 @@ public sealed class PlanRunner(IDiskBackend backend, IJournalStore store, TimePr
                     throw new DiskOperationException($"Phân vùng {victim.PartitionNumber} không còn đúng là ổ {step.DriveLetter}: \"{step.NewLabel}\" " +
                         $"{Units.Format(step.Size!.Value)} như kế hoạch (chữ cái/nhãn/kích thước đã đổi) - dừng, không xóa.");
                 }
-                var style = plan.Before.Disk.Style;
                 var letter = step.DriveLetter!.Value;
                 backend.DeleteDataPartition(disk, victim.PartitionNumber, letter);
-                // Bu chi khi buoc doi chieu sau loi: tao lai DUNG offset + kich thuoc (du lieu chua bi ghi de) roi gan lai chu cai.
-                compensations.Add(new Compensation("recreate-data", $"Tạo lại ổ {letter}: tại vị trí cũ (offset {victim.Offset})", () =>
-                {
-                    if (backend.ReadLayout(disk).FindByOffset(victim.Offset) is null)
-                        backend.CreateDataPartition(disk, victim.Offset, victim.Size, style);
-                    var back = RequirePartition(disk, victim.Offset, null);
-                    if (back.DriveLetter != letter && !backend.DriveLettersInUse().Contains(letter))
-                        backend.SetDriveLetter(disk, back.PartitionNumber, back.DriveLetter, letter);
-                }));
+                // KHONG tu tao lai: Windows xoa trang dau phan vung moi (do o E2E) - tao lai chi lam mat boot sector. Doi chieu
+                // loi sau buoc nay => can nguoi xu ly bang TestDisk (ADR-0005 muc 6).
+                var hint = DeletePartitionPlanner.RecoveryHint(plan.Before, victim);
+                compensations.Add(new Compensation("cannot-undo-delete", $"Ổ {letter}: đã xóa - không tự hoàn tác", () => throw new DiskOperationException(hint)));
                 return $"Đã xóa ổ {letter}: ({Units.Format(victim.Size)} trống).";
             }
             case StepKind.ExtendPartition:
