@@ -1,5 +1,6 @@
 using TsuDisk.Cli;
 using System.Globalization;
+using TsuDisk.Core.Conversion;
 using TsuDisk.Core.Execution;
 using TsuDisk.Core.Gpt;
 using TsuDisk.Core.Health;
@@ -39,6 +40,77 @@ internal static partial class Commands
         if (!SystemTools.IsAdministrator())
             Console.WriteLine("(Nhiệt độ, độ mòn, lỗi đọc/ghi chỉ đọc được khi chạy với quyền quản trị.)");
         return worst == HealthLevel.Bad ? ExitCodes.Failed : ExitCodes.Ok;
+    }
+
+    /// <summary>
+    /// kiem-tra-mbr2gpt: CHI DOC. Mac dinh kiem dia dang chua Windows; TsuDisk khong tu chuyen (cho ADR-0005).
+    /// </summary>
+    public static int CheckMbr2Gpt(CliArgs cli)
+    {
+        var disks = cli.IntValue("dia") is { } n
+            ? Backend.ListDisks().Where(d => d.Number == n).ToList()
+            : Backend.ListDisks().Where(d => d.IsBoot || d.IsSystem).Take(1).ToList();
+        if (disks.Count == 0)
+            throw new UsageException(cli.IntValue("dia") is { } m ? $"Không có đĩa số {m}." : "Không xác định được đĩa hệ thống: chỉ rõ bằng --dia N.");
+
+        var reports = new List<Mbr2GptReport>();
+        foreach (var disk in disks)
+        {
+            var layout = Backend.ReadLayout(disk.Number);
+            if (Mbr2GptCheck.NotApplicableReason(disk) is { } reason)
+            {
+                reports.Add(new Mbr2GptReport(disk.Number, Mbr2GptVerdict.NotApplicable, null, [new(false, reason)], []));
+                continue;
+            }
+            if (!SystemTools.IsAdministrator())
+            {
+                Console.Error.WriteLine("mbr2gpt cần quyền quản trị: mở Terminal (Admin) rồi chạy lại. TsuDisk tự kiểm bố cục:");
+                foreach (var f in Mbr2GptCheck.PreCheck(layout))
+                    Console.Error.WriteLine($"  [{(f.Blocking ? "CHẶN" : "LƯU Ý")}] {f.Message}");
+                return ExitCodes.NeedsAdmin;
+            }
+            reports.Add(Mbr2GptTool.IsAvailable
+                ? Mbr2GptTool.Validate(layout)
+                : new Mbr2GptReport(disk.Number, Mbr2GptVerdict.ToolMissing, null,
+                    [.. Mbr2GptCheck.PreCheck(layout), new(true, "Windows này không có mbr2gpt.exe (cần Windows 10 bản 1703 trở lên).")], []));
+        }
+
+        if (cli.Has("json"))
+            Console.WriteLine(TsuDiskJson.Serialize(reports));
+        else
+            reports.ForEach(r => RenderMbr2Gpt(r, disks.First(d => d.Number == r.DiskNumber)));
+        return reports.Any(r => r.Verdict is Mbr2GptVerdict.Fail or Mbr2GptVerdict.ToolMissing) ? ExitCodes.Failed : ExitCodes.Ok;
+    }
+
+    private static void RenderMbr2Gpt(Mbr2GptReport report, DiskInfo disk)
+    {
+        var verdict = report.Verdict switch
+        {
+            Mbr2GptVerdict.Pass => "ĐẠT - chuyển được sang GPT",
+            Mbr2GptVerdict.Fail => "KHÔNG ĐẠT - mbr2gpt sẽ từ chối chuyển",
+            Mbr2GptVerdict.ToolMissing => "KHÔNG KIỂM ĐƯỢC - thiếu mbr2gpt.exe",
+            _ => "KHÔNG CẦN CHUYỂN",
+        };
+        Console.WriteLine($"Đĩa {disk.Number}: {disk.FriendlyName} - {Units.Format(disk.Size)} - {disk.Style} - {verdict}");
+        foreach (var f in report.Findings)
+            Console.WriteLine($"  [{(f.Blocking ? "CHẶN" : "LƯU Ý")}] {f.Message}");
+        if (report.ToolLog.Count > 0)
+        {
+            Console.WriteLine(@"  Nhật ký mbr2gpt (%windir%\setupact.log, đầy đủ trong --json):");
+            foreach (var line in Mbr2GptCheck.ImportantLines(report.ToolLog))
+                Console.WriteLine($"    {line}");
+        }
+        if (report.Verdict == Mbr2GptVerdict.Pass)
+        {
+            Console.WriteLine($"""
+                  Bước tiếp theo (TsuDisk chưa tự chuyển - mbr2gpt /convert là công cụ chính thức của Microsoft):
+                    1. Sao lưu dữ liệu quan trọng; tạm ngưng BitLocker nếu đang bật.
+                    2. Terminal (Admin): mbr2gpt /convert /disk:{disk.Number} /allowFullOS
+                    3. Khởi động lại, vào BIOS/UEFI đổi chế độ khởi động từ Legacy/CSM sang UEFI - KHÔNG đổi thì máy
+                       không khởi động được. Sau đó mới bật Secure Boot nếu muốn.
+                """);
+        }
+        Console.WriteLine();
     }
 
     public static int VerifyGpt(CliArgs cli)

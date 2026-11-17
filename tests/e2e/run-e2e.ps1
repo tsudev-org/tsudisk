@@ -50,6 +50,7 @@ function Get-Layout([int]$DiskNumber) { Get-Partition -DiskNumber $DiskNumber | 
 $RecoveryGuid = '{de94bba4-06d1-4d40-a16a-bfd50179d6ac}'
 $disk = $null
 $Vhd2 = $null
+$Vhd3 = $null
 try {
     Write-Host "=== Dung o ao $Vhd ==="
     Invoke-Diskpart @(
@@ -261,6 +262,34 @@ try {
     $r = Invoke-TsuDisk @('kiem-tra-gpt', '--dia', $n2)
     Assert-True ($r.Code -eq 0) 'GPT van toan ven sau thu nho + tao'
 
+    Write-Host "`n=== Ca 13: kiem-tra-mbr2gpt (chi doc) ==="
+    $r = Invoke-TsuDisk @('kiem-tra-mbr2gpt', '--dia', $n2)
+    Assert-True ($r.Code -eq 0 -and $r.Output -match 'GPT') 'dia GPT -> khong can chuyen (exit 0)'
+    $Vhd3 = Join-Path $WorkDir 'e2e-mbr.vhdx'
+    Invoke-Diskpart @(
+        "create vdisk file=`"$Vhd3`" maximum=256 type=expandable",
+        "select vdisk file=`"$Vhd3`"",
+        "attach vdisk",
+        "convert mbr",
+        "create partition primary size=100",
+        "format quick fs=ntfs label=MBRDATA",
+        "assign"
+    ) | Out-Null
+    $disk3 = Get-DiskImage -ImagePath $Vhd3 | Get-Disk
+    $before3 = Get-Partition -DiskNumber $disk3.Number | Select-Object Offset, Size, MbrType
+    $r = Invoke-TsuDisk @('kiem-tra-mbr2gpt', '--dia', "$($disk3.Number)")
+    Assert-True ($r.Code -eq 1) 'dia MBR du lieu (khong co Windows) -> khong dat (exit 1)'
+    Assert-True ($r.Output -match 'mbr2gpt') 'co ket luan cua mbr2gpt hoac bao thieu cong cu'
+    if (Test-Path "$env:SystemRoot\System32\mbr2gpt.exe") {
+        Assert-True ($r.Output -match ', Error') 'in dong Error cua mbr2gpt tu setupact.log (ly do tu choi)'
+    }
+    $r = Invoke-TsuDisk @('kiem-tra-mbr2gpt', '--dia', "$($disk3.Number)", '--json')
+    Assert-True ($r.Output -match '"verdict": "(Fail|ToolMissing)"') 'JSON co verdict'
+    $disk3After = Get-Disk -Number $disk3.Number
+    $after3 = Get-Partition -DiskNumber $disk3.Number | Select-Object Offset, Size, MbrType
+    Assert-True ($disk3After.PartitionStyle -eq 'MBR') 'dia van la MBR (chi doc, khong chuyen)'
+    Assert-True ((($before3 | ConvertTo-Json) -eq ($after3 | ConvertTo-Json))) 'bo cuc MBR khong doi'
+
     Write-Host "`n=== Ca 7: doc nhat ky ==="
     $first = (Get-ChildItem $Logs -Recurse -Filter journal.json | Sort-Object FullName | Select-Object -First 1).FullName
     $r = Invoke-TsuDisk @('nhat-ky', $first)
@@ -268,6 +297,7 @@ try {
 }
 finally {
     Write-Host "`n=== Don dep ==="
+    if ($Vhd3) { try { Invoke-Diskpart @("select vdisk file=`"$Vhd3`"", 'detach vdisk') | Out-Null } catch { Write-Host "detach 3: $_" } }
     if ($Vhd2) { try { Invoke-Diskpart @("select vdisk file=`"$Vhd2`"", 'detach vdisk') | Out-Null } catch { Write-Host "detach 2: $_" } }
     try { Invoke-Diskpart @("select vdisk file=`"$Vhd`"", 'detach vdisk') | Out-Null } catch { Write-Host "detach: $_" }
     Remove-Item -Recurse -Force $WorkDir -ErrorAction SilentlyContinue

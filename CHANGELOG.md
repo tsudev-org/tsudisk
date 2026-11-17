@@ -2,6 +2,15 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
+## [26.11.1705] - 17/11/2026
+
+- Lệnh `kiem-tra-mbr2gpt [--dia N] [--json]` (bí danh `check-mbr2gpt`): kiểm tra CHỈ ĐỌC xem đĩa Windows MBR có chuyển
+  được sang GPT không - chạy `mbr2gpt /validate` (công cụ chính thức của Microsoft), đọc lý do trong
+  `%windir%\setupact.log`, giải thích mã thoát và lỗi thường gặp bằng tiếng Việt (BitLocker, quá 3 phân vùng chính, ổ
+  logic, thiếu chỗ cho EFI, đĩa không có Windows). TsuDisk tự kiểm thêm bố cục theo điều kiện Microsoft công bố. Mặc
+  định kiểm đĩa đang chứa Windows. TsuDisk chưa tự chuyển; khi đạt, in các bước chuyển thủ công an toàn.
+- Tệp phát hành đổi tên theo quy ước chung của hệ tsudev: `tsudisk_<phiên bản>_windows-x64-portable.exe`.
+
 ## [26.11.1704] - 17/11/2026
 
 - Lệnh `ke-hoach-thu-nho`, `thu-nho`: thu nhỏ ổ NTFS để nhường vùng trống ngay sau ổ (rồi dùng `tao-phan-vung`).

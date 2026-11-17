@@ -34,7 +34,8 @@ TsuDisk **không sao chép mã** của dự án GPL nào (Apache-2.0 không tư�
 
 Đã xong ở 26.11.1602: kiểm tra sức khỏe ổ (chặn ghi khi hỏng), kiểm tra toàn vẹn GPT đọc thô, sao lưu sector GPT thô.
 Đã xong ở 26.11.1702: đổi chữ cái, nhãn ổ (`doi-ten`). Đã xong ở 26.11.1703: tạo + định dạng phân vùng trong vùng
-trống (`tao-phan-vung`). Đã xong ở 26.11.1704: thu nhỏ ổ NTFS tổng quát (`thu-nho`, ADR-0004).
+trống (`tao-phan-vung`). Đã xong ở 26.11.1704: thu nhỏ ổ NTFS tổng quát (`thu-nho`, ADR-0004). Đã xong ở
+26.11.1705: kiểm tra `mbr2gpt /validate` (`kiem-tra-mbr2gpt`, chỉ đọc).
 
 | Tính năng | Rủi ro | Ghi chú |
 | --- | --- | --- |
@@ -46,7 +47,7 @@ trống (`tao-phan-vung`). Đã xong ở 26.11.1704: thu nhỏ ổ NTFS tổng q
 | ~~Thu nhỏ ổ NTFS (`GetSupportedSize` min)~~ ĐÃ XONG ở 26.11.1704 | Vừa | `thu-nho`, ADR-0004: giữ đủ chỗ trống, kiểm SizeMin lúc lập kế hoạch và lúc chạy |
 | ~~Tạo/định dạng phân vùng dữ liệu trong vùng trống~~ ĐÃ XONG ở 26.11.1703 | Vừa | `tao-phan-vung`: chỉ trong vùng trống, chỉ định dạng phân vùng vừa tạo còn RAW |
 | Xóa phân vùng dữ liệu | Vừa | Xác nhận gõ tên nhãn + chữ cái; sao lưu bảng trước |
-| Kiểm tra `mbr2gpt /validate` và chuyển MBR sang GPT | Vừa | Bọc công cụ chính thức, chỉ đĩa hệ thống |
+| ~~Kiểm tra `mbr2gpt /validate`~~ ĐÃ XONG ở 26.11.1705; chuyển MBR sang GPT | Vừa | Bọc công cụ chính thức, chỉ đĩa hệ thống; bước chuyển cần ADR-0005 + kiểm trên máy ảo Hyper-V Gen 1 |
 
 ### Giai đoạn 3 - Phân phối
 

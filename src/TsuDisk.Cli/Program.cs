@@ -32,6 +32,7 @@ try
         "winre" => Commands.WinRe(),
         "suc-khoe" => Commands.Health(cli),
         "kiem-tra-gpt" => Commands.VerifyGpt(cli),
+        "kiem-tra-mbr2gpt" => Commands.CheckMbr2Gpt(cli),
         "sao-luu" => Commands.Backup(cli),
         "phien-ban" => Commands.Version(),
         _ => Commands.Help(),
@@ -298,6 +299,7 @@ internal static partial class Commands
               tsudisk winre                               Trạng thái Windows Recovery Environment
               tsudisk suc-khoe [--dia N] [--json]         Sức khỏe ổ: trạng thái, nhiệt độ, độ mòn, lỗi đọc/ghi (S.M.A.R.T.)
               tsudisk kiem-tra-gpt [--dia N] [--json]     Kiểm tra toàn vẹn bảng GPT trên đĩa (CRC, header dự phòng) - quản trị
+              tsudisk kiem-tra-mbr2gpt [--dia N] [--json] Chuyển đĩa MBR sang GPT được không (mbr2gpt /validate, chỉ đọc) - quản trị
               tsudisk sao-luu [--dia N] [--thu-muc-nhat-ky DIR]  Sao lưu sector GPT thô + bố cục + SHA-256 - quản trị
               tsudisk phien-ban | tro-giup
 
@@ -309,7 +311,7 @@ internal static partial class Commands
               --chi-o-ao                 Chỉ cho phép thao tác trên ổ ảo VHD/VHDX (kiểm thử)
               --thu-muc-nhat-ky DIR      Nơi lưu nhật ký và bản sao lưu (mặc định %ProgramData%\TsuDisk\nhat-ky)
 
-            Bí danh tiếng Anh: list, analyze, plan, extend, plan-winre, grow-winre, plan-rename, rename, plan-shrink, shrink, plan-create, create, journal, health, verify-gpt, backup, version, help; --dry-run, --yes, --disk, --virtual-only, --log-dir, --letter, --label, --extent, --size-mb, --fs, --shrink-mb.
+            Bí danh tiếng Anh: list, analyze, plan, extend, plan-winre, grow-winre, plan-rename, rename, plan-shrink, shrink, plan-create, create, journal, health, verify-gpt, check-mbr2gpt, backup, version, help; --dry-run, --yes, --disk, --virtual-only, --log-dir, --letter, --label, --extent, --size-mb, --fs, --shrink-mb.
             Mã thoát: 0 xong, 1 từ chối/lỗi, 2 sai cú pháp, 3 thiếu quyền quản trị, 4 thất bại đã hoàn tác, 5 cần xử lý.
             """);
         return ExitCodes.Ok;
