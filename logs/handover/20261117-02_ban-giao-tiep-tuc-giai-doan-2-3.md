@@ -18,28 +18,22 @@
 | Bản mới nhất | `v26.11.1701` (SHA256SUMS + attestation đã kiểm) |
 | Website | https://disk.tsudev.com - deploy từ main sau mỗi merge: `cd website && GITHUB_TOKEN=$(gh auth token) npm run deploy` |
 | Scoop | `scoop install tsudev/tsudisk` (scoop-bucket#15 merge; excavator tự nâng phiên bản) |
-| tsudev.com/apps | Có thẻ + lệnh Scoop (tsudev#291, #295). Logo riêng: tsudev#294 đã được chủ dự án DUYỆT, chờ phiên tsudev merge + deploy |
+| tsudev.com/apps | Có thẻ + lệnh Scoop (tsudev#291, #295). Logo riêng: tsudev#294 phải giải xung đột với #295, lượt duyệt cũ bị hủy (dismiss stale) - chờ chủ dự án DUYỆT LẠI, phiên tsudev merge + deploy |
 | Test | 89 đơn vị; E2E VHDX 32/32 (máy dev + CI Windows) |
 
 ## 2. Việc tiếp theo, theo thứ tự
 
-### 2.1. 👤 + agent: chính sách `pull_request_target` cấp org (HẠN 02/12/2026)
+### 2.1. Chính sách `pull_request_target` cấp org - ĐÃ XONG (17/11/2026), KHÔNG làm lại
 
-Bối cảnh: GitHub chặn thử (brownout) `pull_request_target` trên repo công khai 16:00-18:00 UTC 16/11/2026, làm cổng
-"Bảo vệ bản quyền" (`.github/workflows/bao-ve-ban-quyen.yml` ở scoop-bucket, linux-packages, homebrew-tap, tsudev...)
-`startup_failure` và chặn mọi PR. Từ 02/12/2026 GitHub chặn vĩnh viễn trừ khi org có chính sách sự kiện Actions cho phép
-(nguồn: phiên `tsudev-27`, đang soạn hướng dẫn cho chủ dự án - hỏi phiên tsudev lấy hướng dẫn trước, đừng làm lại).
+Phiên `tsudev-27` báo: Actions event policy id **15243** (active) của org `tsudev-org` tạo lúc 10:15 17/11/2026, cho phép
+`pull_request_target` với `.github/workflows/bao-ve-ban-quyen.yml` ở tsudev, scoop-bucket, linux-packages, homebrew-tap.
+Chi tiết: `tsudev/logs/handover/20261117-01_phien-57-ket-kiem-thu-he-sinh-thai.md` mục 2.
 
-Việc:
-1. **Chủ dự án (agent KHÔNG làm được - token không có `admin:org`, và đây là quyết định bảo mật cấp org)**: vào
-   `https://github.com/organizations/tsudev-org/settings/actions`, tạo chính sách cho phép sự kiện `pull_request_target`
-   cho các repo dùng cổng (tối thiểu: scoop-bucket, linux-packages, homebrew-tap, tsudev). Đối chiếu tên mục và cách
-   bật với thông báo chính thức trên GitHub Changelog trước khi bấm - không đoán.
-2. **Agent kiểm sau khi bật**: mở một PR thử vô hại (vd. sửa chính tả README) ở `tsudev-org/scoop-bucket`, xác nhận
-   check "Bảo vệ bản quyền" ra `success`/`failure` thật chứ không `startup_failure`:
-   `gh run list -R tsudev-org/scoop-bucket --workflow 'Bảo vệ bản quyền' --limit 3`. Đóng PR thử sau đó.
-3. Nếu chủ dự án KHÔNG muốn bật: đề xuất (phiếu cho repo tsudev, vì cổng là quy ước toàn hệ) chuyển cổng sang mẫu
-   `pull_request` + `workflow_run`. Vùng `.github/workflows/` được bảo vệ - cần `nguyentrangtinhsu` duyệt.
+- tsudisk KHÔNG có workflow `pull_request_target` (đã kiểm `grep` 17/11) - không cần thêm vào policy.
+- Nếu sau này thêm workflow như vậy: cần chủ dự án (quyền `admin:org`) thêm repo + đường dẫn workflow vào conditions của
+  policy 15243. Agent không tự làm.
+- Kiểm tùy chọn: PR thử vô hại ở `tsudev-org/scoop-bucket`, check "Bảo vệ bản quyền" phải ra kết quả thật (không
+  `startup_failure`).
 
 ### 2.2. Giai đoạn 2 còn lại (`docs/ROADMAP.md`), mỗi mục một PR, đúng mô hình ADR-0002
 
