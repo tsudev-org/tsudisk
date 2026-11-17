@@ -2,6 +2,12 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
+## [26.11.1802] - 18/11/2026
+
+- Phát hành: mỗi bản được quét trên VirusTotal trước khi công bố; link báo cáo nằm trong ghi chú phát hành. Có phần
+  mềm diệt virus nào gắn cờ thì bản phát hành giữ ở dạng nháp cho tới khi gỡ báo nhầm.
+- Bản thử nghiệm (`-beta.N`, `-rc.N`) được đánh dấu Pre-release, không đẩy sang kho gói.
+
 ## [26.11.1801] - 18/11/2026
 
 - Lệnh `ke-hoach-xoa`, `xoa-phan-vung <X:>` (bí danh `plan-delete`, `delete`): xóa một ổ dữ liệu để lấy vùng trống
