@@ -7,6 +7,8 @@ name: Phat hanh
 #     build (GitHub Artifact Attestation) cho exe + SBOM, tao GitHub Release o dang NHAP. DISTRIBUTION_TRUST.md muc 2.
 #   virustotal: workflow dung chung tsudev-org/.github quet exe, ghi link bao cao vao Release notes (muc 3).
 #   cong-bo: 0 engine gan co (hoac chua co VT_API_KEY) => xuat ban Release. Bi gan co / loi => giu nhap + mo Issue.
+#   winget: (khong chay cho the thu) nop manifest vao microsoft/winget-pkgs bang packaging/tools/winget-submit.mjs,
+#     token WINGET_TOKEN nam trong Environment `packages` (chi the v*). Chua co token => bo qua.
 # The thu `vYY.M.DDNN-beta.N` / `-rc.N` (VERSIONING.md 2.2): VersionPrefix = phan truoc dau '-', Release la Pre-release,
 #   khong sinh manifest winget.
 on:
@@ -205,3 +207,32 @@ jobs:
           - Lỗi khác (hết giờ chờ, API): chạy lại job \`virustotal\` của lượt trên.
           EOF
           gh issue create -R "$GITHUB_REPOSITORY" --title "Phát hành $TAG giữ ở nháp" --body-file body.md
+
+  winget:
+    needs: [build, cong-bo]
+    if: needs.build.outputs.prerelease != 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: packages
+    permissions:
+      contents: read
+    env:
+      VERSION: ${{ needs.build.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Nop manifest vao microsoft/winget-pkgs
+        env:
+          WINGET_TOKEN: ${{ secrets.WINGET_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${WINGET_TOKEN:-}" ]]; then
+            echo "::notice::Chua co WINGET_TOKEN trong Environment packages - bo qua nop winget."
+            exit 0
+          fi
+          gh release download "$TAG" -R "$GITHUB_REPOSITORY" -p "tsudisk_${VERSION}_winget-manifest.zip" -D wm
+          (cd wm && unzip -q ./*.zip)
+          node packaging/tools/winget-submit.mjs --root wm --version "$VERSION" | tee -a "$GITHUB_STEP_SUMMARY"
