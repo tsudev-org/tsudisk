@@ -6,7 +6,7 @@
 // <thu-muc-goc-manifest> chua `manifests/t/tsudev/TsuDisk/<phien-ban>/*.yaml` (giai nen tu
 // tsudisk_<ver>_winget-manifest.zip). WINGET_TOKEN: PAT classic `public_repo` cua tai khoan dong goi; chua co fork
 // `<tai-khoan>/winget-pkgs` thi tao. Da co PR (dang mo hoac da gop) cho dung phien ban thi bo qua. Khong in token.
-import { appendFileSync, readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -42,12 +42,6 @@ async function gh(method, path, body, okMissing = false) {
   if (!r.ok) fail(`${method} ${path} -> ${r.status} ${text.slice(0, 300)}`);
   return text ? JSON.parse(text) : {};
 }
-// Chi ghi URL PR dung khuon (khong de du lieu tu API chen them dong vao GITHUB_OUTPUT).
-const PR_URL = /^https:\/\/github\.com\/microsoft\/winget-pkgs\/pull\/[0-9]+$/;
-const output = (k, v) => {
-  if (!PR_URL.test(v)) fail(`URL PR la: ${JSON.stringify(v).slice(0, 120)}`);
-  if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `${k}=${v}\n`);
-};
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const login = (await gh('GET', 'user')).login;
@@ -57,7 +51,7 @@ const branch = `${id}-${version}`;
 const q = encodeURIComponent(`repo:${UP} is:pr in:title "${id} version ${version}"`);
 const found = (await gh('GET', `search/issues?q=${q}`)).items
   .find((i) => i.title.endsWith(`${id} version ${version}`) && (i.state === 'open' || i.pull_request?.merged_at));
-if (found) { console.log(`[winget-submit] da co PR: ${found.html_url} - bo qua`); output('pr', found.html_url); process.exit(0); }
+if (found) { console.log(`[winget-submit] da co PR: ${found.html_url} - bo qua`); process.exit(0); }
 
 const isNew = (await gh('GET', `repos/${UP}/contents/${pkgDir}`, undefined, true)) === null;
 const title = `${isNew ? 'New package' : 'New version'}: ${id} version ${version}`;
@@ -97,4 +91,3 @@ const body = [
 ].join('\n');
 const pr = await gh('POST', `repos/${UP}/pulls`, { title, head: `${login}:${branch}`, base: 'master', body });
 console.log(`[winget-submit] PR: ${pr.html_url}`);
-output('pr', pr.html_url);
