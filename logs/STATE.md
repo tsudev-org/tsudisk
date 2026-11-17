@@ -16,7 +16,7 @@
 
 | Task | Agent | Bắt đầu |
 | --- | --- | --- |
-| Giai đoạn 2: tạo + định dạng phân vùng trong vùng trống (nhánh `feat/tao-phan-vung`) | agent-tsudisk | 11:02 17/11/2026 |
+| Giai đoạn 2: thu nhỏ ổ NTFS tổng quát (nhánh `feat/thu-nho-o`) | agent-tsudisk | 11:24 17/11/2026 |
 
 ## Đã hoàn thành (mới nhất trên cùng)
 

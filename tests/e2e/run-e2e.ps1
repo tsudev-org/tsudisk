@@ -241,6 +241,26 @@ try {
     $r = Invoke-TsuDisk @('kiem-tra-gpt', '--dia', $n2)
     Assert-True ($r.Code -eq 0) 'GPT o ao thu hai toan ven sau khi tao phan vung'
 
+    Write-Host "`n=== Ca 12: thu nho o NTFS (ADR-0004) roi tao o moi vao vung vua nhuong ==="
+    $restL = "$($rest.DriveLetter):"
+    $restSentinel = Join-Path "$restL\" 'rest.bin'
+    [IO.File]::WriteAllBytes($restSentinel, $bytes)
+    $r = Invoke-TsuDisk @('thu-nho', "$($new.DriveLetter):", '--giam-mb', '100', '--chi-o-ao', '--dong-y')
+    Assert-True ($r.Code -eq 1 -and $r.Output -match 'UnsupportedFileSystem') 'thu nho exFAT bi tu choi (UnsupportedFileSystem)'
+    $r = Invoke-TsuDisk @('thu-nho', $restL, '--giam-mb', '100000', '--chi-o-ao', '--dong-y')
+    Assert-True ($r.Code -eq 1) 'thu nho qua muc cho trong bi tu choi'
+    $r = Invoke-TsuDisk @('thu-nho', $restL, '--giam-mb', '100', '--chi-o-ao', '--dong-y', '--thu-muc-nhat-ky', $Logs)
+    Assert-True ($r.Code -eq 0) 'thu-nho REST 100 MB thanh cong (exit 0)'
+    $restAfter = Get-Partition -DiskNumber $disk2.Number | Where-Object Offset -eq $rest.Offset
+    Assert-True ($rest.Size - $restAfter.Size -eq 100MB) 'REST nho di dung 100 MB, offset giu nguyen'
+    Assert-True ((Get-FileHash $restSentinel -Algorithm SHA256).Hash -eq $keepHash) 'Du lieu REST nguyen ven sau khi thu nho'
+    $r = Invoke-TsuDisk @('tao-phan-vung', '--dia', $n2, '--nhan', 'TAIL', '--chi-o-ao', '--dong-y', '--thu-muc-nhat-ky', $Logs)
+    Assert-True ($r.Code -eq 0) 'tao-phan-vung vao vung vua nhuong thanh cong'
+    $tail = Get-Partition -DiskNumber $disk2.Number | Where-Object Offset -eq ($restAfter.Offset + $restAfter.Size)
+    Assert-True ($null -ne $tail -and $tail.Size -eq 100MB -and $tail.DriveLetter) 'o moi 100 MB nam ngay sau REST'
+    $r = Invoke-TsuDisk @('kiem-tra-gpt', '--dia', $n2)
+    Assert-True ($r.Code -eq 0) 'GPT van toan ven sau thu nho + tao'
+
     Write-Host "`n=== Ca 7: doc nhat ky ==="
     $first = (Get-ChildItem $Logs -Recurse -Filter journal.json | Sort-Object FullName | Select-Object -First 1).FullName
     $r = Invoke-TsuDisk @('nhat-ky', $first)
