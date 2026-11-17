@@ -326,7 +326,11 @@ try {
         "create partition primary offset=$offKb size=$sizeMb",
         "assign letter=$($tL.TrimEnd(':'))"
     ) | Out-Null
-    Start-Sleep -Seconds 2
+    for ($i = 0; $i -lt 30 -and -not (Test-Path $tailSentinel); $i++) { Start-Sleep -Milliseconds 500 }
+    $restored = Get-Partition -DiskNumber $disk2.Number | Where-Object Offset -eq $tail.Offset
+    Write-Host ("  khoi phuc: phan vung=" + ($restored | Select-Object PartitionNumber, Offset, Size, DriveLetter, GptType | Out-String))
+    if ($restored.DriveLetter) { Get-Volume -DriveLetter $restored.DriveLetter | Format-List DriveLetter, FileSystem, FileSystemLabel, Size | Out-String | Write-Host }
+    Write-Host "  Test-Path $tailSentinel = $(Test-Path $tailSentinel)"
     Assert-True ((Test-Path $tailSentinel) -and (Get-FileHash $tailSentinel -Algorithm SHA256).Hash -eq $keepHash) 'khoi phuc bang lenh trong ke hoach: du lieu TAIL tro lai nguyen ven'
 
     Write-Host "`n=== Ca 7: doc nhat ky ==="
