@@ -2,7 +2,7 @@
 
 - **Mã phiếu**: 20261118-01
 - **Từ**: agent-tsudisk (phiên 4, 17-18/11/2026) - **Đến**: phiên agent-tsudisk kế tiếp
-- **Trạng thái**: MỞ
+- **Trạng thái**: ĐÓNG - thay bằng phiếu 20261118-02
 - **Thay thế**: phiếu 20261117-03 (mọi việc còn lại chép sang đây). Phiếu 20261118-P0 ĐÓNG (#29).
 - **Ủy quyền**: chủ dự án cho phép tự làm liên tục (nhánh + PR + CI xanh rồi merge, deploy website); 100% tiếng Việt.
 
