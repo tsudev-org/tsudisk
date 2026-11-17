@@ -49,6 +49,7 @@ tsudisk tao-phan-vung --dia 0 --vung 1 --nhan "Kho"           # Thực hiện (A
 tsudisk nhat-ky                   # Xem lần chạy gần nhất và việc cần làm nếu bị đứt giữa chừng
 tsudisk suc-khoe                  # Sức khỏe ổ: trạng thái, nhiệt độ, độ mòn, lỗi đọc/ghi (S.M.A.R.T.)
 tsudisk kiem-tra-gpt              # Kiểm tra toàn vẹn bảng GPT trên đĩa (Admin)
+tsudisk kiem-tra-mbr2gpt          # Đĩa Windows MBR chuyển sang GPT được không (mbr2gpt /validate, chỉ đọc, Admin)
 tsudisk sao-luu                   # Sao lưu sector GPT thô + bố cục + SHA-256 (Admin)
 ```
 

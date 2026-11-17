@@ -26,6 +26,7 @@ internal sealed class CliArgs
         ["winre"] = "winre",
         ["suc-khoe"] = "suc-khoe", ["health"] = "suc-khoe",
         ["kiem-tra-gpt"] = "kiem-tra-gpt", ["verify-gpt"] = "kiem-tra-gpt",
+        ["kiem-tra-mbr2gpt"] = "kiem-tra-mbr2gpt", ["check-mbr2gpt"] = "kiem-tra-mbr2gpt",
         ["sao-luu"] = "sao-luu", ["backup"] = "sao-luu",
         ["phien-ban"] = "phien-ban", ["version"] = "phien-ban", ["--version"] = "phien-ban", ["-v"] = "phien-ban",
         ["tro-giup"] = "tro-giup", ["help"] = "tro-giup", ["--help"] = "tro-giup", ["-h"] = "tro-giup", ["/?"] = "tro-giup",
