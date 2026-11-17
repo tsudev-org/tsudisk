@@ -26,10 +26,32 @@
 
 ## 2. Việc tiếp theo (mỗi mục một PR)
 
-1. **winget**: 👤 chủ dự án tạo PAT `public_repo` (tài khoản có fork `winget-pkgs`) -> secret `WINGET_TOKEN`. Agent:
-   thêm bước nộp (`wingetcreate submit` hoặc `komac`, ghim SHA-256 của công cụ) dùng zip manifest đã đính kèm; khi
-   winget-pkgs nhận thì thêm `winget install --id tsudev.TsuDisk -e` vào khối "Cài bằng lệnh" (website + README).
-2. **VirusTotal** (DISTRIBUTION_TRUST mục 3, SHOULD): cần secret `VT_API_KEY` từ chủ dự án; Release ở nháp nếu bị gắn cờ.
+**Bí mật đã có (chủ dự án tạo 18/11/2026)** - mỗi tệp là MỘT dòng giá trị thô (không có dạng `TEN=giá trị`), quyền 600:
+
+| Tệp | Nội dung | Nạp thành secret repo |
+| --- | --- | --- |
+| `~/.config/tsudev/winget.env` | PAT GitHub `public_repo` (tài khoản có fork `winget-pkgs`) | `WINGET_TOKEN` |
+| `~/.config/tsudev/virustotal.env` | API key VirusTotal | `VT_API_KEY` |
+
+Cách nạp (KHÔNG `cat`/`echo`/`sed` tệp - phiên 4 đã lỡ in giá trị ra transcript khi định che bằng `sed 's/=.*/'`,
+vì tệp không có dấu `=`; chủ dự án sẽ thu hồi sau phase): 
+`gh secret set WINGET_TOKEN -R tsudev-org/tsudisk < ~/.config/tsudev/winget.env` và
+`gh secret set VT_API_KEY -R tsudev-org/tsudisk < ~/.config/tsudev/virustotal.env`; kiểm bằng `gh secret list` (chỉ hiện tên).
+Cân nhắc đặt trong Environment `packages` có người duyệt (PACKAGING.md mục 7) thay vì secret repo trần.
+
+1. **VirusTotal** (DISTRIBUTION_TRUST mục 3, một PR): trong job `publish` của `release.yml`, tạo Release ở **nháp**
+   (`--draft`), gửi exe lên VirusTotal API v3 (`POST /api/v3/files`, header `x-apikey` lấy từ `secrets.VT_API_KEY`,
+   không in ra log), chờ phân tích xong (`GET /api/v3/analyses/{id}`, giới hạn gói miễn phí 4 yêu cầu/phút - hỏi lại
+   mỗi 20-30 giây), ghi link `https://www.virustotal.com/gui/file/<sha256>` vào Release notes. `malicious` = 0 thì
+   `gh release edit --draft=false`; có engine gắn cờ thì giữ nháp + mở Issue, KHÔNG xuất bản. Thiếu secret thì bỏ qua
+   bước và xuất bản như cũ (để fork/PR không gãy). Thử trên thẻ beta (`v26.11.DDNN-beta.1`, Pre-release) trước.
+2. **winget** (một PR, sau mục 1): job mới `winget` (`needs: publish`, chỉ khi có `WINGET_TOKEN`, không chạy cho thẻ
+   beta) trên `windows-latest`: tải `tsudisk_{ver}_winget-manifest.zip` của Release, `winget validate` thư mục manifest,
+   rồi nộp bằng `wingetcreate submit --token` (tải `wingetcreate.exe` từ Release chính thức microsoft/winget-create theo
+   phiên bản cố định + kiểm SHA-256 ghim trong workflow) hoặc `komac` (cũng ghim). Lần đầu là gói MỚI `tsudev.TsuDisk`:
+   PR vào microsoft/winget-pkgs cần người kiểm duyệt của Microsoft - theo dõi PR, sửa theo bình luận bot. Khi được
+   merge: thêm `winget install --id tsudev.TsuDisk -e` vào khối "Cài bằng lệnh" (website + README) và `channels`.
+   Nộp thủ công ngay bây giờ cho bản 26.11.1801 cũng được (manifest đã đính kèm Release) - ghi số PR winget-pkgs vào STATE.
 3. **Chuyển MBR -> GPT**: ADR-0006 (số 0005 đã dùng cho xóa phân vùng). CI VHDX không kiểm được bước chuyển -> cần chủ
    dự án duyệt kiểm trên máy ảo Hyper-V Gen 1. Không merge khi chưa kiểm thật.
 4. **Giao diện WPF** (lớn): mọi thao tác = một `Plan` qua `PlanRunner`; planner đủ cho bản đầu. Sau đó MSIX (phiếu P2).
