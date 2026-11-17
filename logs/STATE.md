@@ -70,4 +70,14 @@
 
 > Ghi theo `.standards/docs/SECURITY_BASELINE.md` mục 9. Để trống nếu chưa có.
 
-- (chưa có)
+- 18/11/2026 - **Lộ PAT winget** (classic, `public_repo`, tài khoản `nguyentrangtinhsu`): khi nạp `WINGET_TOKEN`, token
+  được dán vào terminal và hiện đầy đủ trong ảnh chụp gửi vào phiên Claude, đồng thời có thể đã vào `~/.bash_history`.
+  Lộ khoảng vài phút trước khi thay. Đã làm: tạo token mới (hết hạn 17/12/2026), ghi lại `~/.config/tsudev/winget.env`,
+  nạp lại secret (Environment `packages`), xóa dòng `ghp_` khỏi `~/.bash_history`. Không nằm trong git (không cần
+  filter-repo). Token không chạm dữ liệu người dùng (D1). **Còn mở**: 👤 xác nhận token CŨ đã bị xóa ở
+  github.com/settings/tokens và xem github.com/settings/security-log không có dùng lạ.
+  Phòng ngừa: nạp secret chỉ bằng `gh secret set ... < tệp`, ghi tệp bằng `cat > tệp` (không dán token lên dòng lệnh).
+- 17/11/2026 (ghi bổ sung) - Phiên 4 in giá trị `~/.config/tsudev/{winget,virustotal}.env` ra transcript (phiếu
+  20261118-01 mục 2). PAT winget cũ đã thay ở sự cố trên; **còn mở**: 👤 đổi khóa VirusTotal rồi
+  `gh secret set VT_API_KEY -R tsudev-org/tsudisk < ~/.config/tsudev/virustotal.env`.
+
