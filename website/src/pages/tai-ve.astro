@@ -3,7 +3,7 @@ import Trang from '../layouts/Trang.astro';
 import { banMoiNhat, mb, RELEASES_URL, REPO, REPO_URL } from '../lib/noi-dung';
 
 const ban = await banMoiNhat();
-const vd = ban?.goi[0]?.ten ?? 'tsudisk_<phiên bản>_x64-portable.exe';
+const vd = ban?.goi[0]?.ten ?? 'tsudisk_<phiên bản>_windows-x64-portable.exe';
 ---
 <Trang tieuDe="Tải về" moTa="Tải TsuDisk cho Windows 10, 11: một tệp tsudisk.exe chạy thẳng, mã SHA-256 từng gói, chứng thực nguồn gốc build và cách tự build từ mã nguồn." duongDan="/tai-ve/">
   <div class="khung tai-lieu">

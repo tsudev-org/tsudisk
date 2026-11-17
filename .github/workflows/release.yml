@@ -1,6 +1,6 @@
 name: Phat hanh
 
-# Gan tag vYY.M.DDNN tren main -> build tsudisk.exe tren Windows, chay lai E2E VHDX, dat ten theo VERSIONING.md,
+# Gan tag vYY.M.DDNN tren main -> build tsudisk.exe tren Windows, chay lai E2E VHDX, dat ten theo VERSIONING.md + phieu toan he 20261117-V1 ({goi}_{ver}_{os}-{arch}-{loai}),
 # sinh SHA256SUMS.txt, chung thuc nguon goc build (GitHub Artifact Attestation), tao GitHub Release.
 on:
   push:
@@ -41,7 +41,7 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory dist | Out-Null
-          $name = "tsudisk_$($env:VERSION)_x64-portable.exe"
+          $name = "tsudisk_$($env:VERSION)_windows-x64-portable.exe"
           Copy-Item publish/tsudisk.exe "dist/$name"
           Get-ChildItem dist | ForEach-Object { "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower(), $_.Name } |
             Set-Content -Encoding ascii dist/SHA256SUMS.txt

@@ -130,10 +130,10 @@ export function changelogMoiNhat(soMuc: number): string {
 export interface GoiTai { ma: string; tieuDe: string; moTa: string; ten: string; url: string; sha256: string; kichThuoc: number }
 export interface BanPhatHanh { tag: string; phienBan: string; ngay: string; url: string; goi: GoiTai[]; phu: GoiTai[]; tepSums: { ten: string; url: string }[] }
 
-/** Các gói giao chương trình theo docs/VERSIONING.md (`tsudisk_26.11.1601_x64-portable.exe`). Thứ tự = thứ tự hiển thị. */
+/** Các gói giao chương trình theo docs/VERSIONING.md (`tsudisk_26.11.1705_windows-x64-portable.exe`; bản <= 26.11.1704 dùng `tsudisk_26.11.1704_x64-portable.exe`). Thứ tự = thứ tự hiển thị. */
 export const LOAI_GOI: { ma: string; tieuDe: string; moTa: string; mau: RegExp }[] = [
   { ma: 'setup', tieuDe: 'Bộ cài đặt', moTa: 'Cài vào Program Files, thêm tsudisk vào PATH, có mục gỡ cài đặt.', mau: /^tsudisk_.+_x64-setup\.exe$/ },
-  { ma: 'portable', tieuDe: 'Bản di động', moTa: 'Một tệp tsudisk.exe chạy thẳng, không cài, không cần .NET. Mở Terminal (Admin) ở thư mục chứa tệp.', mau: /^tsudisk_.+_x64-portable\.exe$/ },
+  { ma: 'portable', tieuDe: 'Bản di động', moTa: 'Một tệp tsudisk.exe chạy thẳng, không cài, không cần .NET. Mở Terminal (Admin) ở thư mục chứa tệp.', mau: /^tsudisk_.+_(windows-)?x64-portable\.exe$/ },
 ];
 const PHU: { tieuDe: string; moTa: string; mau: RegExp }[] = [
   { tieuDe: 'SBOM', moTa: 'Danh mục thành phần phần mềm (CycloneDX) của bản phát hành.', mau: /sbom\.json$/ },

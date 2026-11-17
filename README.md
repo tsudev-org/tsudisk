@@ -21,7 +21,7 @@ dữ liệu nào** của các phân vùng khác, không cần khởi động l�
 
 ## Cài đặt
 
-Tải `tsudisk_<phiên bản>_x64-portable.exe` ở <https://disk.tsudev.com/tai-ve/> (kèm SHA-256), hoặc qua Scoop:
+Tải `tsudisk_<phiên bản>_windows-x64-portable.exe` ở <https://disk.tsudev.com/tai-ve/> (kèm SHA-256), hoặc qua Scoop:
 
 ```powershell
 scoop bucket add tsudev https://github.com/tsudev-org/scoop-bucket
