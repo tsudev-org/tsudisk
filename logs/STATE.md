@@ -5,10 +5,10 @@
 
 ## Hàng đợi task (làm từ trên xuống)
 
-- [ ] 👤 Theo dõi phiếu tsudev 20261117-D2: tsudev#294 cần chủ dự án DUYỆT LẠI (lượt duyệt cũ bị hủy sau khi giải xung đột).
-- [ ] Phiếu bàn giao đầy đủ cho phiên kế tiếp: `logs/handover/20261117-02_ban-giao-tiep-tuc-giai-doan-2-3.md`.
-- [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): giao diện WPF; đổi chữ cái/nhãn ổ; thu nhỏ ổ tổng quát; tạo/định dạng
-      phân vùng trong vùng trống; `mbr2gpt`.
+- [ ] Phiếu bàn giao đầy đủ cho phiên kế tiếp: `logs/handover/20261117-03_giai-doan-2-doi-ten-tao-thu-nho.md`.
+- [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): `kiem-tra-mbr2gpt` (chỉ đọc, `/validate`) rồi mới tới chuyển MBR -> GPT
+      (cần ADR riêng + kiểm trên máy ảo Hyper-V vì CI VHDX không có Windows trên đĩa MBR); xóa phân vùng dữ liệu; giao
+      diện WPF.
 - [ ] Giai đoạn 3: bộ cài, winget `tsudev.TsuDisk` (cần PAT `public_repo` làm secret `WINGET_TOKEN`), ký SignPath (D5).
 - [ ] Nợ thương hiệu: biến thể 16px đơn giản hóa; ảnh gốc lớn hơn/SVG (`docs/BRAND.md`).
 
@@ -16,10 +16,14 @@
 
 | Task | Agent | Bắt đầu |
 | --- | --- | --- |
-| Giai đoạn 2: thu nhỏ ổ NTFS tổng quát (nhánh `feat/thu-nho-o`) | agent-tsudisk | 11:24 17/11/2026 |
 
 ## Đã hoàn thành (mới nhất trên cùng)
 
+- 17/11/2026 - 26.11.1704: `thu-nho` (thu nhỏ NTFS tổng quát, ADR-0004) - #24; E2E 63/63.
+- 17/11/2026 - 26.11.1703: `tao-phan-vung` (tạo + định dạng trong vùng trống) - #23.
+- 17/11/2026 - 26.11.1702: `doi-ten` (đổi chữ cái + nhãn ổ) - #22. Cả ba bản: SHA256SUMS + attestation đã kiểm,
+  website đã deploy. Test đơn vị 89 -> 137.
+- 17/11/2026 - tsudev#294 (logo riêng TsuDisk trên tsudev.com) đã MERGED.
 - 17/11/2026 - Org `tsudev-org` có Actions event policy 15243 cho `pull_request_target` (phiên tsudev); tsudisk không cần thêm.
 - 17/11/2026 - Phiếu tsudev 20261117-D3 ĐÓNG (tsudev#295): tsudev.com/apps có `scoop install tsudev/tsudisk` (đo 200).
 - 17/11/2026 - Gói Scoop `tsudisk` merge (scoop-bucket#15); trang Tải về + README có khối cài bằng Scoop.
@@ -41,6 +45,8 @@
 
 - 16/11/2026 - C# / .NET 10 + Storage Management API: `docs/adr/0001-chon-nen-tang.md`
 - 16/11/2026 - Mô hình kế hoạch an toàn: `docs/adr/0002-mo-hinh-ke-hoach-an-toan.md`
+- 16/11/2026 - Thu nhỏ chỉ cho WinRE: `docs/adr/0003-thu-nho-chi-cho-winre.md`
+- 17/11/2026 - Thu nhỏ NTFS tổng quát (mở rộng ADR-0003): `docs/adr/0004-thu-nho-o-tong-quat.md`
 
 ## Sự cố bảo mật
 
