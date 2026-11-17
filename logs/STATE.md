@@ -3,6 +3,10 @@
 > Agent đọc file này ở đầu mỗi phiên và cập nhật ở cuối mỗi phiên.
 > Quy trình: `.standards/docs/AGENT_PROTOCOL.md`.
 
+> **Phiên kế tiếp**: đọc `~/projects/logs/handover/20261117-P2_ke-hoach-phan-phoi-tin-cay-da-nen-tang.md` hàng 8
+> (`tsudisk`) ở mục 3 + `.standards/docs/DISTRIBUTION_TRUST.md`. P1 còn: `packaging/package.json`, winget, VirusTotal
+> (cần bí mật `VT_API_KEY`); P2 MSIX khi có giao diện WPF + tài khoản Partner Center; P4 ký mã.
+
 ## Hàng đợi task (làm từ trên xuống)
 
 - [ ] Phiếu bàn giao đầy đủ cho phiên kế tiếp: `logs/handover/20261117-03_giai-doan-2-doi-ten-tao-thu-nho.md`.
