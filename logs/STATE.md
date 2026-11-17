@@ -6,7 +6,9 @@
 ## Hàng đợi task (làm từ trên xuống)
 
 - [ ] Phiếu bàn giao đầy đủ cho phiên kế tiếp: `logs/handover/20261117-03_giai-doan-2-doi-ten-tao-thu-nho.md`.
-- [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): `kiem-tra-mbr2gpt` (chỉ đọc, `/validate`) rồi mới tới chuyển MBR -> GPT
+- [ ] Kiểm Scoop excavator tự lên 26.11.1705 với tên tệp mới (scoop-bucket#19); chạy lại `gh attestation verify` cho
+      tệp 26.11.1705 (phiên 4 hết hạn mức trước khi đọc được kết quả).
+- [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): chuyển MBR -> GPT
       (cần ADR riêng + kiểm trên máy ảo Hyper-V vì CI VHDX không có Windows trên đĩa MBR); xóa phân vùng dữ liệu; giao
       diện WPF.
 - [ ] Giai đoạn 3: bộ cài, winget `tsudev.TsuDisk` (cần PAT `public_repo` làm secret `WINGET_TOKEN`), ký SignPath (D5).
@@ -18,6 +20,11 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 17/11/2026 - 26.11.1705: `kiem-tra-mbr2gpt` (chỉ đọc, mbr2gpt /validate + setupact.log) - #27; test 150 -> 151, E2E
+  ca 13 đạt trên mbr2gpt thật (mã 7 "Wrong boot partition count"). Website đã deploy (đo 200, có thẻ mới).
+- 17/11/2026 - Phiếu toàn hệ 20261117-V1: tsudisk đã đọc; tên tệp đổi `tsudisk_{ver}_windows-x64-portable.exe` (#26,
+  scoop-bucket#19), bản đầu tiên 26.11.1705. Chờ tsudev-standards v3.7.0 để sync.
 
 - 17/11/2026 - 26.11.1704: `thu-nho` (thu nhỏ NTFS tổng quát, ADR-0004) - #24; E2E 63/63.
 - 17/11/2026 - 26.11.1703: `tao-phan-vung` (tạo + định dạng trong vùng trống) - #23.
