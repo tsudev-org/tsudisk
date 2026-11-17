@@ -26,6 +26,8 @@ try
         "doi-ten" => Commands.Rename(cli, planOnly: false),
         "ke-hoach-tao-phan-vung" => Commands.CreatePartition(cli, planOnly: true),
         "tao-phan-vung" => Commands.CreatePartition(cli, planOnly: false),
+        "ke-hoach-thu-nho" => Commands.Shrink(cli, planOnly: true),
+        "thu-nho" => Commands.Shrink(cli, planOnly: false),
         "nhat-ky" => Commands.Journal(cli),
         "winre" => Commands.WinRe(),
         "suc-khoe" => Commands.Health(cli),
@@ -141,6 +143,24 @@ internal static partial class Commands
         var layout = Backend.ListDisks().Select(d => Backend.ReadLayout(d.Number)).FirstOrDefault(l => l.FindByLetter(letter) is not null)
             ?? throw new DiskOperationException($"Không có ổ {letter}: trên đĩa nào.");
         return ShowAndRun(cli, RenamePlanner.Plan(layout, Backend.DriveLettersInUse(), request), planOnly, letter.ToString());
+    }
+
+    public static int Shrink(CliArgs cli, bool planOnly)
+    {
+        if (cli.Positionals.Count != 1)
+            throw new UsageException("Cần đúng một ổ, ví dụ: tsudisk thu-nho D: --giam-mb 20480");
+        var letter = CliArgs.ParseDriveLetter(cli.Positionals[0]);
+        var reduceMb = cli.IntValue("giam-mb") ?? throw new UsageException("Cần --giam-mb N: số MB muốn nhường ra (vùng trống nằm ngay sau ổ).");
+        var layout = Backend.ListDisks().Select(d => Backend.ReadLayout(d.Number)).FirstOrDefault(l => l.FindByLetter(letter) is not null)
+            ?? throw new DiskOperationException($"Không có ổ {letter}: trên đĩa nào.");
+        var target = layout.FindByLetter(letter)!;
+        var request = new ShrinkRequest(letter, reduceMb * Units.MiB)
+        {
+            VirtualDiskOnly = cli.Has("chi-o-ao"),
+            SystemDrive = Environment.GetEnvironmentVariable("SystemDrive") is [var sys, ..] ? sys : null,
+            WindowsMinSize = target.FileSystem == "NTFS" ? WindowsDiskBackend.TryGetMinPartitionSize(layout.Disk.Number, target.PartitionNumber) : null,
+        };
+        return ShowAndRun(cli, ShrinkPlanner.Plan(layout, request), planOnly, letter.ToString());
     }
 
     public static int CreatePartition(CliArgs cli, bool planOnly)
@@ -269,6 +289,8 @@ internal static partial class Commands
               tsudisk mo-rong-winre [tùy chọn]            Thực hiện nới rộng Recovery; gõ WINRE để xác nhận (cần quyền quản trị)
               tsudisk ke-hoach-doi-ten <X:> [--chu-cai Y] [--nhan TÊN]  Kế hoạch đổi chữ cái và/hoặc nhãn ổ dữ liệu, KHÔNG thay đổi gì
               tsudisk doi-ten <X:> [--chu-cai Y] [--nhan TÊN]  Thực hiện đổi (cần quyền quản trị); --nhan "" để xóa nhãn
+              tsudisk ke-hoach-thu-nho <X:> --giam-mb N   Kế hoạch thu nhỏ ổ NTFS, nhường N MB vùng trống ra sau ổ, KHÔNG thay đổi gì
+              tsudisk thu-nho <X:> --giam-mb N            Thực hiện thu nhỏ (cần quyền quản trị); gõ lại chữ cái ổ để xác nhận
               tsudisk ke-hoach-tao-phan-vung --dia N [--vung K] [--kich-thuoc-mb M] [--he-tep NTFS|exFAT|FAT32] [--nhan TÊN] [--chu-cai Y]
                                                           Kế hoạch tạo + định dạng phân vùng dữ liệu trong vùng trống, KHÔNG thay đổi gì
               tsudisk tao-phan-vung --dia N [như trên]    Thực hiện (cần quyền quản trị); gõ TAO để xác nhận
@@ -279,7 +301,7 @@ internal static partial class Commands
               tsudisk sao-luu [--dia N] [--thu-muc-nhat-ky DIR]  Sao lưu sector GPT thô + bố cục + SHA-256 - quản trị
               tsudisk phien-ban | tro-giup
 
-            Tùy chọn cho ke-hoach / mo-rong / doi-ten / tao-phan-vung:
+            Tùy chọn cho ke-hoach / mo-rong / doi-ten / thu-nho / tao-phan-vung:
               --chay-thu                 Chỉ chạy các bước không ghi đĩa (quét, sao lưu) để kiểm tra
               --dong-y                   Không hỏi xác nhận (dùng trong kịch bản tự động)
               --recovery-mb N            Kích thước Recovery mới (512-4096; mo-rong mặc định 1024, mo-rong-winre mặc định đủ 250 MB trống)
@@ -287,7 +309,7 @@ internal static partial class Commands
               --chi-o-ao                 Chỉ cho phép thao tác trên ổ ảo VHD/VHDX (kiểm thử)
               --thu-muc-nhat-ky DIR      Nơi lưu nhật ký và bản sao lưu (mặc định %ProgramData%\TsuDisk\nhat-ky)
 
-            Bí danh tiếng Anh: list, analyze, plan, extend, plan-winre, grow-winre, plan-rename, rename, plan-create, create, journal, health, verify-gpt, backup, version, help; --dry-run, --yes, --disk, --virtual-only, --log-dir, --letter, --label, --extent, --size-mb, --fs.
+            Bí danh tiếng Anh: list, analyze, plan, extend, plan-winre, grow-winre, plan-rename, rename, plan-shrink, shrink, plan-create, create, journal, health, verify-gpt, backup, version, help; --dry-run, --yes, --disk, --virtual-only, --log-dir, --letter, --label, --extent, --size-mb, --fs, --shrink-mb.
             Mã thoát: 0 xong, 1 từ chối/lỗi, 2 sai cú pháp, 3 thiếu quyền quản trị, 4 thất bại đã hoàn tác, 5 cần xử lý.
             """);
         return ExitCodes.Ok;

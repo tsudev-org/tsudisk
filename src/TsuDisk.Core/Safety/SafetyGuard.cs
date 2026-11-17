@@ -50,11 +50,14 @@ public static class SafetyGuard
                 case StepKind.ExtendPartition when size < existing.Size:
                     violations.Add($"Bước {step.Index}: kế hoạch thu nhỏ {existing.DisplayName} - bị cấm.");
                     break;
-                case StepKind.ShrinkPartition when plan.Operation != Planning.WinReGrowPlanner.Operation:
-                    violations.Add($"Bước {step.Index}: thu nhỏ chỉ được phép trong thao tác nới rộng WinRE.");
+                case StepKind.ShrinkPartition when plan.Operation is not (Planning.WinReGrowPlanner.Operation or Planning.ShrinkPlanner.Operation):
+                    violations.Add($"Bước {step.Index}: thu nhỏ chỉ được phép trong thao tác nới rộng WinRE hoặc thu nhỏ ổ (ADR-0003, ADR-0004).");
                     break;
                 case StepKind.ShrinkPartition when existing is null || existing.Kind != PartitionKind.BasicData:
                     violations.Add($"Bước {step.Index}: chỉ được thu nhỏ ổ dữ liệu.");
+                    break;
+                case StepKind.ShrinkPartition when plan.Operation == Planning.ShrinkPlanner.Operation:
+                    violations.AddRange(CheckGeneralShrink(step, existing));
                     break;
                 case StepKind.ShrinkPartition when size >= existing.Size || existing.Size - size > Planning.WinReGrowRequest.MaxShrink:
                     violations.Add($"Bước {step.Index}: mức thu nhỏ {existing.DisplayName} không hợp lệ (phải nhỏ hơn hiện tại và không quá 4 GB).");
@@ -82,6 +85,21 @@ public static class SafetyGuard
         if (plan.ExpectedAfter.Disk.Style == PartitionStyle.Mbr && plan.ExpectedAfter.Partitions.Count > 4)
             violations.Add("Đĩa MBR chỉ có tối đa 4 phân vùng chính.");
         return violations;
+    }
+
+    /// <summary>ADR-0004: chi NTFS, nho hon hien tai, diem cuoi can le 1 MiB, con du cho trong sau khi thu nho.</summary>
+    private static IEnumerable<string> CheckGeneralShrink(PlanStep step, PartitionInfo existing)
+    {
+        var size = step.Size!.Value;
+        if (existing.FileSystem != "NTFS")
+            yield return $"Bước {step.Index}: chỉ thu nhỏ được ổ NTFS.";
+        if (size >= existing.Size)
+            yield return $"Bước {step.Index}: kích thước mới của {existing.DisplayName} phải nhỏ hơn hiện tại.";
+        if (!Units.IsAligned(existing.Offset + size, Units.MiB))
+            yield return $"Bước {step.Index}: điểm cuối mới của {existing.DisplayName} không căn lề 1 MiB.";
+        var minFree = Planning.ShrinkRequest.MinFreeAfter(existing.IsSystem || existing.IsBoot, size);
+        if (existing.FreeBytes is not { } free || free - (existing.Size - size) < minFree)
+            yield return $"Bước {step.Index}: {existing.DisplayName} sẽ còn dưới {Units.Format(minFree)} trống sau khi thu nhỏ.";
     }
 
     private static IEnumerable<string> CheckCreate(PlanStep step, DiskLayout before, PartitionInfo? existing)

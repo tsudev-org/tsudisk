@@ -81,6 +81,19 @@ public sealed class WindowsDiskBackend : IDiskBackend
 
     public long GetMinPartitionSize(int diskNumber, int partitionNumber) => StorageApi.GetMinSize(diskNumber, partitionNumber);
 
+    /// <summary>SizeMin cho luc lap ke hoach; null khi chua co quyen hoac Windows khong tra loi (PlanRunner van kiem lai).</summary>
+    public static long? TryGetMinPartitionSize(int diskNumber, int partitionNumber)
+    {
+        try
+        {
+            return StorageApi.GetMinSize(diskNumber, partitionNumber);
+        }
+        catch (Exception ex) when (ex is DiskOperationException or System.Management.ManagementException or UnauthorizedAccessException)
+        {
+            return null;
+        }
+    }
+
     public IReadOnlySet<char> DriveLettersInUse() => StorageApi.LettersInUse();
 
     public void SetDriveLetter(int diskNumber, int partitionNumber, char? oldLetter, char newLetter) =>

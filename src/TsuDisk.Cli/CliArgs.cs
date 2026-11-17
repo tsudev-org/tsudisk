@@ -20,6 +20,8 @@ internal sealed class CliArgs
         ["doi-ten"] = "doi-ten", ["rename"] = "doi-ten",
         ["ke-hoach-tao-phan-vung"] = "ke-hoach-tao-phan-vung", ["plan-create"] = "ke-hoach-tao-phan-vung",
         ["tao-phan-vung"] = "tao-phan-vung", ["create"] = "tao-phan-vung",
+        ["ke-hoach-thu-nho"] = "ke-hoach-thu-nho", ["plan-shrink"] = "ke-hoach-thu-nho",
+        ["thu-nho"] = "thu-nho", ["shrink"] = "thu-nho",
         ["nhat-ky"] = "nhat-ky", ["journal"] = "nhat-ky",
         ["winre"] = "winre",
         ["suc-khoe"] = "suc-khoe", ["health"] = "suc-khoe",
@@ -43,10 +45,11 @@ internal sealed class CliArgs
         ["--vung"] = "vung", ["--extent"] = "vung",
         ["--kich-thuoc-mb"] = "kich-thuoc-mb", ["--size-mb"] = "kich-thuoc-mb",
         ["--he-tep"] = "he-tep", ["--fs"] = "he-tep",
+        ["--giam-mb"] = "giam-mb", ["--shrink-mb"] = "giam-mb",
         ["--thu-muc-nhat-ky"] = "thu-muc-nhat-ky", ["--log-dir"] = "thu-muc-nhat-ky",
     };
 
-    private static readonly HashSet<string> ValueFlags = ["dia", "recovery-mb", "recovery", "thu-muc-nhat-ky", "chu-cai", "nhan", "vung", "kich-thuoc-mb", "he-tep"];
+    private static readonly HashSet<string> ValueFlags = ["dia", "recovery-mb", "recovery", "thu-muc-nhat-ky", "chu-cai", "nhan", "vung", "kich-thuoc-mb", "he-tep", "giam-mb"];
 
     public string Command { get; private init; } = "tro-giup";
     public List<string> Positionals { get; } = [];

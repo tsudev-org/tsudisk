@@ -2,6 +2,13 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
+## [26.11.1704] - 17/11/2026
+
+- Lệnh `ke-hoach-thu-nho`, `thu-nho`: thu nhỏ ổ NTFS để nhường vùng trống ngay sau ổ (rồi dùng `tao-phan-vung`).
+  Windows tự dời dữ liệu ở cuối ổ; TsuDisk giữ ổ còn đủ chỗ trống (ổ dữ liệu min(2 GB, 25%), ổ Windows 10 GB), hỏi
+  trước Windows cho thu nhỏ tới đâu và gợi ý cách gỡ khi tệp không dời được (ngủ đông, pagefile, điểm khôi phục).
+  Lỗi giữa chừng thì nới ổ về cỡ cũ. Quyết định: `docs/adr/0004-thu-nho-o-tong-quat.md`.
+
 ## [26.11.1703] - 17/11/2026
 
 - Lệnh `ke-hoach-tao-phan-vung`, `tao-phan-vung`: tạo và định dạng nhanh một ổ dữ liệu mới (NTFS, exFAT, FAT32) trong
