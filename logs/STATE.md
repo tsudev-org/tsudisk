@@ -70,4 +70,17 @@
 
 > Ghi theo `.standards/docs/SECURITY_BASELINE.md` mục 9. Để trống nếu chưa có.
 
-- (chưa có)
+- 18/11/2026 - **Lộ PAT winget** (classic, `public_repo`, tài khoản `nguyentrangtinhsu`): khi nạp `WINGET_TOKEN`, token
+  được dán vào terminal và hiện đầy đủ trong ảnh chụp gửi vào phiên Claude, đồng thời có thể đã vào `~/.bash_history`.
+  Lộ khoảng vài phút trước khi thay. Đã làm: tạo token mới (hết hạn 17/12/2026), ghi lại `~/.config/tsudev/winget.env`,
+  nạp lại secret (Environment `packages`), xóa dòng `ghp_` khỏi `~/.bash_history`. Không nằm trong git (không cần
+  filter-repo). Token không chạm dữ liệu người dùng (D1). Token CŨ (hết hạn 17/12/2026 18:36 UTC) đã bị xóa - đối
+  chiếu danh sách github.com/settings/tokens 18/11/2026: chỉ còn token mới (hết hạn 18/12/2026) và một token
+  `winget tsudev` khác chưa từng dùng. Còn: 👤 xem github.com/settings/security-log có dùng lạ trong lúc lộ không.
+  Phòng ngừa: nạp secret chỉ bằng `gh secret set ... < tệp`, ghi tệp bằng `cat > tệp` (không dán token lên dòng lệnh).
+- 17/11/2026 (ghi bổ sung) - Phiên 4 in giá trị `~/.config/tsudev/{winget,virustotal}.env` ra transcript (phiếu
+  20261118-01 mục 2). PAT winget cũ đã thay ở sự cố trên. Khóa VirusTotal: tài khoản miễn phí, chủ dự án
+  không đổi được khóa - CHẤP NHẬN rủi ro (khóa chỉ lộ trong transcript cục bộ/phiên Claude, không công khai; gói miễn
+  phí không tính tiền, hậu quả tệ nhất là người khác dùng hết hạn mức 4 lượt/phút, 500 lượt/ngày). Theo dõi: job
+  `virustotal` báo lỗi hạn mức (HTTP 429/`QuotaExceededError`) bất thường => nghi khóa bị dùng, tạo tài khoản mới.
+
