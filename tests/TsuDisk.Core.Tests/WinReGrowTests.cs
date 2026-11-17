@@ -191,6 +191,7 @@ public class WinReGrowTests
         public long GetMaxPartitionSize(int diskNumber, int partitionNumber) => inner.GetMaxPartitionSize(diskNumber, partitionNumber);
         public long GetMinPartitionSize(int diskNumber, int partitionNumber) => inner.GetMinPartitionSize(diskNumber, partitionNumber);
         public void DeletePartition(int diskNumber, int partitionNumber) => inner.DeletePartition(diskNumber, partitionNumber);
+        public void DeleteDataPartition(int diskNumber, int partitionNumber, char driveLetter) => inner.DeleteDataPartition(diskNumber, partitionNumber, driveLetter);
         public void ResizePartition(int diskNumber, int partitionNumber, long newSize) => inner.ResizePartition(diskNumber, partitionNumber, newSize);
         public IReadOnlySet<char> DriveLettersInUse() => inner.DriveLettersInUse();
         public void SetDriveLetter(int diskNumber, int partitionNumber, char? oldLetter, char newLetter) => inner.SetDriveLetter(diskNumber, partitionNumber, oldLetter, newLetter);

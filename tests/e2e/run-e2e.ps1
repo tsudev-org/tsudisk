@@ -290,6 +290,42 @@ try {
     Assert-True ($disk3After.PartitionStyle -eq 'MBR') 'dia van la MBR (chi doc, khong chuyen)'
     Assert-True ((($before3 | ConvertTo-Json) -eq ($after3 | ConvertTo-Json))) 'bo cuc MBR khong doi'
 
+    Write-Host "`n=== Ca 14: xoa phan vung du lieu (ADR-0005) - du lieu con tren dia, huong dan cuu bang TestDisk ==="
+    $tailNow = Get-Partition -DiskNumber $disk2.Number | Where-Object Offset -eq $tail.Offset
+    $tL = "$($tailNow.DriveLetter):"
+    $tailSentinel = Join-Path "$tL\" 'tail.bin'
+    [IO.File]::WriteAllBytes($tailSentinel, $bytes)
+    $r = Invoke-TsuDisk @('ke-hoach-xoa', 'C:', '--chi-o-ao')
+    Assert-True ($r.Code -eq 1) 'ke-hoach-xoa C: bi tu choi'
+    $r = Invoke-TsuDisk @('ke-hoach-xoa', $tL, '--chi-o-ao')
+    Assert-True ($r.Code -eq 0 -and $r.Output -match "TestDisk" -and $r.Output -match "sector $($tailNow.Offset / 512) ") 'ke hoach chi cach cuu bang TestDisk dung sector bat dau'
+    $r = Invoke-TsuDisk @('xoa-phan-vung', $tL, '--chi-o-ao', '--dong-y', '--thu-muc-nhat-ky', $Logs)
+    Assert-True ($r.Code -eq 2) '--dong-y khong du de xoa (exit 2)'
+    $r = Invoke-TsuDisk @('xoa-phan-vung', $tL, '--chi-o-ao', '--xac-nhan', "$tL SAI", '--thu-muc-nhat-ky', $Logs)
+    Assert-True ($r.Code -eq 2) 'xac nhan sai -> khong xoa (exit 2)'
+    $r = Invoke-TsuDisk @('xoa-phan-vung', $tL, '--chi-o-ao', '--xac-nhan', "$tL TAIL", '--thu-muc-nhat-ky', "$tL\logs")
+    Assert-True ($r.Code -eq 2) 'thu muc nhat ky tren o sap xoa -> tu choi'
+    $open = [IO.File]::Open($tailSentinel, 'Open', 'Read', 'Read')
+    try {
+        $r = Invoke-TsuDisk @('xoa-phan-vung', $tL, '--chi-o-ao', '--xac-nhan', "$tL TAIL", '--thu-muc-nhat-ky', $Logs)
+        Assert-True ($r.Code -ne 0 -and $r.Output -match ([string][char]0x0111 + 'ang')) "o co tep dang mo -> khong xoa (exit $($r.Code))"
+        Assert-True ($null -ne (Get-Partition -DiskNumber $disk2.Number | Where-Object Offset -eq $tail.Offset)) 'TAIL van con'
+    } finally { $open.Dispose() }
+    $keepBefore = Get-Partition -DiskNumber $disk2.Number | Where-Object { $_.Offset -ne $tail.Offset } | Select-Object Offset, Size
+    $r = Invoke-TsuDisk @('xoa-phan-vung', $tL, '--chi-o-ao', '--xac-nhan', "$($tL.ToLower()) TAIL", '--thu-muc-nhat-ky', $Logs)
+    Assert-True ($r.Code -eq 0) 'xoa-phan-vung thanh cong (exit 0)'
+    Assert-True ($null -eq (Get-Partition -DiskNumber $disk2.Number | Where-Object Offset -eq $tail.Offset)) 'TAIL da bi xoa'
+    $keepAfter2 = Get-Partition -DiskNumber $disk2.Number | Select-Object Offset, Size
+    Assert-True ((($keepBefore | ConvertTo-Json) -eq ($keepAfter2 | ConvertTo-Json))) 'cac phan vung khac giu nguyen'
+    $r = Invoke-TsuDisk @('kiem-tra-gpt', '--dia', $n2)
+    Assert-True ($r.Code -eq 0) 'GPT toan ven sau khi xoa'
+    # Chan doan (A): sau khi xoa, sector dau cua vung cu con chu ky NTFS khong (xoa chi go muc trong bang phan vung).
+    $raw = [IO.File]::Open("\\.\PhysicalDrive$($disk2.Number)", 'Open', 'Read', 'ReadWrite')
+    try { $buf = New-Object byte[] 4096; [void]$raw.Seek($tail.Offset, 'Begin'); [void]$raw.Read($buf, 0, 4096) } finally { $raw.Dispose() }
+    $oem = [Text.Encoding]::ASCII.GetString($buf, 3, 8)
+    Write-Host "  OEM id sau khi xoa: '$oem'"
+    Assert-True ($oem -eq 'NTFS    ') 'xoa khong ghi de boot sector cua o (du lieu con tren dia)'
+
     Write-Host "`n=== Ca 7: doc nhat ky ==="
     $first = (Get-ChildItem $Logs -Recurse -Filter journal.json | Sort-Object FullName | Select-Object -First 1).FullName
     $r = Invoke-TsuDisk @('nhat-ky', $first)

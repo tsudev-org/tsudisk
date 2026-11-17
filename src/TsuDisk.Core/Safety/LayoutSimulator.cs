@@ -20,6 +20,11 @@ public static class LayoutSimulator
         {
             switch (step.Kind)
             {
+                case StepKind.DeleteDataPartition:
+                {
+                    partitions.Remove(partitions.Single(p => p.Offset == step.Offset));
+                    break;
+                }
                 case StepKind.DeletePartition:
                 {
                     var victim = partitions.Single(p => p.Offset == step.Offset);

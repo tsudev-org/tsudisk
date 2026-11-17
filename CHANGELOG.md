@@ -2,6 +2,18 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
+## [26.11.1801] - 18/11/2026
+
+- Lệnh `ke-hoach-xoa`, `xoa-phan-vung <X:>` (bí danh `plan-delete`, `delete`): xóa một ổ dữ liệu để lấy vùng trống
+  (ADR-0005). Xác nhận bằng cách gõ lại đúng `X: nhãn` (chạy tự động: `--xac-nhan "X: nhãn"`; `--dong-y` không đủ).
+  Không bao giờ xóa ổ Windows/khởi động, EFI, MSR, Recovery, ổ động. Ngay trước khi xóa, TsuDisk kiểm lại chữ cái, nhãn,
+  kích thước và khóa độc quyền ổ: còn chương trình nào mở tệp trên ổ thì dừng, không ép. Xóa không ghi đè dữ liệu; kế
+  hoạch in sẵn cách cứu bằng TestDisk (sector bắt đầu, độ dài) nếu xóa nhầm.
+- `ke-hoach-tao-phan-vung` nhắc: Windows xóa trắng phần đầu vùng trống khi tạo phân vùng - ổ vừa xóa nhầm phải cứu trước.
+- Phát hành: `SHA256SUMS.txt` ký Sigstore (`SHA256SUMS.txt.sigstore.json`), SBOM SPDX đính kèm, thông tin phiên bản
+  trong `tsudisk.exe` đầy đủ (nhà phát hành tsudev, mô tả, phiên bản tệp `26.11.1801.0`).
+- Bộ quy ước tsudev v3.7.0.
+
 ## [26.11.1705] - 17/11/2026
 
 - Lệnh `kiem-tra-mbr2gpt [--dia N] [--json]` (bí danh `check-mbr2gpt`): kiểm tra CHỈ ĐỌC xem đĩa Windows MBR có chuyển

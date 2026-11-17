@@ -79,6 +79,26 @@ internal sealed class FakeBackend(DiskLayout initial, WinReStatus winRe) : IDisk
         Layout = Layout with { Partitions = [.. Layout.Partitions.Where(p => p.PartitionNumber != partitionNumber)] };
     }
 
+    /// <summary>Gia lap volume con tep dang mo: khoa doc quyen that bai.</summary>
+    public bool VolumeInUse { get; set; }
+
+    public void DeleteDataPartition(int diskNumber, int partitionNumber, char driveLetter)
+    {
+        Enter("delete-data");
+        var part = Layout.Partitions.Single(p => p.PartitionNumber == partitionNumber);
+        if (part.DriveLetter != driveLetter)
+            throw new DiskOperationException($"Phân vùng không mang {driveLetter}:");
+        if (VolumeInUse)
+            throw new DiskOperationException($"Ổ {driveLetter}: đang được dùng.");
+        Layout = Layout with { Partitions = [.. Layout.Partitions.Where(p => p.PartitionNumber != partitionNumber)] };
+        AfterDeleteData?.Invoke(this);
+    }
+
+    /// <summary>Gia lap mot thay doi ngoai y muon xay ra cung luc (de buoc doi chieu that bai va kich hoat buoc bu).</summary>
+    public Action<FakeBackend>? AfterDeleteData { get; set; }
+
+    public void ReplaceLayout(DiskLayout layout) => Layout = layout;
+
     public void ResizePartition(int diskNumber, int partitionNumber, long newSize)
     {
         Enter("resize");
