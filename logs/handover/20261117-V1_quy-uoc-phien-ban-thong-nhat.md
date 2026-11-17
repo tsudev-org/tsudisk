@@ -92,4 +92,4 @@ Tám kiểu đặt thẻ cùng tồn tại, khó so sánh/đối chiếu phiên 
   - Trình cập nhật: tsudisk KHÔNG có updater trong app (hạng C ngoại tuyến) - không cần chứng minh so sánh phiên bản
     (mục 3.2). Kênh đọc tên tệp duy nhất ngoài repo: Scoop `bucket/tsudisk.json` (`autoupdate` url + regex hash) - PR
     scoop-bucket đổi khuôn tệp, merge TRƯỚC khi gắn thẻ bản kế tiếp (mục 3.3). Chưa có winget/Homebrew/APT.
-  - PR: tsudisk#26 (khuôn tên tệp), scoop-bucket#19 (autoupdate). Thẻ đầu tiên theo khuôn tên tệp mới: (điền khi phát hành).
+  - PR: tsudisk#26 (khuôn tên tệp), scoop-bucket#19 (autoupdate). Thẻ đầu tiên theo khuôn tên tệp mới: `v26.11.1705` (`tsudisk_26.11.1705_windows-x64-portable.exe`, sha256 đã kiểm).
