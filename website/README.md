@@ -50,7 +50,7 @@ theo RFC 9116.
 ## Tài sản thương hiệu
 
 Sinh bằng `scripts/brand-assets.mjs` từ MỘT ảnh gốc `assets/brand/source/logo-tsudev.png` (bản gốc chính thức của
-tsudev, SHA-256 ghi trong `assets/brand/brand.json`). Không sửa tay; CI chạy `--check`.
+TsuDEV, SHA-256 ghi trong `assets/brand/brand.json`). Không sửa tay; CI chạy `--check`.
 
 ## Lệnh
 
