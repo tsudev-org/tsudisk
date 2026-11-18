@@ -6,7 +6,7 @@ Quản lý phân vùng ổ cứng Windows **an toàn trước hết**: phân tí
 (kể cả khi phân vùng Recovery chắn đường), có nhật ký từng bước và tự hoàn tác khi lỗi. Một tệp `tsudisk.exe` duy
 nhất, không cần cài .NET.
 
-Một sản phẩm của [tsudev](https://tsudev.com). Trang sản phẩm: <https://disk.tsudev.com>
+Một sản phẩm của [TsuDEV](https://tsudev.com). Trang sản phẩm: <https://disk.tsudev.com>
 
 **Hạng sản phẩm: C - Ngoại tuyến** (theo `.standards/docs/AUTH_AND_ACCOUNT.md` mục 1): chạy trọn vẹn không cần
 Internet, không tài khoản, không gửi dữ liệu đi đâu.

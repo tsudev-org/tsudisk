@@ -4,10 +4,10 @@
        (26.11.1601 = ban thu 01 ngay 16/11/2026). Khong khai Version trong tung .csproj. -->
   <PropertyGroup>
     <VersionPrefix>26.11.1802</VersionPrefix>
-    <Company>tsudev</Company>
-    <Authors>tsudev</Authors>
+    <Company>TsuDEV</Company>
+    <Authors>TsuDEV</Authors>
     <Product>TsuDisk</Product>
-    <Copyright>Copyright (c) 2026 tsudev</Copyright>
+    <Copyright>Copyright (c) 2026 TsuDEV</Copyright>
     <Description>Quản lý phân vùng ổ cứng Windows an toàn: phân tích, lập kế hoạch, mở rộng ổ</Description>
     <RepositoryUrl>https://github.com/tsudev-org/tsudisk</RepositoryUrl>
     <PackageProjectUrl>https://disk.tsudev.com</PackageProjectUrl>

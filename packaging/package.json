@@ -2,7 +2,7 @@
   "schema": 1,
   "name": "tsudisk",
   "winget": "tsudev.TsuDisk",
-  "publisher": "tsudev",
+  "publisher": "TsuDEV",
   "homepage": "https://disk.tsudev.com",
   "license": "Apache-2.0",
   "description": {

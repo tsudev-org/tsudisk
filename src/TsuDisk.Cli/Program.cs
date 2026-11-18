@@ -314,7 +314,7 @@ internal static partial class Commands
 
     public static int Version()
     {
-        Console.WriteLine($"TsuDisk {ToolVersion} - https://disk.tsudev.com - Một sản phẩm của tsudev (https://tsudev.com)");
+        Console.WriteLine($"TsuDisk {ToolVersion} - https://disk.tsudev.com - Một sản phẩm của TsuDEV (https://tsudev.com)");
         return ExitCodes.Ok;
     }
 
