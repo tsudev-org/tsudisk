@@ -139,4 +139,25 @@ Muốn tự làm bằng tay từng lệnh: [`docs/HUONG-DAN-MO-RONG-O-C.md`](doc
 ## Giấy phép
 
 Apache 2.0 - xem [`LICENSE`](LICENSE) và [`NOTICE`](NOTICE). Quyền riêng tư: [`PRIVACY.md`](PRIVACY.md).
-Báo lỗ hổng: [`SECURITY.md`](SECURITY.md).
+Báo lỗ hổng: [`SECURITY.md`](SECURITY.md). Đóng góp: [`CONTRIBUTING.md`](CONTRIBUTING.md). Hồ sơ OpenSSF Best
+Practices: [`docs/best-practices.json`](docs/best-practices.json).
+
+## English summary
+
+TsuDisk is a **safety-first Windows partition manager** (Apache-2.0): it analyses free space, previews a plan, and
+extends a volume - including drive C: when the Recovery (WinRE) partition sits in the way - following Microsoft's
+procedure (KB5028997) without moving any data of other partitions. It is a single `tsudisk.exe`, works fully offline,
+has no account and sends no data anywhere.
+
+- **Install**: download `tsudisk_<version>_windows-x64-portable.exe` from <https://disk.tsudev.com/tai-ve/> or the
+  [Releases](https://github.com/tsudev-org/tsudisk/releases) page (with a Sigstore-signed `SHA256SUMS.txt`, SBOM and
+  build provenance), or `scoop install tsudev/tsudisk`.
+- **Use** (Vietnamese commands with English aliases, `tsudisk help`): `tsudisk list`, `tsudisk analyze`,
+  `tsudisk plan C:` (prints every step, changes nothing), `tsudisk extend C: --dry-run`, `tsudisk extend C:` (asks you
+  to retype the drive letter), `tsudisk verify-gpt`, `tsudisk journal`.
+- **Safety**: refuses failing disks and inconsistent GPTs, simulates every plan and checks invariants, fingerprints
+  the layout, re-reads before every write, backs up GPT/BCD/WinRE first, rolls back automatically, keeps an atomic
+  journal, and calls system tools by absolute System32 path without a shell.
+- **Develop**: `dotnet build TsuDisk.slnx -c Release` and `dotnet test tests/TsuDisk.Core.Tests`; end-to-end tests run
+  on a virtual VHDX disk. See [CONTRIBUTING.md](CONTRIBUTING.md). Report vulnerabilities privately as described in
+  [SECURITY.md](SECURITY.md); changes are listed in [CHANGELOG.md](CHANGELOG.md).
