@@ -1,6 +1,6 @@
 # OpenSSF Best Practices - TsuDisk
 
-Hồ sơ mức **passing** trên [bestpractices.dev](https://www.bestpractices.dev/). Nguồn sự thật: [`best-practices.json`](best-practices.json) (công cụ `bp.cjs` điền biểu mẫu từ tệp này). Mỗi câu `Met` có bằng chứng trên `main`; sửa repo thì cập nhật cả hai tệp.
+Hồ sơ [16949](https://www.bestpractices.dev/projects/16949) - mức **passing** (100%, nộp 20/11/2026) trên [bestpractices.dev](https://www.bestpractices.dev/). Nguồn sự thật: [`best-practices.json`](best-practices.json) (công cụ `bp.cjs` điền biểu mẫu từ tệp này). Mỗi câu `Met` có bằng chứng trên `main`; sửa repo thì cập nhật cả hai tệp.
 
 Tổng: 61 Met, 6 N/A.
 
