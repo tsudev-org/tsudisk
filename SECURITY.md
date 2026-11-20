@@ -46,3 +46,20 @@ tác động. **Đừng thử lỗ hổng trên đĩa thật có dữ liệu** -
 - Không mã mạng, không tự cập nhật: không có kênh cập nhật để bị chiếm.
 - CI: gitleaks (binary ghim checksum), CodeQL `security-extended`, kiểm gói NuGet lỗ hổng, Dependabot, E2E trên ổ ảo.
 - Bản phát hành kèm `SHA256SUMS.txt` và chứng thực nguồn gốc build (GitHub Artifact Attestation).
+
+## English summary
+
+- **Scope**: TsuDisk runs as administrator and rewrites partition tables, so a "vulnerability" here also includes any
+  way to make it change a partition outside the published plan, bypass the safety invariants
+  (`src/TsuDisk.Core/Safety/SafetyGuard.cs`), hijack execution (DLL or executable planting, argument injection into
+  `diskpart`/`reagentc`/`bcdedit`), or make it read back logs/backups that a normal user could modify.
+- **Supported versions**: the latest release only.
+- **Reporting**: do **not** open a public issue. Use GitHub
+  [private vulnerability reporting](https://github.com/tsudev-org/tsudisk/security/advisories/new) (fallback: the
+  contact address on <https://tsudev.com>, subject starting with `[SECURITY]`). Include the version, the disk layout
+  (`tsudisk danh-sach --json`), steps and impact. Do not test on real disks with data; use a virtual disk.
+- **Response**: acknowledgement within 3 business days, assessment within 7 days; fixes for data-loss bugs get the
+  highest priority and an advisory. Fixed vulnerabilities are named in [CHANGELOG.md](CHANGELOG.md).
+- **Measures**: absolute System32 paths and separate arguments for system tools, logs in `%ProgramData%\TsuDisk`
+  (admin-only), no network code and no auto-update, gitleaks, CodeQL `security-extended`, vulnerable NuGet check,
+  Dependabot, fuzz and E2E tests, Sigstore-signed checksums and build provenance for every release.

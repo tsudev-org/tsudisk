@@ -8,6 +8,8 @@ Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/V
   khai bảng entry vô lý (số entry/kích thước entry tràn số, kích thước không phải 128 × 2^n, bảng > 1 MiB) hoặc LBA ngoài
   vùng đã đọc. Nay báo "bảng entry vô lý" và dừng như mọi GPT hỏng khác. Lỗi chỉ làm lệnh dừng sớm (trước mọi bước
   ghi), không gây mất dữ liệu. Tìm ra bằng test fuzz mới `GptFuzzTests` (đột biến trường header/entry rồi tính lại CRC).
+- Tài liệu: `CONTRIBUTING.md` (tiếng Anh), tóm tắt tiếng Anh trong README và SECURITY, hồ sơ OpenSSF Best Practices
+  `docs/best-practices.json`.
 
 ## [26.11.1802] - 18/11/2026
 
