@@ -2,6 +2,9 @@
 
 # TsuDisk
 
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/16949/badge)](https://www.bestpractices.dev/projects/16949)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/tsudev-org/tsudisk/badge)](https://scorecard.dev/viewer/?uri=github.com/tsudev-org/tsudisk)
+
 Quản lý phân vùng ổ cứng Windows **an toàn trước hết**: phân tích vùng trống, lập kế hoạch xem trước, mở rộng ổ
 (kể cả khi phân vùng Recovery chắn đường), có nhật ký từng bước và tự hoàn tác khi lỗi. Một tệp `tsudisk.exe` duy
 nhất, không cần cài .NET.
