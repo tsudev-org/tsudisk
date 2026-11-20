@@ -96,10 +96,22 @@ public static class GptParser
         return result;
     }
 
-    /// <summary>So byte can doc cho bang entry (lam tron len theo sector).</summary>
+    /// <summary>Tran tren cua bang entry: 1 MiB (Windows/UEFI dung 128 x 128 byte = 16 KiB).</summary>
+    public const int MaxEntriesBytes = 1024 * 1024;
+
+    /// <summary>
+    /// So byte can doc cho bang entry (lam tron len theo sector); 0 khi header khai bang vo ly: so entry khong duong,
+    /// kich thuoc entry khong phai 128 x 2^n (UEFI 2.10 muc 5.3.2) hoac bang lon hon <see cref="MaxEntriesBytes"/>.
+    /// </summary>
     public static int EntriesBytes(GptHeader header, int sectorSize)
     {
+        ArgumentNullException.ThrowIfNull(header);
+        if (sectorSize <= 0 || header.EntryCount <= 0 || header.EntrySize < 128
+            || header.EntrySize % 128 != 0 || !int.IsPow2(header.EntrySize / 128))
+            return 0;
         var raw = (long)header.EntryCount * header.EntrySize;
+        if (raw > MaxEntriesBytes)
+            return 0;
         return (int)((raw + sectorSize - 1) / sectorSize * sectorSize);
     }
 }

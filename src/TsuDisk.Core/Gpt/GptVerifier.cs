@@ -8,14 +8,21 @@ public sealed record GptImage(int SectorSize, long DiskSizeBytes, byte[] Head, b
     /// <summary>LBA dau tien chua trong <see cref="Tail"/>.</summary>
     public long TailFirstLba => (DiskSizeBytes / SectorSize) - (Tail.Length / SectorSize);
 
+    /// <summary>
+    /// Doc <paramref name="count"/> sector tu <paramref name="lba"/>; ngoai vung da doc (hoac tham so vo ly tu header
+    /// hong: am, qua lon, tran so) thi tra rong - khong bao gio nem.
+    /// </summary>
     public ReadOnlySpan<byte> Lba(long lba, int count = 1)
     {
-        var headSectors = Head.Length / SectorSize;
-        if (lba >= 0 && lba + count <= headSectors)
-            return Head.AsSpan((int)(lba * SectorSize), count * SectorSize);
+        if (lba < 0 || count <= 0 || SectorSize <= 0)
+            return [];
+        long headSectors = Head.Length / SectorSize;
+        if (lba < headSectors && count <= headSectors - lba)
+            return Head.AsSpan((int)lba * SectorSize, count * SectorSize);
+        long tailSectors = Tail.Length / SectorSize;
         var rel = lba - TailFirstLba;
-        if (rel >= 0 && (rel + count) * SectorSize <= Tail.Length)
-            return Tail.AsSpan((int)(rel * SectorSize), count * SectorSize);
+        if (rel >= 0 && rel < tailSectors && count <= tailSectors - rel)
+            return Tail.AsSpan((int)rel * SectorSize, count * SectorSize);
         return [];
     }
 }
@@ -82,8 +89,12 @@ public static class GptVerifier
         if (primary is not null)
         {
             var bytes = GptParser.EntriesBytes(primary, ss);
-            var primaryTable = image.Lba(primary.EntriesLba, bytes / ss);
-            if (primaryTable.IsEmpty)
+            var primaryTable = bytes > 0 ? image.Lba(primary.EntriesLba, bytes / ss) : [];
+            if (bytes <= 0)
+            {
+                Add(GptCheckLevel.Error, $"Header GPT chính khai bảng entry vô lý ({primary.EntryCount} entry × {primary.EntrySize} byte).");
+            }
+            else if (primaryTable.IsEmpty)
             {
                 Add(GptCheckLevel.Error, "Không đọc được bảng entry GPT chính.");
             }
