@@ -47,6 +47,6 @@ public class ResxParityTests
     public void NoEmDash_InStrings()
     {
         foreach (var file in new[] { "Strings.resx", "Strings.vi.resx" })
-            Assert.DoesNotContain(Load(file).Values, v => v.Contains('—', StringComparison.Ordinal));
+            Assert.DoesNotContain(Load(file).Values, v => v.Contains((char)0x2014, StringComparison.Ordinal));
     }
 }
