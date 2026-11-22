@@ -25,3 +25,4 @@ TsuDisk không sao chép mã nguồn của dự án nào khác. Các thành ph�
 | Thành phần | Giấy phép |
 | --- | --- |
 | Be Vietnam Pro | SIL Open Font License 1.1 (`website/public/fonts/OFL-BeVietnamPro.txt`) |
+| Montserrat | SIL Open Font License 1.1 (`website/public/fonts/OFL-Montserrat.txt`) |
