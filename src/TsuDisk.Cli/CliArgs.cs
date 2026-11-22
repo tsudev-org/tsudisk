@@ -30,6 +30,9 @@ internal sealed class CliArgs
         ["kiem-tra-gpt"] = "kiem-tra-gpt", ["verify-gpt"] = "kiem-tra-gpt",
         ["kiem-tra-mbr2gpt"] = "kiem-tra-mbr2gpt", ["check-mbr2gpt"] = "kiem-tra-mbr2gpt",
         ["sao-luu"] = "sao-luu", ["backup"] = "sao-luu",
+        ["dang-nhap"] = "dang-nhap", ["login"] = "dang-nhap",
+        ["dang-xuat"] = "dang-xuat", ["logout"] = "dang-xuat",
+        ["tai-khoan"] = "tai-khoan", ["account"] = "tai-khoan",
         ["phien-ban"] = "phien-ban", ["version"] = "phien-ban", ["--version"] = "phien-ban", ["-v"] = "phien-ban",
         ["tro-giup"] = "tro-giup", ["help"] = "tro-giup", ["--help"] = "tro-giup", ["-h"] = "tro-giup", ["/?"] = "tro-giup",
     };

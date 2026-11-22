@@ -31,6 +31,9 @@ public static class Loc
     /// <summary>Chuoi theo ngon ngu dang dung.</summary>
     public static string T(string vi, string en) => IsEnglish ? en : vi;
 
+    /// <summary>Gia tri thuoc tinh <c>lang</c> cua trang HTML (trang ket qua dang nhap).</summary>
+    public static string HtmlLang => IsEnglish ? "en" : "vi";
+
     private sealed class Restore(AppLanguage? previous) : IDisposable
     {
         public void Dispose() => Scoped.Value = previous;

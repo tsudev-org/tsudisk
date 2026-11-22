@@ -4,6 +4,11 @@ Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/V
 
 ## [Chưa phát hành]
 
+- Lệnh `tai-khoan`, `dang-nhap`, `dang-xuat` (bí danh `account`, `login`, `logout`): đăng nhập tài khoản TsuDEV bằng
+  trình duyệt của máy (tùy chọn) để nhận quyền lợi TsuDEV Pro và nhắc gia hạn. Không đăng nhập thì TsuDisk vẫn đủ tính
+  năng và không kết nối mạng lần nào. Đã đăng nhập cũng không gửi thông tin đĩa, nhật ký hay tệp nào lên mạng (xem
+  `PRIVACY.md`).
+
 - Chuẩn bị TsuDEV Pro (ADR-0007): TsuDisk vẫn miễn phí đủ tính năng, ngoại tuyến, không gửi dữ liệu nào lên mạng. Khi
   có tài khoản TsuDEV Pro sắp hết hạn (còn ≤ 7 ngày), mỗi lần chạy lệnh TsuDisk in lời nhắc gia hạn kèm liên kết; hết
   hạn thì báo một lần. Không chặn lệnh, không in khi chạy `--json`/tự động. Đăng nhập sẽ có ở bản sau.
