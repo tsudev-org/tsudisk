@@ -3,7 +3,7 @@
        Phien ban app theo .standards/docs/VERSIONING.md muc 2: YY.M.DDNN
        (26.11.1601 = ban thu 01 ngay 16/11/2026). Khong khai Version trong tung .csproj. -->
   <PropertyGroup>
-    <VersionPrefix>26.11.2201</VersionPrefix>
+    <VersionPrefix>26.11.2202</VersionPrefix>
     <Company>TsuDEV</Company>
     <Authors>TsuDEV</Authors>
     <Product>TsuDisk</Product>
