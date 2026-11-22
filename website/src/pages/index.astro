@@ -21,6 +21,12 @@ const tinhNang = [
   { t: 'Chạy online, không khởi động lại', d: 'Mở rộng NTFS khi Windows đang chạy. Máy ảo, WSL, cơ sở dữ liệu, terminal đang mở không bị gián đoạn.' },
 ];
 
+// Hoạ tiết `khoi-phan-vung`: các khối phân vùng (đặc) và vùng trống (nét đứt) trên một thanh đĩa, toạ độ viewBox 1200.
+const hoaTiet = [
+  { x: 0, w: 70 }, { x: 78, w: 380 }, { x: 466, w: 44 }, { x: 518, w: 230, trong: true },
+  { x: 756, w: 260 }, { x: 1024, w: 176, trong: true },
+];
+
 const camKet = [
   { t: 'Không chạm phân vùng khác', d: 'Mọi phân vùng ngoài kế hoạch giữ nguyên vị trí, kích thước, loại - kiểm trên mô phỏng trước khi chạy và trên đĩa thật sau khi chạy.' },
   { t: 'Không dời dữ liệu', d: 'Bố cục cần dời dữ liệu bị từ chối kèm giải thích, thay vì làm liều. EFI, MSR, ổ động, Storage Spaces không bao giờ bị đụng.' },
@@ -31,17 +37,44 @@ const camKet = [
 <Trang moTa="TsuDisk quản lý phân vùng ổ cứng Windows an toàn: phân tích vùng trống, xem kế hoạch trước, mở rộng ổ C: kể cả khi Recovery chắn đường." duongDan="/">
   <section class="mo-dau">
     <div class="khung">
-      <picture class="logo-day-du">
-        <source type="image/avif" srcset="/brand/logo-tsudisk-day-du-360.avif 1x, /brand/logo-tsudisk-day-du-717.avif 2x">
-        <source type="image/webp" srcset="/brand/logo-tsudisk-day-du-360.webp 1x, /brand/logo-tsudisk-day-du-717.webp 2x">
-        <img src="/brand/logo-tsudisk-day-du.png" alt="Logo TsuDisk: thanh ổ đĩa có mũi tên mở rộng sang vùng trống nét đứt" width="180" height="174">
-      </picture>
+      <!-- Hoạ tiết chữ ký `khoi-phan-vung` (bản sắc disk, DESIGN_SYSTEM 1.2.4): thanh chia phân vùng tĩnh, vẽ bằng
+           accent/glow, độ phủ thấp, không nằm sau chữ. Trang trí thuần, ẩn với trình đọc màn hình. -->
+      <svg class="hoa-tiet" aria-hidden="true" focusable="false" viewBox="0 30 1200 60" preserveAspectRatio="none">
+        {hoaTiet.map((k) => <rect class={k.trong ? 'hoa-tiet__trong' : 'hoa-tiet__khoi'} x={k.x} y="34" width={k.w} height="52" rx="8" />)}
+      </svg>
       <span class="nhan">Miễn phí, mã nguồn mở, cho Windows 10 và 11</span>
       <h1>Mở rộng ổ C: <span class="chu-tim">không dời một byte dữ liệu nào</span></h1>
-      <p class="mo-dau__phu">TsuDisk phân tích bố cục đĩa, lập kế hoạch xem trước, rồi gộp vùng trống vào ổ cần thêm dung lượng - kể cả khi phân vùng Recovery nằm chắn đường. Mỗi bước được kiểm lại, ghi nhật ký và tự hoàn tác khi lỗi. Một tệp <code>tsudisk.exe</code>, không cần cài .NET.</p>
-      <div class="mo-dau__nut">
-        <a class="nut nut--chinh" href="/tai-ve/">Tải về{ban ? ` bản ${ban.phienBan}` : ''}</a>
-        <a class="nut nut--phu" href="/huong-dan/">Hướng dẫn sử dụng</a>
+      <p class="mo-dau__phu">Phân tích bố cục đĩa, xem trước kế hoạch, rồi gộp vùng trống vào ổ cần thêm dung lượng - kể cả khi phân vùng Recovery nằm chắn đường. Mỗi bước được kiểm lại, ghi nhật ký và tự hoàn tác khi lỗi.</p>
+
+      <div class="ban-thao-tac" role="region" aria-labelledby="ba-buoc">
+        <h2 id="ba-buoc" class="ban-thao-tac__tieu-de">Bắt đầu trong 3 bước</h2>
+        <ol class="ban-thao-tac__buoc">
+          <li>
+            <span class="ban-thao-tac__so" aria-hidden="true">1</span>
+            <div class="ban-thao-tac__noi-dung">
+              <h3>Tải <code>tsudisk.exe</code></h3>
+              <p>Một tệp, không cần cài .NET. Hoặc <a href="/tai-ve/#cai-bang-lenh">cài bằng lệnh</a>.</p>
+            </div>
+            <a class="nut nut--chinh" href="/tai-ve/">Tải về{ban ? ` bản ${ban.phienBan}` : ''}</a>
+          </li>
+          <li>
+            <span class="ban-thao-tac__so" aria-hidden="true">2</span>
+            <div class="ban-thao-tac__noi-dung">
+              <h3>Xem đĩa - chỉ đọc</h3>
+              <p>Mỗi vùng trống gộp được vào ổ nào, vì sao.</p>
+            </div>
+            <code class="ban-thao-tac__lenh">tsudisk phan-tich</code>
+          </li>
+          <li>
+            <span class="ban-thao-tac__so" aria-hidden="true">3</span>
+            <div class="ban-thao-tac__noi-dung">
+              <h3>Xem kế hoạch, chưa đổi gì</h3>
+              <p>Gõ lại chữ cái ổ mới thực hiện. <a href="#vi-du">Xem một lần chạy thật</a>.</p>
+            </div>
+            <code class="ban-thao-tac__lenh">tsudisk ke-hoach X:</code>
+          </li>
+        </ol>
+        <p class="ban-thao-tac__chan"><a href="/huong-dan/">Hướng dẫn sử dụng</a><span aria-hidden="true"> · </span><a href="/an-toan/">Cơ chế an toàn</a></p>
       </div>
       <p class="mo-dau__ghi-chu">Hạng sản phẩm C: chạy trọn vẹn không cần Internet, không tài khoản, không gửi dữ liệu đi đâu.</p>
     </div>
@@ -85,7 +118,7 @@ KẾ HOẠCH: mở rộng C: trên đĩa 0, tăng 59,9 GB
     </div>
   </section>
 
-  <section class="muc" aria-labelledby="bat-dau">
+  <section class="muc" aria-labelledby="ba-buoc">
     <div class="khung">
       <h2 id="bat-dau">Bắt đầu</h2>
       <p class="muc__dan">{ban ? `Bản mới nhất ${ban.phienBan}, phát hành ngày ${ban.ngay}.` : 'Bản phát hành đầu tiên đang được chuẩn bị; có thể tự build từ mã nguồn ngay hôm nay.'} Luôn sao lưu dữ liệu quan trọng trước khi thay đổi ổ đĩa.</p>

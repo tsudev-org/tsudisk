@@ -81,7 +81,22 @@ pre {
 .nut--phu:hover { background: var(--bg-hover); border-color: var(--text-muted); color: var(--text-primary); }
 
 /* Trang chủ: hero canh giữa */
-.mo-dau { padding: 5rem 0 3rem; text-align: center; }
+.mo-dau { padding: 3.5rem 0 3rem; text-align: center; }
+/* Hoạ tiết khoi-phan-vung: thanh đĩa tĩnh phía trên tiêu đề, không nằm sau chữ */
+.hoa-tiet { display: block; width: 100%; max-width: 32rem; height: 1.5rem; margin: 0 auto 1.5rem; }
+.hoa-tiet__khoi { fill: var(--accent); opacity: 0.15; }
+.hoa-tiet__trong { fill: var(--glow); stroke: var(--accent); stroke-opacity: 0.35; stroke-width: 2; stroke-dasharray: 8 6; vector-effect: non-scaling-stroke; }
+
+/* Bố cục `cong-cu`: vùng thao tác chính ngay màn đầu, căn giữa */
+.ban-thao-tac { max-width: 44rem; margin: 0 auto; text-align: left; background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); padding: 1.25rem 1.25rem 1rem; box-shadow: 0 0 0 6px var(--glow); }
+.ban-thao-tac__tieu-de { margin: 0 0 0.75rem; font-size: 1.05rem; }
+.ban-thao-tac__buoc { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.ban-thao-tac__buoc li { display: grid; grid-template-columns: auto 1fr auto; gap: 0.9rem; align-items: center; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-base); }
+.ban-thao-tac__so { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: var(--radius-md); font-family: var(--font-display); font-weight: 700; color: var(--on-primary); background: var(--primary); }
+.ban-thao-tac__noi-dung h3 { margin: 0; font-size: 1rem; }
+.ban-thao-tac__noi-dung p { margin: 0.15rem 0 0; color: var(--text-secondary); font-size: 0.92rem; }
+.ban-thao-tac__lenh { white-space: nowrap; padding: 0.4rem 0.7rem; }
+.ban-thao-tac__chan { margin: 0.85rem 0 0; font-size: 0.94rem; text-align: center; }
 .mo-dau__luoi { display: grid; gap: 3rem; justify-items: center; }
 .mo-dau h1 { font-size: clamp(2.1rem, 5vw, 3.4rem); line-height: 1.12; margin: 0 auto 1.1rem; letter-spacing: -0.025em; max-width: 46rem; }
 .chu-tim {
@@ -194,7 +209,9 @@ kbd { border: 1px solid var(--border-strong); border-bottom-width: 2px; border-r
 .giao-dien button:focus-visible { outline-offset: 1px; }
 
 @media (max-width: 860px) {
-  .mo-dau { padding: 3rem 0 2rem; }
+  .mo-dau { padding: 2.5rem 0 2rem; }
+  .ban-thao-tac__buoc li { grid-template-columns: auto 1fr; }
+  .ban-thao-tac__buoc li > :last-child { grid-column: 2; justify-self: start; }
   .tai-lieu { grid-template-columns: 1fr; gap: 1.5rem; padding-top: 1.5rem; }
   .tai-lieu__menu { position: static; }
   .tai-lieu__menu ul { display: flex; flex-wrap: wrap; gap: 0.25rem; }
@@ -226,4 +243,4 @@ kbd { border: 1px solid var(--border-strong); border-bottom-width: 2px; border-r
 }
 
 /* Logo đầy đủ ở trang chủ: ảnh có nền tối riêng, bo góc theo token, không phóng to quá bản gốc. */
-.logo-day-du img { display: block; width: 180px; height: auto; border-radius: var(--radius-lg); margin-bottom: 1rem; }
+.logo-day-du img { display: block; width: 160px; height: auto; border-radius: var(--radius-lg); margin: 0 auto 1rem; }

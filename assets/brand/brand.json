@@ -1,20 +1,59 @@
 {
-  "_ghi_chu": "Cấu hình dây chuyền thương hiệu (website/scripts/brand-assets.mjs). Logo sản phẩm riêng do chủ dự án cung cấp 17/11/2026 (BRAND_ASSETS.md mục 15). Ảnh gốc DUY NHẤT: source/logo-tsudisk.png (717x693, nền #0C0F16), SHA-256 933d93add9ee961863ef2586355a2c6527e0075871508e8ae16723a7febf1fa9. Favicon/icon dùng vùng biểu tượng cắt từ chính ảnh gốc (iconCrop = trái, trên, rộng, cao; đo tự động 17/11/2026, chừa lề 12px) để cỡ 16px vẫn đọc được; logo đầy đủ có chữ cho chỗ hiển thị lớn. Chân trang giữ dấu hiệu tsudev (ecosystem, bản gốc chính thức SHA-256 2ad933bd...). Đổi logo: thay ảnh gốc, đo lại iconCrop, chạy node website/scripts/brand-assets.mjs. CI chạy --check.",
+  "_ghi_chu": "Cấu hình dây chuyền thương hiệu (website/scripts/brand-assets.mjs). Logo sản phẩm riêng do chủ dự án cung cấp 17/11/2026 (BRAND_ASSETS.md mục 15). Ảnh gốc DUY NHẤT: source/logo-tsudisk.png (717x693, nền #0C0F16), SHA-256 933d93add9ee961863ef2586355a2c6527e0075871508e8ae16723a7febf1fa9. Favicon/icon dùng vùng biểu tượng cắt từ chính ảnh gốc (iconCrop = trái, trên, rộng, cao; đo tự động 17/11/2026, chừa lề 12px) để cỡ 16px vẫn đọc được; logo đầy đủ có chữ cho chỗ hiển thị lớn. Chân trang giữ dấu hiệu tsudev (ecosystem, bản gốc chính thức SHA-256 2ad933bd...). Đổi logo: thay ảnh gốc, đo lại iconCrop, chạy node website/scripts/brand-assets.mjs. CI chạy --check. Bản sắc v5.0.0 (22/11/2026): ogGlow/ogAccent theo products/disk.json (dark accent #86DACC); ogMotif = hoạ tiết khoi-phan-vung [x, rộng, vùng trống?] trên thang 1200, cùng toạ độ với hero trang chủ.",
   "id": "tsudisk",
   "name": "TsuDisk",
   "source": "source/logo-tsudisk.png",
   "mode": "tile",
-  "iconCrop": [163, 167, 392, 221],
+  "iconCrop": [
+    163,
+    167,
+    392,
+    221
+  ],
   "iconPadding": 0.04,
   "tileRadius": 0.22,
   "solidBg": "#0c0f16",
-  "fullSizes": [360, 717],
-  "ecosystem": { "id": "tsudev", "source": "source/logo-tsudev.png" },
-  "ogGlow": "#16263a",
-  "ogAccent": "#2dd4bf",
+  "fullSizes": [
+    360,
+    717
+  ],
+  "ecosystem": {
+    "id": "tsudev",
+    "source": "source/logo-tsudev.png"
+  },
+  "ogGlow": "#0d2b28",
+  "ogAccent": "#86DACC",
   "domain": "disk.tsudev.com",
   "ogLines": [
     "Quản lý phân vùng ổ cứng Windows an toàn",
     "Mở rộng ổ C: kể cả khi Recovery chắn đường"
+  ],
+  "ogMotif": [
+    [
+      0,
+      70
+    ],
+    [
+      78,
+      380
+    ],
+    [
+      466,
+      44
+    ],
+    [
+      518,
+      230,
+      1
+    ],
+    [
+      756,
+      260
+    ],
+    [
+      1024,
+      176,
+      1
+    ]
   ]
 }

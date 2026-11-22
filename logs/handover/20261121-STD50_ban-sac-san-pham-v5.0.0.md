@@ -2,7 +2,7 @@
 
 - **Mã phiếu**: 20261121-STD50
 - **Từ**: phiên tsudev-standards, 21/11/2026 - **Đến**: phiên kế tiếp của `tsudisk`
-- **Trạng thái**: MỞ
+- **Trạng thái**: ĐÓNG 22/11/2026
 - **Nguồn**: https://github.com/tsudev-org/tsudev-standards/releases/tag/v5.0.0 - `docs/DESIGN_SYSTEM.md` mục 1.2,
   CHANGELOG 5.0.0 "Hướng dẫn nâng cấp"
 - **Bối cảnh**: chủ dự án muốn mỗi sản phẩm có đặc trưng nổi bật riêng (màu, giao diện, bố cục). Trước v5.0.0, 9/11
@@ -46,4 +46,4 @@ kiểm chống trùng phải xanh. KHÔNG ghi đè tại repo này.
 
 ## Kết quả xử lý
 
-- 22/11/2026 (tsudisk-59): PR 1 XONG - #49 (sync v5.0.0, token chung + `products.css`, `data-product="disk"`, xoá bảng màu tự khai, Montserrat, bo góc token, ảnh `docs/ui/ban-sac-v5/`). PR 2 (bố cục + hoạ tiết) cho phiên sau.
+- 22/11/2026 (tsudisk-59): PR 1 XONG - #49 (sync v5.0.0, token chung + `products.css`, `data-product="disk"`, xoá bảng màu tự khai, Montserrat, bo góc token, ảnh `docs/ui/ban-sac-v5/`). PR 2 XONG - bố cục `cong-cu` (bàn thao tác 3 bước ngay màn đầu), hoạ tiết `khoi-phan-vung` ở hero + og-image. Phiếu ĐÓNG.
