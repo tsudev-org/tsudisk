@@ -28,7 +28,7 @@ Xem phiếu gốc mục 8 (giá Pro, ân hạn, nơi đặt dịch vụ đồng 
 
 ## 4. Kết quả xử lý (phiên nhận điền)
 
--
+- 22/11/2026 (tsudisk-59): kiểm kê XONG - 0 mã mạng, 0 byte rời máy (ADR-0007 "Bối cảnh"); ADR-0007; thông báo nhiều thiết bị + 5 test (nguồn quyền lợi giả). CÒN: đăng nhập (chờ client `tsudisk`, phiếu tsudev 20261122-DK1), màn Pro/Ủng hộ + huy hiệu (đi cùng WPF), đồng bộ (chờ TsuSync .NET), THREAT_MODEL.
 
 ## 5. Đã chốt (19/11/2026, bổ sung sau khi mở phiếu)
 

@@ -50,4 +50,4 @@
 - Không xoá dữ liệu trên thiết bị trong bất kỳ trường hợp nào.
 
 ## 5. Kết quả xử lý (mỗi phiên ghi một dòng)
-
+- 22/11/2026 (tsudisk-59): 2.1 XONG - lõi `TsuDisk.Core.Pro` (port từ tsuswico) + CLI chỉ in (`ProHook`), 6 test bắt buộc 7.6 + 5 test 7.3 + đối chiếu nguyên văn PRODUCT_POLICY; ADR-0007. 2.2 CHỜ thư viện .NET TsuSync + client OIDC `tsudisk` (phiếu tsudev 20261122-DK1). Bộ quy ước đã ở v5.0.0 (#49) - thay v4.0.0.
