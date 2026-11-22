@@ -3,17 +3,16 @@
 > Agent đọc file này ở đầu mỗi phiên và cập nhật ở cuối mỗi phiên.
 > Quy trình: `.standards/docs/AGENT_PROTOCOL.md`.
 
-> **Phiên kế tiếp**: đọc phiếu bàn giao mới nhất trong `logs/handover/` (phiên 22/11/2026). Phiếu mở: STD50 (bản
-> sắc v5.0.0, PR 2 bố cục), PRO2/PRO1 (Pro, nhắc gia hạn).
+> **Phiên kế tiếp**: đọc `logs/handover/20261122-01_phien-6-phat-hanh-2201-ban-sac-pro.md` mục 2-3.
 
 ## Hàng đợi task (làm từ trên xuống)
 
-- [ ] Phát hành `v26.11.2201` (gộp 26.11.1802 chưa từng phát hành: VirusTotal thật + job winget lần đầu), theo dõi PR
-      winget-pkgs (phiếu 20261118-02 mục 3).
-- [ ] Phiếu 20261121-STD50: PR 1 màu + hình (sync v5.0.0), PR 2 bố cục `cong-cu` + hoạ tiết.
-- [ ] Phiếu 20261120-PRO2 (thay một phần PRO1): ADR Pro, nhắc gia hạn 7 ngày ở CLI (6 test), đồng bộ khi có TsuSync .NET.
-- [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): chuyển MBR -> GPT (ADR-0006)
-      (ADR-0006 Đề xuất - chờ duyệt + kiểm Hyper-V Gen 1 -> Gen 2); giao diện WPF (bản đầu chỉ đọc).
+- [ ] winget-pkgs #486465 (26.11.2201): chờ chủ dự án ký CLA, rồi theo dõi Validation; merge => khối "Cài bằng lệnh".
+- [ ] Phiếu 20261121-STD50 PR 2: bố cục `cong-cu` + hoạ tiết `khoi-phan-vung` + og-image.
+- [ ] Pro (ADR-0007): đăng nhập khi có client OIDC `tsudisk` (phiếu tsudev 20261122-DK1); đồng bộ khi có TsuSync .NET;
+      THREAT_MODEL; màn Pro/Ủng hộ + huy hiệu cùng WPF.
+- [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): chuyển MBR -> GPT (ADR-0006 Đề xuất - chờ duyệt + kiểm Hyper-V Gen 1 ->
+      Gen 2); giao diện WPF (bản đầu chỉ đọc).
 - [ ] Giai đoạn 3: bộ cài, ký SignPath (D5).
 - [ ] Nợ thương hiệu: biến thể 16px đơn giản hóa; ảnh gốc lớn hơn/SVG (`docs/BRAND.md`).
 
@@ -23,6 +22,10 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 22/11/2026 - Phát hành 26.11.2201 (#48; gộp 1802): VirusTotal 0/74, SHA256SUMS + attestation + Sigstore đã kiểm; job
+  winget mở microsoft/winget-pkgs#486465 (Needs-CLA). Bản sắc `disk` v5.0.0 PR 1 (#49, bộ quy ước v5.0.0). Pro nhắc gia
+  hạn + nhiều thiết bị, ADR-0007 (#50; test 165 -> 204). Website deploy.
 
 - 19-21/11/2026 - OpenSSF Scorecard (#43), sửa bộ kiểm GPT + fuzz (#44), hồ sơ Best Practices 16949 passing +
   CONTRIBUTING (#45, #46), bộ quy ước v4.2.0 (#47).
@@ -70,6 +73,7 @@
 - 17/11/2026 - Thu nhỏ NTFS tổng quát (mở rộng ADR-0003): `docs/adr/0004-thu-nho-o-tong-quat.md`
 - 18/11/2026 - Xóa phân vùng dữ liệu, không tự tạo lại (Windows xóa trắng đầu phân vùng mới): `docs/adr/0005-xoa-phan-vung-du-lieu.md`
 - 18/11/2026 - (Đề xuất) Chuyển MBR -> GPT bằng mbr2gpt chính thức, không tự viết bộ chuyển: `docs/adr/0006-chuyen-mbr-sang-gpt.md`
+- 22/11/2026 - TsuDEV Pro: lưu cục bộ, CLI chỉ in nhắc gia hạn, đăng nhập/đồng bộ chờ: `docs/adr/0007-pro-luu-cuc-bo-nhac-gia-han.md`
 
 ## Sự cố bảo mật
 

@@ -46,4 +46,4 @@ kiểm chống trùng phải xanh. KHÔNG ghi đè tại repo này.
 
 ## Kết quả xử lý
 
-- 
+- 22/11/2026 (tsudisk-59): PR 1 XONG - #49 (sync v5.0.0, token chung + `products.css`, `data-product="disk"`, xoá bảng màu tự khai, Montserrat, bo góc token, ảnh `docs/ui/ban-sac-v5/`). PR 2 (bố cục + hoạ tiết) cho phiên sau.
