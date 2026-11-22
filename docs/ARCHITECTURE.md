@@ -28,6 +28,7 @@
 | Nghiệp vụ thuần | `src/TsuDisk.Core/` | `net10.0` | ✅ test đơn vị + FakeBackend tiêm lỗi |
 | Adapter hệ thống | `src/TsuDisk.Windows/` | `net10.0-windows10.0.17763.0` | ❌ - E2E VHDX trên Windows |
 | Điểm vào | `src/TsuDisk.Cli/` | `net10.0-windows10.0.17763.0` | ❌ - E2E VHDX trên Windows |
+| Giao diện (chỉ đọc, ADR-0008) | `src/TsuDisk.Gui/` | `net10.0-windows10.0.17763.0` (WPF) | Build ✅; chạy ❌ - CI Windows chụp vi/en × Sáng/Tối |
 
 `TsuDisk.Core` gồm:
 
@@ -39,6 +40,7 @@
 | `Execution/` | `IDiskBackend` (cổng ra hệ điều hành), `PlanRunner` (chạy + kiểm từng bước + hoàn tác), `RunJournal`, `RecoveryAdvisor` |
 | `Scripts/` | `DiskpartScript` - kịch bản diskpart sinh thuần, test từng dòng |
 | `Serialization/` | JSON sinh lúc biên dịch (an toàn khi cắt tỉa) |
+| `Presentation/` | Phần test được của giao diện: gộp token, chọn ngôn ngữ/giao diện, phân trang, khối bản đồ đĩa, chữ mô tả kế hoạch (CLI dùng chung) |
 
 ## 3. Luật bất di bất dịch
 

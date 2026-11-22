@@ -51,6 +51,8 @@ xuất tại repo `tsudev-standards` theo `.standards/docs/SYNC.md` mục 1.
 ```bash
 dotnet test tests/TsuDisk.Core.Tests                            # test đơn vị, chạy được trên Linux
 dotnet publish src/TsuDisk.Cli -c Release -o artifacts/publish  # ra tsudisk.exe (win-x64, một tệp)
+dotnet publish src/TsuDisk.Gui -c Release -o artifacts/gui      # tsudisk-gui.exe (WPF chỉ đọc, ADR-0008)
+#   tsudisk-gui.exe --du-lieu-mau --chup-man-hinh <thư-mục>     # ảnh vi/en x Sáng/Tối, chạy được trên máy dev
 # E2E trên ổ ảo VHDX (Windows, PowerShell Admin):
 #   powershell -ExecutionPolicy Bypass -File tests\e2e\run-e2e.ps1 -Exe artifacts\publish\tsudisk.exe
 cd website && npm ci && npm run build                           # website

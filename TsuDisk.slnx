@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/TsuDisk.Core/TsuDisk.Core.csproj" />
+    <Project Path="src/TsuDisk.Gui/TsuDisk.Gui.csproj" />
     <Project Path="src/TsuDisk.Windows/TsuDisk.Windows.csproj" />
     <Project Path="src/TsuDisk.Cli/TsuDisk.Cli.csproj" />
   </Folder>

@@ -71,6 +71,26 @@ jobs:
       - name: E2E tren o ao VHDX
         shell: powershell
         run: ./tests/e2e/run-e2e.ps1 -Exe ./publish/tsudisk.exe
+      - name: Dong goi tsudisk-gui.exe (giao dien chi doc, ADR-0008)
+        run: dotnet publish src/TsuDisk.Gui -c Release -r win-x64 -o publish-gui
+      - name: Giao dien - thong tin exe + chup vi/en x Sang/Toi (du lieu mau va o that cua runner)
+        shell: pwsh
+        run: |
+          $v = ([xml](Get-Content Directory.Build.props)).Project.PropertyGroup.VersionPrefix | Where-Object { $_ } | Select-Object -First 1
+          ./scripts/kiem-thong-tin-exe.ps1 -Exe publish-gui/tsudisk-gui.exe -Version $v -BoQuaChay
+          foreach ($run in @(@{ Dir = 'gui-anh/mau'; Args = @('--du-lieu-mau') }, @{ Dir = 'gui-anh/that'; Args = @() })) {
+            $out = Join-Path $PWD $run.Dir
+            # WinExe: pwsh khong tu doi - Start-Process -Wait de lay ma thoat.
+            $p = Start-Process -FilePath publish-gui/tsudisk-gui.exe -ArgumentList ($run.Args + @('--chup-man-hinh', $out)) -Wait -PassThru
+            if ($p.ExitCode -ne 0) { Get-Content (Join-Path $out 'loi.txt') -ErrorAction SilentlyContinue; throw "tsudisk-gui $($run.Dir) ma thoat $($p.ExitCode)" }
+            $n = (Get-ChildItem $out -Filter 'tsudisk-gui_*.png').Count
+            if ($n -ne 4) { throw "$($run.Dir): can 4 anh, co $n" }
+          }
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: tsudisk-gui-anh
+          path: gui-anh
+          retention-days: 7
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: tsudisk-win-x64

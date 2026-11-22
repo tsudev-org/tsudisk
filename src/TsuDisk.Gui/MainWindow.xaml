@@ -1,0 +1,307 @@
+<Window x:Class="TsuDisk.Gui.MainWindow" x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:g="clr-namespace:TsuDisk.Gui"
+        Title="TsuDisk" Width="1200" Height="880" MinWidth="900" MinHeight="600"
+        WindowStartupLocation="CenterScreen" Icon="Resources/icon-64.png"
+        Background="{DynamicResource bg-base}" Foreground="{DynamicResource text-primary}"
+        FontFamily="{DynamicResource font-body}" FontSize="14" UseLayoutRounding="True">
+  <Window.Resources>
+    <g:RoleBrushConverter x:Key="RoleBg" />
+    <g:RoleBrushConverter x:Key="RoleFg" Foreground="True" />
+    <g:VisibleConverter x:Key="Show" />
+    <g:VisibleConverter x:Key="Hide" Invert="True" />
+  </Window.Resources>
+
+  <DockPanel x:Name="Root" Background="{DynamicResource bg-base}">
+    <!-- Header: dau hieu + ten + nhan "Chi doc"; dieu khien giao dien/ngon ngu/gioi thieu ben phai. -->
+    <Border DockPanel.Dock="Top" Background="{DynamicResource bg-surface}" BorderBrush="{DynamicResource border}" BorderThickness="0,0,0,1" Padding="24,12">
+      <DockPanel LastChildFill="False">
+        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+          <Image Source="Resources/icon-64.png" Width="28" Height="28" Margin="0,0,10,0" AutomationProperties.Name="TsuDisk" />
+          <TextBlock Text="TsuDisk" FontFamily="{DynamicResource font-display}" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" />
+          <Border Style="{StaticResource Badge}" Margin="12,0,0,0">
+            <TextBlock Text="{g:T ReadOnlyBadge}" FontSize="12" FontWeight="Medium" Foreground="{DynamicResource text-link}" />
+          </Border>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+          <Button Content="{g:T Refresh}" Command="{Binding Refresh}" Margin="0,0,12,0" />
+          <TextBlock Text="{g:T Theme}" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource text-secondary}" />
+          <ComboBox Width="150" ItemsSource="{Binding ThemeChoices}" ItemTemplate="{StaticResource LabelItem}" SelectedValuePath="Value"
+                    SelectedValue="{Binding Theme}" AutomationProperties.Name="{g:T Theme}" Margin="0,0,12,0" />
+          <TextBlock Text="{g:T Language}" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource text-secondary}" />
+          <ComboBox Width="150" ItemsSource="{Binding LanguageChoices}" ItemTemplate="{StaticResource LabelItem}" SelectedValuePath="Value"
+                    SelectedValue="{Binding Language}" AutomationProperties.Name="{g:T Language}" Margin="0,0,12,0" />
+          <Button Content="{g:T About}" Style="{StaticResource Ghost}" Click="OnAbout" />
+        </StackPanel>
+      </DockPanel>
+    </Border>
+
+    <Border DockPanel.Dock="Bottom" BorderBrush="{DynamicResource border}" BorderThickness="0,1,0,0" Padding="24,10">
+      <TextBlock Style="{StaticResource Muted}" HorizontalAlignment="Center">
+        <Run x:Name="FooterVersion" /> · <Run Text="{g:T FooterBy}" /> ·
+        <Hyperlink NavigateUri="https://tsudev.com" RequestNavigate="OnLink" Foreground="{DynamicResource text-link}">tsudev.com</Hyperlink> ·
+        <Hyperlink NavigateUri="https://disk.tsudev.com" RequestNavigate="OnLink" Foreground="{DynamicResource text-link}">disk.tsudev.com</Hyperlink>
+      </TextBlock>
+    </Border>
+
+    <ScrollViewer x:Name="Scroller" VerticalScrollBarVisibility="Auto" Focusable="False">
+      <StackPanel MaxWidth="1080" Margin="24">
+        <Border Style="{StaticResource Badge}" HorizontalAlignment="Left" Margin="0,0,0,12"
+                Visibility="{Binding IsSample, Converter={StaticResource Show}}">
+          <TextBlock Text="{g:T SampleData}" FontSize="12" Foreground="{DynamicResource text-link}" />
+        </Border>
+
+        <!-- Vung thao tac chinh (bo cuc cong-cu): chon dia + ban do + bang ngay man dau. -->
+        <Border Style="{StaticResource Card}">
+          <StackPanel>
+            <TextBlock Text="{g:T MapTitle}" Style="{StaticResource H2}" />
+            <ComboBox ItemsSource="{Binding Disks}" SelectedItem="{Binding SelectedDisk}" ItemTemplate="{StaticResource LabelItem}"
+                      HorizontalAlignment="Left" MinWidth="560" AutomationProperties.Name="{g:T Disk}" Margin="0,0,0,16" />
+
+            <TextBlock Text="{g:T Loading}" Foreground="{DynamicResource text-secondary}" Margin="0,0,0,12"
+                       Visibility="{Binding IsLoading, Converter={StaticResource Show}}" />
+            <Border Visibility="{Binding HasError, Converter={StaticResource Show}}" BorderBrush="{DynamicResource danger}"
+                    BorderThickness="3,0,0,0" Padding="12" Margin="0,0,0,12" Background="{DynamicResource bg-subtle}" MinHeight="120">
+              <StackPanel>
+                <TextBlock Text="{g:T LoadError}" FontWeight="SemiBold" />
+                <TextBlock Text="{Binding Error}" Style="{StaticResource Muted}" Margin="0,4,0,8" />
+                <Button Content="{g:T Retry}" Command="{Binding Refresh}" HorizontalAlignment="Left" />
+              </StackPanel>
+            </Border>
+            <TextBlock Text="{g:T NoDisks}" Foreground="{DynamicResource text-secondary}" Margin="0,0,0,12"
+                       Visibility="{Binding IsEmpty, Converter={StaticResource Show}}" />
+
+            <ListBox x:Name="Map" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedSegment}" Height="64"
+                     Background="Transparent" BorderThickness="0" Padding="0" AutomationProperties.Name="{g:T MapTitle}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+              <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <g:FractionPanel />
+                </ItemsPanelTemplate>
+              </ListBox.ItemsPanel>
+              <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                  <Setter Property="g:FractionPanel.Fraction" Value="{Binding Fraction}" />
+                  <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
+                  <Setter Property="ToolTip" Value="{Binding AccessibleName}" />
+                  <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                  <Setter Property="Template">
+                    <Setter.Value>
+                      <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Outer" Padding="1" Background="Transparent">
+                          <Border x:Name="Block" Background="{Binding Role, Converter={StaticResource RoleBg}}" CornerRadius="{DynamicResource radius-sm}"
+                                  BorderThickness="2" BorderBrush="Transparent" ClipToBounds="True">
+                            <TextBlock Text="{Binding MapLabel}" Foreground="{Binding Role, Converter={StaticResource RoleFg}}" FontSize="12"
+                                       FontWeight="SemiBold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4,0" />
+                          </Border>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                          <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Block" Property="BorderBrush" Value="{DynamicResource text-primary}" />
+                          </Trigger>
+                          <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Outer" Property="Background" Value="{DynamicResource focus-ring}" />
+                          </Trigger>
+                        </ControlTemplate.Triggers>
+                      </ControlTemplate>
+                    </Setter.Value>
+                  </Setter>
+                </Style>
+              </ListBox.ItemContainerStyle>
+            </ListBox>
+
+            <WrapPanel Margin="0,10,0,16">
+              <WrapPanel.Resources>
+                <Style TargetType="Rectangle">
+                  <Setter Property="Width" Value="12" />
+                  <Setter Property="Height" Value="12" />
+                  <Setter Property="RadiusX" Value="2" />
+                  <Setter Property="RadiusY" Value="2" />
+                  <Setter Property="Margin" Value="0,0,6,0" />
+                </Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource Muted}">
+                  <Setter Property="Margin" Value="0,0,16,0" />
+                </Style>
+              </WrapPanel.Resources>
+              <Rectangle Fill="{DynamicResource primary}" /><TextBlock Text="{g:T RoleData}" />
+              <Rectangle Fill="{DynamicResource info}" /><TextBlock Text="{g:T RoleSystem}" />
+              <Rectangle Fill="{DynamicResource warning}" /><TextBlock Text="{g:T RoleRecovery}" />
+              <Rectangle Fill="{DynamicResource bg-subtle}" Stroke="{DynamicResource border-strong}" /><TextBlock Text="{g:T RoleFree}" />
+              <Rectangle Fill="{DynamicResource text-muted}" /><TextBlock Text="{g:T RoleOther}" />
+            </WrapPanel>
+
+            <!-- Bang phan vung (DATA_TABLE): header bg-subtle, so can phai, chan vung ban ghi 3 phan. -->
+            <Border BorderBrush="{DynamicResource border}" BorderThickness="1" CornerRadius="{DynamicResource radius-lg}" ClipToBounds="True">
+              <StackPanel Grid.IsSharedSizeScope="True">
+                <Border Background="{DynamicResource bg-subtle}" BorderBrush="{DynamicResource border}" BorderThickness="0,0,0,1" Padding="12,8">
+                  <Grid TextElement.FontWeight="SemiBold">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="40" /><ColumnDefinition Width="48" /><ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="110" /><ColumnDefinition Width="110" /><ColumnDefinition Width="110" /><ColumnDefinition Width="90" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{g:T ColNumber}" />
+                    <TextBlock Grid.Column="1" Text="{g:T ColDrive}" />
+                    <TextBlock Grid.Column="2" Text="{g:T ColType}" />
+                    <TextBlock Grid.Column="3" Text="{g:T ColOffset}" TextAlignment="Right" />
+                    <TextBlock Grid.Column="4" Text="{g:T ColSize}" TextAlignment="Right" />
+                    <TextBlock Grid.Column="5" Text="{g:T ColFree}" TextAlignment="Right" />
+                    <TextBlock Grid.Column="6" Text="{g:T ColFileSystem}" Margin="16,0,0,0" />
+                  </Grid>
+                </Border>
+                <ListBox x:Name="Table" ItemsSource="{Binding PageRows}" SelectedItem="{Binding SelectedSegment}" BorderThickness="0"
+                         Background="Transparent" ItemContainerStyle="{StaticResource RowItem}" AutomationProperties.Name="{g:T PartitionsTitle}"
+                         HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                  <ListBox.ItemTemplate>
+                    <DataTemplate>
+                      <Grid>
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="40" /><ColumnDefinition Width="48" /><ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="110" /><ColumnDefinition Width="110" /><ColumnDefinition Width="110" /><ColumnDefinition Width="90" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding Number}" />
+                        <TextBlock Grid.Column="1" Text="{Binding Drive}" FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="2" Text="{Binding Type}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
+                        <TextBlock Grid.Column="3" Text="{Binding Offset}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="4" Text="{Binding Size}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="5" Text="{Binding Free}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="6" Text="{Binding FileSystem}" Margin="16,0,0,0" />
+                      </Grid>
+                    </DataTemplate>
+                  </ListBox.ItemTemplate>
+                </ListBox>
+                <Grid MinHeight="48" Margin="12,4" DataContext="{Binding Pager}">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <ComboBox x:Name="PageSize" Width="80" ItemsSource="{Binding Sizes}" SelectedItem="{Binding PageSize}"
+                              AutomationProperties.Name="{g:T PageSizeLabel}" IsEnabled="{Binding HasRecords}" />
+                    <TextBlock Text="{g:T PageSizeSuffix}" Style="{StaticResource Muted}" VerticalAlignment="Center" Margin="8,0,0,0" />
+                  </StackPanel>
+                  <TextBlock x:Name="Summary" Grid.Column="1" Text="{Binding Summary}" Style="{StaticResource Muted}" VerticalAlignment="Center"
+                             AutomationProperties.LiveSetting="Polite" AutomationProperties.Name="{Binding LiveSummary}" />
+                  <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+                              AutomationProperties.Name="{g:T Pagination}">
+                    <Button Style="{StaticResource PageCell}" Content="&lt;" Command="{Binding Previous}" AutomationProperties.Name="{g:T PrevPage}" />
+                    <ItemsControl ItemsSource="{Binding Cells}" Focusable="False">
+                      <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+                      </ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                          <Button x:Name="Cell" Style="{StaticResource PageCell}" Content="{Binding Text}" CommandParameter="{Binding Page}"
+                                  Command="{Binding DataContext.Go, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                  AutomationProperties.Name="{Binding AccessibleName}" />
+                          <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                              <Setter TargetName="Cell" Property="Background" Value="{DynamicResource primary}" />
+                              <Setter TargetName="Cell" Property="Foreground" Value="{DynamicResource on-primary}" />
+                              <Setter TargetName="Cell" Property="BorderThickness" Value="0" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsEllipsis}" Value="True">
+                              <Setter TargetName="Cell" Property="IsEnabled" Value="False" />
+                            </DataTrigger>
+                          </DataTemplate.Triggers>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Button Style="{StaticResource PageCell}" Content="&gt;" Command="{Binding Next}" AutomationProperties.Name="{g:T NextPage}" />
+                  </StackPanel>
+                </Grid>
+              </StackPanel>
+            </Border>
+          </StackPanel>
+        </Border>
+
+        <!-- Xem truoc ke hoach: CHI LAP ke hoach, khong co nut ap dung. -->
+        <Border Style="{StaticResource Card}">
+          <StackPanel>
+            <TextBlock Text="{g:T PlanTitle}" Style="{StaticResource H2}" />
+            <TextBlock Text="{g:T PlanSelectHint}" Foreground="{DynamicResource text-secondary}" Margin="0,0,0,12"
+                       Visibility="{Binding ShowPlanHint, Converter={StaticResource Show}}" />
+            <Button Style="{StaticResource Primary}" Content="{Binding PlanButtonText}" Command="{Binding PlanExtend}" HorizontalAlignment="Left" />
+
+            <StackPanel Margin="0,16,0,0" Visibility="{Binding HasRefusal, Converter={StaticResource Show}}">
+              <Border BorderBrush="{DynamicResource danger}" BorderThickness="3,0,0,0" Padding="12" Background="{DynamicResource bg-subtle}">
+                <StackPanel>
+                  <TextBlock Text="{Binding RefusalText}" FontWeight="SemiBold" />
+                  <ItemsControl ItemsSource="{Binding RefusalHints}" Margin="0,6,0,0">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate><TextBlock Text="{Binding StringFormat='- {0}'}" Foreground="{DynamicResource text-secondary}" Margin="0,2" /></DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+              </Border>
+            </StackPanel>
+
+              <TextBlock Text="{g:T WinReUnknown}" Foreground="{DynamicResource warning}" Margin="0,12,0,0"
+                         Visibility="{Binding ShowWinReNote, Converter={StaticResource Show}}" />
+
+            <StackPanel Margin="0,16,0,0" Visibility="{Binding HasPlan, Converter={StaticResource Show}}">
+              <TextBlock Text="{Binding PlanHeadline}" FontWeight="SemiBold" FontSize="15" />
+              <ItemsControl ItemsSource="{Binding PlanNotes}" Margin="0,6,0,0">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate><TextBlock Text="{Binding StringFormat='* {0}'}" Foreground="{DynamicResource text-secondary}" Margin="0,2" /></DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <ItemsControl ItemsSource="{Binding PlanSteps}" Margin="0,12,0,0">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Grid Margin="0,3">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32" /><ColumnDefinition Width="64" /><ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="{Binding Index, StringFormat='{}{0}.'}" Foreground="{DynamicResource text-muted}" />
+                      <Border Grid.Column="1" x:Name="W" Style="{StaticResource Badge}" HorizontalAlignment="Left" Visibility="Hidden">
+                        <TextBlock Text="{g:T PlanWrite}" FontSize="12" FontWeight="Medium" Foreground="{DynamicResource warning}" />
+                      </Border>
+                      <TextBlock Grid.Column="2" Text="{Binding Title}" />
+                    </Grid>
+                    <DataTemplate.Triggers>
+                      <DataTrigger Binding="{Binding Writes}" Value="True">
+                        <Setter TargetName="W" Property="Visibility" Value="Visible" />
+                      </DataTrigger>
+                    </DataTemplate.Triggers>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBlock Text="{Binding PlanInvariants}" Style="{StaticResource Muted}" Margin="0,12,0,0" />
+              <Border BorderBrush="{DynamicResource info}" BorderThickness="3,0,0,0" Padding="12" Margin="0,16,0,0" Background="{DynamicResource bg-subtle}">
+                <StackPanel>
+                  <TextBlock Text="{g:T ReadOnlyNotice}" />
+                  <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <Border Background="{DynamicResource bg-base}" BorderBrush="{DynamicResource border}" BorderThickness="1"
+                            CornerRadius="{DynamicResource radius-md}" Padding="12,8">
+                      <TextBlock Text="{Binding Command}" FontFamily="{DynamicResource font-mono}" />
+                    </Border>
+                    <Button Content="{g:T CopyCommand}" Command="{Binding CopyCommand}" Margin="8,0,0,0" />
+                    <TextBlock Text="{g:T Copied}" Foreground="{DynamicResource success}" VerticalAlignment="Center" Margin="8,0,0,0"
+                               Visibility="{Binding Copied, Converter={StaticResource Show}}" />
+                  </StackPanel>
+                </StackPanel>
+              </Border>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
+        <Border Style="{StaticResource Card}">
+          <StackPanel>
+            <TextBlock Text="{g:T AnalysisTitle}" Style="{StaticResource H2}" />
+            <TextBlock Text="{Binding AnalysisTotal}" Foreground="{DynamicResource text-secondary}" Margin="0,0,0,8" />
+            <TextBlock Text="{g:T CoreTextNote}" Style="{StaticResource Muted}" Margin="0,0,0,8"
+                       Visibility="{Binding Text, RelativeSource={RelativeSource Self}, Converter={StaticResource Show}}" />
+            <TextBlock Text="{g:T NoFreeSpace}" Visibility="{Binding HasNoFreeSpace, Converter={StaticResource Show}}" />
+            <ItemsControl ItemsSource="{Binding Advice}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate><TextBlock Text="{Binding StringFormat='- {0}'}" Margin="0,3" /></DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+</Window>

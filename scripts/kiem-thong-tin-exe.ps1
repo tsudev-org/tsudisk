@@ -4,10 +4,12 @@
   FileVersion = YY.M.DDNN.0; ProductVersion va `tsudisk phien-ban` trung dung chuoi phien ban san pham.
   Ban thu (26.11.1802-beta.1): FileVersion lay phan truoc dau '-' (26.11.1802.0), ProductVersion giu nguyen chuoi.
   Chay: pwsh scripts/kiem-thong-tin-exe.ps1 -Exe publish/tsudisk.exe -Version 26.11.1801
+  Giao dien (tsudisk-gui.exe): them -BoQuaChay - exe WinExe khong co lenh phien-ban (chay se mo cua so).
 #>
 param(
     [Parameter(Mandatory = $true)][string]$Exe,
-    [Parameter(Mandatory = $true)][string]$Version
+    [Parameter(Mandatory = $true)][string]$Version,
+    [switch]$BoQuaChay
 )
 $ErrorActionPreference = 'Stop'
 $info = (Get-Item $Exe).VersionInfo
@@ -19,8 +21,10 @@ if ([string]::IsNullOrWhiteSpace($info.FileDescription) -or $info.FileDescriptio
 if ($info.LegalCopyright -notmatch 'TsuDEV') { $loi += "LegalCopyright = '$($info.LegalCopyright)'" }
 if ($info.FileVersion -ne "$base.0") { $loi += "FileVersion = '$($info.FileVersion)', can '$base.0'" }
 if ($info.ProductVersion -ne $Version) { $loi += "ProductVersion = '$($info.ProductVersion)', can '$Version'" }
-$printed = (& $Exe phien-ban | Out-String)
-if ($printed -notmatch [regex]::Escape("TsuDisk $Version")) { $loi += "tsudisk phien-ban in '$($printed.Trim())', can chua 'TsuDisk $Version'" }
+if (-not $BoQuaChay) {
+    $printed = (& $Exe phien-ban | Out-String)
+    if ($printed -notmatch [regex]::Escape("TsuDisk $Version")) { $loi += "tsudisk phien-ban in '$($printed.Trim())', can chua 'TsuDisk $Version'" }
+}
 $info | Format-List CompanyName, ProductName, FileDescription, LegalCopyright, FileVersion, ProductVersion | Out-String | Write-Host
 if ($loi.Count -gt 0) { $loi | ForEach-Object { Write-Host "LOI: $_" -ForegroundColor Red }; exit 1 }
 Write-Host 'Thong tin phien ban trong exe: DAT' -ForegroundColor Green

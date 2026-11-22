@@ -40,7 +40,7 @@ trống (`tao-phan-vung`). Đã xong ở 26.11.1704: thu nhỏ ổ NTFS tổng q
 
 | Tính năng | Rủi ro | Ghi chú |
 | --- | --- | --- |
-| Giao diện WPF: bản đồ đĩa trực quan, hàng đợi thao tác, xem trước, áp dụng | - | Dùng chung `PlanRunner`; mọi thao tác GUI = một `Plan` |
+| Giao diện WPF: bản đồ đĩa trực quan, hàng đợi thao tác, xem trước, áp dụng | - | Bản đầu CHỈ ĐỌC xong 23/11/2026 (`tsudisk-gui.exe`, ADR-0008: bản đồ, bảng, phân tích, xem trước kế hoạch mở rộng). Còn: phát hành, nối `PlanRunner`, màn Pro |
 | ~~Sao lưu bảng GPT thô (kiểu `sgdisk --backup`)~~ ĐÃ XONG; khôi phục tự động | Cao | Khôi phục chỉ khi có ADR riêng, xác nhận hai lần |
 | ~~Mở rộng riêng phân vùng WinRE (lỗi 0x80070643 của KB5034441)~~ ĐÃ XONG ở 26.11.1603 | Vừa | `mo-rong-winre`, thu nhỏ có trần 4 GB |
 | ~~Sức khỏe ổ: S.M.A.R.T./`MSFT_StorageReliabilityCounter`~~ ĐÃ XONG | Thấp | Chặn ghi khi ổ báo lỗi |

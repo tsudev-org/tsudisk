@@ -1,0 +1,99 @@
+using System.Globalization;
+using System.IO;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using TsuDisk.Core.Presentation;
+
+namespace TsuDisk.Gui;
+
+/// <summary>
+/// Diem vao giao dien. Tham so:
+/// <c>--du-lieu-mau</c> dung bo cuc mau thay o that;
+/// <c>--chup-man-hinh &lt;thu-muc&gt;</c> ve cua so o vi/en x Sang/Toi ra PNG roi thoat (ma 0 = ve duoc het) - dung cho
+/// anh website/PR va kiem tren CI Windows. Che do chup KHONG doc/ghi tep cai dat.
+/// </summary>
+internal sealed partial class App : Application
+{
+    public static string Version =>
+        typeof(App).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0] ?? "0";
+
+    /// <summary>Ngon ngu giao dien cua Windows (GetUserDefaultUILanguage qua CurrentUICulture), uu tien truoc.</summary>
+    public static IEnumerable<string> SystemLanguages() => [CultureInfo.CurrentUICulture.Name, CultureInfo.CurrentCulture.Name];
+
+    protected override async void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
+        var args = e.Args;
+        var sample = args.Contains("--du-lieu-mau");
+        var shotIndex = Array.IndexOf(args, "--chup-man-hinh");
+        var shotDir = shotIndex >= 0 && shotIndex + 1 < args.Length ? args[shotIndex + 1] : null;
+        SettingsStore.Disabled = shotDir is not null;
+        if (shotDir is not null)
+            Directory.CreateDirectory(shotDir);
+
+        var settings = SettingsStore.Load();
+        Loc.Instance.SetLanguage(UiLanguage.Resolve(settings.Language, SystemLanguages()));
+        ThemeManager.Start(settings.Theme);
+        IDiskSource source = sample ? new SampleDiskSource() : new WindowsDiskSource();
+        var model = new MainViewModel(source, settings);
+        var window = new MainWindow(model);
+        MainWindow = window;
+
+        if (shotDir is null)
+        {
+            window.Show();
+            await model.LoadAsync().ConfigureAwait(true);
+            return;
+        }
+
+        try
+        {
+            await CaptureAsync(window, model, shotDir).ConfigureAwait(true);
+            Shutdown(0);
+        }
+#pragma warning disable CA1031 // Che do chup: moi loi => in ra va ma thoat 1 de CI do.
+        catch (Exception ex)
+#pragma warning restore CA1031
+        {
+            // WinExe khong co console: ghi loi ra tep de CI in ra.
+            await File.WriteAllTextAsync(Path.Combine(shotDir, "loi.txt"), ex.ToString()).ConfigureAwait(true);
+            Shutdown(1);
+        }
+    }
+
+    private static async Task CaptureAsync(MainWindow window, MainViewModel model, string directory)
+    {
+        window.ShowInTaskbar = false;
+        window.WindowStartupLocation = WindowStartupLocation.Manual;
+        window.Left = -32000;
+        window.Top = -32000;
+        window.Width = 1280;
+        window.Height = 900;
+        window.Show();
+        await model.LoadAsync().ConfigureAwait(true);
+        if (model.Error is { } error)
+            throw new InvalidOperationException($"Không đọc được bố cục đĩa: {error}");
+        if (model.PlanExtend.CanExecute(null))
+            model.PlanExtend.Execute(null);
+
+        foreach (var language in UiLanguage.Supported)
+        {
+            Loc.Instance.SetLanguage(language);
+            foreach (var mode in new[] { Core.Presentation.ThemeMode.Light, Core.Presentation.ThemeMode.Dark })
+            {
+                ThemeManager.Apply(ThemeChoice.System, mode);
+                await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+                var bitmap = window.RenderFullPage();
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                var path = Path.Combine(directory, $"tsudisk-gui_{language}_{(mode == Core.Presentation.ThemeMode.Dark ? "toi" : "sang")}.png");
+                using var file = File.Create(path);
+                encoder.Save(file);
+                await Console.Out.WriteLineAsync(path).ConfigureAwait(true);
+            }
+        }
+    }
+}

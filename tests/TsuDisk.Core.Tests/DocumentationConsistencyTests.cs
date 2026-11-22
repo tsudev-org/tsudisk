@@ -11,6 +11,8 @@ namespace TsuDisk.Core.Tests;
 /// </summary>
 public partial class DocumentationConsistencyTests
 {
+    internal static string RepoPath(params string[] parts) => RepoFile(parts);
+
     private static string RepoFile(params string[] parts)
     {
         var dir = new DirectoryInfo(AppContext.BaseDirectory);

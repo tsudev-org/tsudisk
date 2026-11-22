@@ -4,6 +4,11 @@ Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/V
 
 ## [Chưa phát hành]
 
+- Giao diện cửa sổ `tsudisk-gui.exe` (bản xem trước, CHỈ ĐỌC): bản đồ đĩa, bảng phân vùng, phân tích vùng trống, xem
+  trước kế hoạch mở rộng kèm lệnh để chạy bằng `tsudisk`. Không có nút áp dụng. Tiếng Việt/tiếng Anh và Sáng/Tối theo
+  Windows, đổi được trong ứng dụng. Chưa có trong bản phát hành.
+- Kích thước trong giao diện tiếng Anh dùng dấu chấm thập phân (`63.9 GB`).
+
 ## [26.11.2202] - 22/11/2026
 
 - Lệnh `tai-khoan`, `dang-nhap`, `dang-xuat` (bí danh `account`, `login`, `logout`): đăng nhập tài khoản TsuDEV bằng
