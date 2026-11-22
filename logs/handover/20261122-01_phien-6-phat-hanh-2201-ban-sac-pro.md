@@ -2,7 +2,7 @@
 
 - **Mã phiếu**: 20261122-01
 - **Từ**: agent-tsudisk (phiên `tsudisk-59`) - **Đến**: phiên kế tiếp của `tsudisk`
-- **Trạng thái**: MỞ (mục 3 là việc tiếp theo)
+- **Trạng thái**: ĐÓNG 23/11/2026 - thay bằng phiếu 20261123-01
 - **AKB**: `~/agent-kb/tsudisk/sessions/SES-20261122-2147-ccd7-*`
 
 ## 1. Đã xong

@@ -3,16 +3,19 @@
 > Agent đọc file này ở đầu mỗi phiên và cập nhật ở cuối mỗi phiên.
 > Quy trình: `.standards/docs/AGENT_PROTOCOL.md`.
 
-> **Phiên kế tiếp**: đọc `logs/handover/20261122-02_phien-6b-dang-nhap-bo-cuc-2202.md`.
+> **Phiên kế tiếp**: đọc `logs/handover/20261123-01_phien-7-gui-chi-doc.md`.
 
 ## Hàng đợi task (làm từ trên xuống)
 
-- [ ] winget-pkgs #486490 (26.11.2202, CLA đã ký): theo dõi Validation/người duyệt; merge => khối "Cài bằng lệnh"
-      (PACKAGING 8.1). #486465 (2201) đã đóng, nhường cho #486490.
+- [ ] winget-pkgs #486490 (26.11.2202): Validation 10/10 XANH (23/11/2026), chờ moderator cộng đồng duyệt; merge =>
+      khối "Cài bằng lệnh" (PACKAGING 8.1). 👤 `WINGET_TOKEN` (env `packages`) có thể là token đã thu hồi 23/11 - nạp lại
+      trước bản phát hành tới, không thì job winget lỗi 401.
 - [ ] Pro: đăng nhập thật bằng tài khoản TsuDEV trên Windows (cần chủ dự án bấm trong trình duyệt) - THREAT_MODEL mục 4.
       Đồng bộ: chờ .NET `TsuSync` (PRO-D3, repo tsusync) + chủ dự án duyệt phạm vi (ADR-0007 "Việc còn chờ").
-- [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): chuyển MBR -> GPT (ADR-0006 Đề xuất - chờ duyệt + kiểm Hyper-V Gen 1 ->
-      Gen 2); giao diện WPF (bản đầu chỉ đọc; màn Pro/Ủng hộ + huy hiệu đồ hoạ đi cùng).
+- [ ] GUI (ADR-0008, bản đầu chỉ đọc xong #57): 👤 chủ dự án xem ảnh `docs/ui/gui-chi-doc/` -> phát hành
+      `tsudisk-gui.exe` cùng CLI (release.yml, VirusTotal, SHA256SUMS, Scoop/winget); rồi nối `PlanRunner` cho `doi-ten`
+      (ADR bổ sung); màn Pro/Ủng hộ + hộp thoại nhắc gia hạn.
+- [ ] Chuyển MBR -> GPT: ADR-0006 Đề xuất - chờ duyệt + kiểm Hyper-V Gen 1 -> Gen 2.
 - [ ] Giai đoạn 3: bộ cài, ký SignPath (D5).
 - [ ] Nợ thương hiệu: biến thể 16px đơn giản hóa; ảnh gốc lớn hơn/SVG (`docs/BRAND.md`).
 
@@ -22,6 +25,11 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 23/11/2026 (phiên 7) - GUI WPF bản đầu CHỈ ĐỌC `tsudisk-gui.exe` (#57, ADR-0008): bản đồ đĩa, bảng + chân vùng bản
+  ghi, phân tích, xem trước kế hoạch mở rộng; vi/en + Sáng/Tối theo hệ thống; token nhúng từ `.standards`; CI Windows
+  chụp vi/en × Sáng/Tối (mẫu + ổ thật). Core/Presentation, test 285 -> 328. winget-pkgs#486490 Validation-Completed.
+  Đăng nhập thật: chủ dự án chưa thử. TsuSync .NET mới có lớp mã hoá (chưa có máy khách HTTP) + phạm vi chưa duyệt.
 
 - 22/11/2026 (đợt 2, chủ dự án ủy quyền) - CLA Microsoft đã ký (winget-pkgs); client OIDC `tsudisk` chèn vào CSDL
   production (phiếu tsudev DK1 ĐÓNG). Đăng nhập `tai-khoan`/`dang-nhap`/`dang-xuat` + THREAT_MODEL (#52, test 285).
@@ -79,6 +87,7 @@
 - 18/11/2026 - Xóa phân vùng dữ liệu, không tự tạo lại (Windows xóa trắng đầu phân vùng mới): `docs/adr/0005-xoa-phan-vung-du-lieu.md`
 - 18/11/2026 - (Đề xuất) Chuyển MBR -> GPT bằng mbr2gpt chính thức, không tự viết bộ chuyển: `docs/adr/0006-chuyen-mbr-sang-gpt.md`
 - 22/11/2026 - TsuDEV Pro: lưu cục bộ, CLI chỉ in nhắc gia hạn, đăng nhập/đồng bộ chờ: `docs/adr/0007-pro-luu-cuc-bo-nhac-gia-han.md`
+- 23/11/2026 - Giao diện WPF bản đầu chỉ đọc, `tsudisk-gui.exe` riêng, chưa phát hành: `docs/adr/0008-giao-dien-wpf-chi-doc.md`
 
 ## Sự cố bảo mật
 
