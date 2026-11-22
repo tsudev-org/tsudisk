@@ -3,13 +3,15 @@
 > Agent đọc file này ở đầu mỗi phiên và cập nhật ở cuối mỗi phiên.
 > Quy trình: `.standards/docs/AGENT_PROTOCOL.md`.
 
-> **Phiên kế tiếp**: đọc `logs/handover/20261118-02_phien-5-virustotal-winget.md` mục 3. Secret đã nạp, cảnh báo
-> CodeQL đã đóng, #36 (job winget) đã/đang merge => việc đầu tiên: gắn thẻ `v26.11.1802` và kiểm theo mục 3.1.
+> **Phiên kế tiếp**: đọc phiếu bàn giao mới nhất trong `logs/handover/` (phiên 22/11/2026). Phiếu mở: STD50 (bản
+> sắc v5.0.0, PR 2 bố cục), PRO2/PRO1 (Pro, nhắc gia hạn).
 
 ## Hàng đợi task (làm từ trên xuống)
 
-- [ ] Phiếu bàn giao đầy đủ cho phiên kế tiếp: `logs/handover/20261118-02_phien-5-virustotal-winget.md`.
-- [ ] Phát hành `v26.11.1802` (VirusTotal thật + job winget lần đầu), theo dõi PR winget-pkgs (phiếu 20261118-02 mục 3).
+- [ ] Phát hành `v26.11.2201` (gộp 26.11.1802 chưa từng phát hành: VirusTotal thật + job winget lần đầu), theo dõi PR
+      winget-pkgs (phiếu 20261118-02 mục 3).
+- [ ] Phiếu 20261121-STD50: PR 1 màu + hình (sync v5.0.0), PR 2 bố cục `cong-cu` + hoạ tiết.
+- [ ] Phiếu 20261120-PRO2 (thay một phần PRO1): ADR Pro, nhắc gia hạn 7 ngày ở CLI (6 test), đồng bộ khi có TsuSync .NET.
 - [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): chuyển MBR -> GPT (ADR-0006)
       (ADR-0006 Đề xuất - chờ duyệt + kiểm Hyper-V Gen 1 -> Gen 2); giao diện WPF (bản đầu chỉ đọc).
 - [ ] Giai đoạn 3: bộ cài, ký SignPath (D5).
@@ -21,6 +23,9 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 19-21/11/2026 - OpenSSF Scorecard (#43), sửa bộ kiểm GPT + fuzz (#44), hồ sơ Best Practices 16949 passing +
+  CONTRIBUTING (#45, #46), bộ quy ước v4.2.0 (#47).
 
 - 18/11/2026 - Release qua NHÁP -> VirusTotal (workflow dùng chung) -> xuất bản; thẻ beta/rc là Pre-release - #35,
   kiểm bằng `v26.11.1802-beta.1` (xanh). Environment `packages` (chỉ thẻ `v*`). Job winget + `winget-submit.mjs` ở #36
