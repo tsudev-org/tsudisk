@@ -1,8 +1,10 @@
 ---
 // Khung chung: <head> theo ECOSYSTEM_IDENTITY mục 2.2, đầu trang, chân trang nối về tsudev.com (mục 4).
 import '../styles/fonts.css';
-import '../styles/tokens.css';
-import '../styles/palette.css';
+// Lớp nền chung rồi lớp bản sắc `disk` (tsudev-standards v5.0.0 DESIGN_SYSTEM 1.2.1): đọc thẳng bản sao chỉ-đọc .standards/,
+// không chép mã màu vào CSS riêng.
+import '../../../.standards/tokens/tokens.css';
+import '../../../.standards/tokens/products.css';
 import '../styles/site.css';
 import { REPO_URL, SAN_PHAM, SITE, UNG_HO_URL } from '../lib/noi-dung';
 
@@ -31,7 +33,7 @@ const cheDo = [
 const dangO = (href: string) => duongDan.startsWith(href);
 ---
 <!doctype html>
-<html lang="vi" data-theme="dark">
+<html lang="vi" data-theme="dark" data-product="disk">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
