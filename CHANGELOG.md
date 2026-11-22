@@ -4,6 +4,11 @@ Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/V
 
 ## [Chưa phát hành]
 
+- Chuẩn bị TsuDEV Pro (ADR-0007): TsuDisk vẫn miễn phí đủ tính năng, ngoại tuyến, không gửi dữ liệu nào lên mạng. Khi
+  có tài khoản TsuDEV Pro sắp hết hạn (còn ≤ 7 ngày), mỗi lần chạy lệnh TsuDisk in lời nhắc gia hạn kèm liên kết; hết
+  hạn thì báo một lần. Không chặn lệnh, không in khi chạy `--json`/tự động. Đăng nhập sẽ có ở bản sau.
+- Website: màu xanh ngọc riêng của TsuDisk (bộ quy ước tsudev v5.0.0), tiêu đề dùng phông Montserrat.
+
 ## [26.11.2201] - 22/11/2026
 
 - Sửa: bộ kiểm GPT (`kiem-tra-gpt`, sao lưu GPT trước khi ghi) ném ngoại lệ thay vì báo lỗi khi header GPT trên đĩa

@@ -14,6 +14,7 @@ CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("vi-VN");
 try
 {
     var cli = CliArgs.Parse(args);
+    ProHook.Run(cli, Commands.DefaultLogRoot);   // ADR-0007: chi in khi co quyen loi da dem, khong chan lenh
     return cli.Command switch
     {
         "danh-sach" => Commands.List(cli),
