@@ -3,16 +3,16 @@
 > Agent đọc file này ở đầu mỗi phiên và cập nhật ở cuối mỗi phiên.
 > Quy trình: `.standards/docs/AGENT_PROTOCOL.md`.
 
-> **Phiên kế tiếp**: đọc `logs/handover/20261122-01_phien-6-phat-hanh-2201-ban-sac-pro.md` mục 2-3.
+> **Phiên kế tiếp**: đọc `logs/handover/20261122-02_phien-6b-dang-nhap-bo-cuc-2202.md`.
 
 ## Hàng đợi task (làm từ trên xuống)
 
-- [ ] winget-pkgs #486465 (26.11.2201): chờ chủ dự án ký CLA, rồi theo dõi Validation; merge => khối "Cài bằng lệnh".
-- [ ] Phiếu 20261121-STD50 PR 2: bố cục `cong-cu` + hoạ tiết `khoi-phan-vung` + og-image.
-- [ ] Pro (ADR-0007): đăng nhập khi có client OIDC `tsudisk` (phiếu tsudev 20261122-DK1); đồng bộ khi có TsuSync .NET;
-      THREAT_MODEL; màn Pro/Ủng hộ + huy hiệu cùng WPF.
+- [ ] winget-pkgs #486490 (26.11.2202, CLA đã ký): theo dõi Validation/người duyệt; merge => khối "Cài bằng lệnh"
+      (PACKAGING 8.1). #486465 (2201) đã đóng, nhường cho #486490.
+- [ ] Pro: đăng nhập thật bằng tài khoản TsuDEV trên Windows (cần chủ dự án bấm trong trình duyệt) - THREAT_MODEL mục 4.
+      Đồng bộ: chờ .NET `TsuSync` (PRO-D3, repo tsusync) + chủ dự án duyệt phạm vi (ADR-0007 "Việc còn chờ").
 - [ ] Giai đoạn 2 còn lại (`docs/ROADMAP.md`): chuyển MBR -> GPT (ADR-0006 Đề xuất - chờ duyệt + kiểm Hyper-V Gen 1 ->
-      Gen 2); giao diện WPF (bản đầu chỉ đọc).
+      Gen 2); giao diện WPF (bản đầu chỉ đọc; màn Pro/Ủng hộ + huy hiệu đồ hoạ đi cùng).
 - [ ] Giai đoạn 3: bộ cài, ký SignPath (D5).
 - [ ] Nợ thương hiệu: biến thể 16px đơn giản hóa; ảnh gốc lớn hơn/SVG (`docs/BRAND.md`).
 
@@ -22,6 +22,11 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 22/11/2026 (đợt 2, chủ dự án ủy quyền) - CLA Microsoft đã ký (winget-pkgs); client OIDC `tsudisk` chèn vào CSDL
+  production (phiếu tsudev DK1 ĐÓNG). Đăng nhập `tai-khoan`/`dang-nhap`/`dang-xuat` + THREAT_MODEL (#52, test 285).
+  STD50 PR 2 bố cục `cong-cu` + hoạ tiết (#53, phiếu ĐÓNG). Phát hành 26.11.2202 (#54; VT 0/74, sha256/attestation/
+  Sigstore OK), winget-pkgs#486490. Website deploy-2026.11.22.2.
 
 - 22/11/2026 - Phát hành 26.11.2201 (#48; gộp 1802): VirusTotal 0/74, SHA256SUMS + attestation + Sigstore đã kiểm; job
   winget mở microsoft/winget-pkgs#486465 (Needs-CLA). Bản sắc `disk` v5.0.0 PR 1 (#49, bộ quy ước v5.0.0). Pro nhắc gia
