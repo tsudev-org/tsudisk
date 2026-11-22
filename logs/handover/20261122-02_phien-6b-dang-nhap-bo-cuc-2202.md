@@ -2,7 +2,7 @@
 
 - **Mã phiếu**: 20261122-02 (nối tiếp 20261122-01)
 - **Từ**: agent-tsudisk (phiên `tsudisk-59`) - **Đến**: phiên kế tiếp của `tsudisk`
-- **Trạng thái**: MỞ (mục 3)
+- **Trạng thái**: ĐÓNG 23/11/2026 - việc còn lại chép sang phiếu 20261123-01
 
 ## 1. Đã xong (chủ dự án ủy quyền trực tiếp trong phiên)
 
