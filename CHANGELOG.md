@@ -4,15 +4,14 @@ Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/V
 
 ## [Chưa phát hành]
 
+## [26.11.2201] - 22/11/2026
+
 - Sửa: bộ kiểm GPT (`kiem-tra-gpt`, sao lưu GPT trước khi ghi) ném ngoại lệ thay vì báo lỗi khi header GPT trên đĩa
   khai bảng entry vô lý (số entry/kích thước entry tràn số, kích thước không phải 128 × 2^n, bảng > 1 MiB) hoặc LBA ngoài
   vùng đã đọc. Nay báo "bảng entry vô lý" và dừng như mọi GPT hỏng khác. Lỗi chỉ làm lệnh dừng sớm (trước mọi bước
   ghi), không gây mất dữ liệu. Tìm ra bằng test fuzz mới `GptFuzzTests` (đột biến trường header/entry rồi tính lại CRC).
 - Tài liệu: `CONTRIBUTING.md` (tiếng Anh), tóm tắt tiếng Anh trong README và SECURITY, hồ sơ OpenSSF Best Practices
   `docs/best-practices.json`.
-
-## [26.11.1802] - 18/11/2026
-
 - Phát hành: mỗi bản được quét trên VirusTotal trước khi công bố; link báo cáo nằm trong ghi chú phát hành. Có phần
   mềm diệt virus nào gắn cờ thì bản phát hành giữ ở dạng nháp cho tới khi gỡ báo nhầm.
 - Bản thử nghiệm (`-beta.N`, `-rc.N`) được đánh dấu Pre-release, không đẩy sang kho gói.
