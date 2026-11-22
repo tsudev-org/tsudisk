@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chuoi giao dien TsuDisk.Gui (tieng Viet). Sinh cung luc hai ngon ngu - them khoa thi them o CA HAI tep
+     (test ResxParityTests do). PRODUCT_POLICY muc 1.1: chuoi nam trong tep dich, khong viet cung trong ma. -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="ReadOnlyBadge" xml:space="preserve"><value>Chỉ đọc</value></data>
+  <data name="Theme" xml:space="preserve"><value>Giao diện</value></data>
+  <data name="ThemeSystem" xml:space="preserve"><value>Theo hệ thống</value></data>
+  <data name="ThemeLight" xml:space="preserve"><value>Sáng</value></data>
+  <data name="ThemeDark" xml:space="preserve"><value>Tối</value></data>
+  <data name="Language" xml:space="preserve"><value>Ngôn ngữ</value></data>
+  <data name="LanguageSystem" xml:space="preserve"><value>Theo hệ thống</value></data>
+  <data name="Refresh" xml:space="preserve"><value>Đọc lại</value></data>
+  <data name="About" xml:space="preserve"><value>Giới thiệu</value></data>
+  <data name="Disk" xml:space="preserve"><value>Đĩa</value></data>
+  <data name="DiskLabelFormat" xml:space="preserve"><value>Đĩa {0}: {1} - {2} - {3}</value></data>
+  <data name="SystemDisk" xml:space="preserve"><value>đĩa hệ thống</value></data>
+  <data name="VirtualDisk" xml:space="preserve"><value>ổ ảo</value></data>
+  <data name="ReadOnlyDisk" xml:space="preserve"><value>CHỈ ĐỌC</value></data>
+  <data name="Loading" xml:space="preserve"><value>Đang đọc bố cục đĩa...</value></data>
+  <data name="LoadError" xml:space="preserve"><value>Không tải được dữ liệu</value></data>
+  <data name="Retry" xml:space="preserve"><value>Thử lại</value></data>
+  <data name="NoDisks" xml:space="preserve"><value>Chưa có bản ghi nào - Windows không báo đĩa nào.</value></data>
+  <data name="MapTitle" xml:space="preserve"><value>Bản đồ đĩa</value></data>
+  <data name="RoleData" xml:space="preserve"><value>Dữ liệu</value></data>
+  <data name="RoleSystem" xml:space="preserve"><value>Hệ thống (EFI/MSR)</value></data>
+  <data name="RoleRecovery" xml:space="preserve"><value>Khôi phục (Recovery)</value></data>
+  <data name="RoleFree" xml:space="preserve"><value>Vùng trống</value></data>
+  <data name="RoleOther" xml:space="preserve"><value>Khác</value></data>
+  <data name="PartitionsTitle" xml:space="preserve"><value>Phân vùng và vùng trống</value></data>
+  <data name="ColNumber" xml:space="preserve"><value>#</value></data>
+  <data name="ColDrive" xml:space="preserve"><value>Ổ</value></data>
+  <data name="ColType" xml:space="preserve"><value>Loại</value></data>
+  <data name="ColOffset" xml:space="preserve"><value>Vị trí</value></data>
+  <data name="ColSize" xml:space="preserve"><value>Dung lượng</value></data>
+  <data name="ColFree" xml:space="preserve"><value>Trống</value></data>
+  <data name="ColFileSystem" xml:space="preserve"><value>Hệ tệp</value></data>
+  <data name="FreeSegment" xml:space="preserve"><value>Vùng trống (Unallocated)</value></data>
+  <data name="Kind_Unknown" xml:space="preserve"><value>Không rõ</value></data>
+  <data name="Kind_EfiSystem" xml:space="preserve"><value>Phân vùng hệ thống EFI</value></data>
+  <data name="Kind_MicrosoftReserved" xml:space="preserve"><value>Phân vùng dành riêng Microsoft (MSR)</value></data>
+  <data name="Kind_BasicData" xml:space="preserve"><value>Dữ liệu cơ bản</value></data>
+  <data name="Kind_Recovery" xml:space="preserve"><value>Phân vùng khôi phục (Recovery)</value></data>
+  <data name="Kind_LdmMetadata" xml:space="preserve"><value>Ổ động (Dynamic disk)</value></data>
+  <data name="Kind_LdmData" xml:space="preserve"><value>Ổ động (Dynamic disk)</value></data>
+  <data name="Kind_StorageSpaces" xml:space="preserve"><value>Storage Spaces</value></data>
+  <data name="Kind_LinuxFilesystem" xml:space="preserve"><value>Hệ thống tệp Linux</value></data>
+  <data name="Kind_LinuxSwap" xml:space="preserve"><value>Linux swap</value></data>
+  <data name="Kind_LinuxLvm" xml:space="preserve"><value>Linux LVM</value></data>
+  <data name="Kind_MbrExtended" xml:space="preserve"><value>Phân vùng mở rộng MBR (Extended)</value></data>
+  <data name="PageSizeLabel" xml:space="preserve"><value>Số bản ghi mỗi trang</value></data>
+  <data name="PageSizeSuffix" xml:space="preserve"><value>/ trang</value></data>
+  <data name="SummaryRange" xml:space="preserve"><value>{0}-{1} / {2}</value></data>
+  <data name="SummarySingle" xml:space="preserve"><value>{0} mục</value></data>
+  <data name="LiveSummary" xml:space="preserve"><value>Đang hiển thị {0} đến {1} trong {2} mục</value></data>
+  <data name="Pagination" xml:space="preserve"><value>Phân trang</value></data>
+  <data name="PrevPage" xml:space="preserve"><value>Trang trước</value></data>
+  <data name="NextPage" xml:space="preserve"><value>Trang sau</value></data>
+  <data name="PageN" xml:space="preserve"><value>Trang {0}</value></data>
+  <data name="AnalysisTitle" xml:space="preserve"><value>Phân tích vùng trống</value></data>
+  <data name="AnalysisTotal" xml:space="preserve"><value>Tổng vùng trống: {0}</value></data>
+  <data name="NoFreeSpace" xml:space="preserve"><value>Không có vùng trống nào (từ 1 MB trở lên).</value></data>
+  <data name="CoreTextNote" xml:space="preserve"><value></value></data>
+  <data name="PlanTitle" xml:space="preserve"><value>Xem trước kế hoạch mở rộng</value></data>
+  <data name="PlanSelectHint" xml:space="preserve"><value>Chọn một ổ dữ liệu có chữ cái trên bản đồ hoặc trong bảng để xem kế hoạch mở rộng.</value></data>
+  <data name="PlanButton" xml:space="preserve"><value>Lập kế hoạch mở rộng {0}:</value></data>
+  <data name="PlanRefused" xml:space="preserve"><value>Từ chối</value></data>
+  <data name="PlanWrite" xml:space="preserve"><value>GHI</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>Bản giao diện này chỉ đọc: không có nút áp dụng. Muốn thực hiện, chạy lệnh dưới đây trong Terminal (Admin).</value></data>
+  <data name="CopyCommand" xml:space="preserve"><value>Sao chép lệnh</value></data>
+  <data name="Copied" xml:space="preserve"><value>Đã sao chép</value></data>
+  <data name="WinReUnknown" xml:space="preserve"><value>Chưa có quyền quản trị nên không đọc được WinRE - kế hoạch coi WinRE là không rõ.</value></data>
+  <data name="FooterBy" xml:space="preserve"><value>Một sản phẩm của TsuDEV</value></data>
+  <data name="AboutDescription" xml:space="preserve"><value>Quản lý phân vùng ổ cứng Windows an toàn: phân tích, lập kế hoạch, mở rộng ổ.</value></data>
+  <data name="AboutVersion" xml:space="preserve"><value>Phiên bản {0}</value></data>
+  <data name="AboutLicense" xml:space="preserve"><value>Mã nguồn mở, giấy phép Apache-2.0</value></data>
+  <data name="Publisher" xml:space="preserve"><value>Nhà phát hành: TsuDEV</value></data>
+  <data name="Close" xml:space="preserve"><value>Đóng</value></data>
+  <data name="SampleData" xml:space="preserve"><value>Dữ liệu mẫu</value></data>
+</root>

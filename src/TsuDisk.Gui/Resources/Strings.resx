@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chuoi giao dien TsuDisk.Gui (tieng Anh - mac dinh khi ngon ngu he thong chua ho tro). Sinh cung luc hai ngon ngu - them khoa thi them o CA HAI tep
+     (test ResxParityTests do). PRODUCT_POLICY muc 1.1: chuoi nam trong tep dich, khong viet cung trong ma. -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="ReadOnlyBadge" xml:space="preserve"><value>Read-only</value></data>
+  <data name="Theme" xml:space="preserve"><value>Theme</value></data>
+  <data name="ThemeSystem" xml:space="preserve"><value>System</value></data>
+  <data name="ThemeLight" xml:space="preserve"><value>Light</value></data>
+  <data name="ThemeDark" xml:space="preserve"><value>Dark</value></data>
+  <data name="Language" xml:space="preserve"><value>Language</value></data>
+  <data name="LanguageSystem" xml:space="preserve"><value>System</value></data>
+  <data name="Refresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="About" xml:space="preserve"><value>About</value></data>
+  <data name="Disk" xml:space="preserve"><value>Disk</value></data>
+  <data name="DiskLabelFormat" xml:space="preserve"><value>Disk {0}: {1} - {2} - {3}</value></data>
+  <data name="SystemDisk" xml:space="preserve"><value>system disk</value></data>
+  <data name="VirtualDisk" xml:space="preserve"><value>virtual disk</value></data>
+  <data name="ReadOnlyDisk" xml:space="preserve"><value>READ-ONLY</value></data>
+  <data name="Loading" xml:space="preserve"><value>Reading disk layout...</value></data>
+  <data name="LoadError" xml:space="preserve"><value>Could not load data</value></data>
+  <data name="Retry" xml:space="preserve"><value>Retry</value></data>
+  <data name="NoDisks" xml:space="preserve"><value>No records yet - Windows reported no disks.</value></data>
+  <data name="MapTitle" xml:space="preserve"><value>Disk map</value></data>
+  <data name="RoleData" xml:space="preserve"><value>Data</value></data>
+  <data name="RoleSystem" xml:space="preserve"><value>System (EFI/MSR)</value></data>
+  <data name="RoleRecovery" xml:space="preserve"><value>Recovery</value></data>
+  <data name="RoleFree" xml:space="preserve"><value>Unallocated</value></data>
+  <data name="RoleOther" xml:space="preserve"><value>Other</value></data>
+  <data name="PartitionsTitle" xml:space="preserve"><value>Partitions and free space</value></data>
+  <data name="ColNumber" xml:space="preserve"><value>#</value></data>
+  <data name="ColDrive" xml:space="preserve"><value>Drive</value></data>
+  <data name="ColType" xml:space="preserve"><value>Type</value></data>
+  <data name="ColOffset" xml:space="preserve"><value>Offset</value></data>
+  <data name="ColSize" xml:space="preserve"><value>Size</value></data>
+  <data name="ColFree" xml:space="preserve"><value>Free</value></data>
+  <data name="ColFileSystem" xml:space="preserve"><value>File system</value></data>
+  <data name="FreeSegment" xml:space="preserve"><value>Unallocated space</value></data>
+  <data name="Kind_Unknown" xml:space="preserve"><value>Unknown</value></data>
+  <data name="Kind_EfiSystem" xml:space="preserve"><value>EFI system partition</value></data>
+  <data name="Kind_MicrosoftReserved" xml:space="preserve"><value>Microsoft reserved partition (MSR)</value></data>
+  <data name="Kind_BasicData" xml:space="preserve"><value>Basic data</value></data>
+  <data name="Kind_Recovery" xml:space="preserve"><value>Recovery partition</value></data>
+  <data name="Kind_LdmMetadata" xml:space="preserve"><value>Dynamic disk</value></data>
+  <data name="Kind_LdmData" xml:space="preserve"><value>Dynamic disk</value></data>
+  <data name="Kind_StorageSpaces" xml:space="preserve"><value>Storage Spaces</value></data>
+  <data name="Kind_LinuxFilesystem" xml:space="preserve"><value>Linux filesystem</value></data>
+  <data name="Kind_LinuxSwap" xml:space="preserve"><value>Linux swap</value></data>
+  <data name="Kind_LinuxLvm" xml:space="preserve"><value>Linux LVM</value></data>
+  <data name="Kind_MbrExtended" xml:space="preserve"><value>MBR extended partition</value></data>
+  <data name="PageSizeLabel" xml:space="preserve"><value>Records per page</value></data>
+  <data name="PageSizeSuffix" xml:space="preserve"><value>/ page</value></data>
+  <data name="SummaryRange" xml:space="preserve"><value>{0}-{1} / {2}</value></data>
+  <data name="SummarySingle" xml:space="preserve"><value>{0} items</value></data>
+  <data name="LiveSummary" xml:space="preserve"><value>Showing {0} to {1} of {2} items</value></data>
+  <data name="Pagination" xml:space="preserve"><value>Pagination</value></data>
+  <data name="PrevPage" xml:space="preserve"><value>Previous page</value></data>
+  <data name="NextPage" xml:space="preserve"><value>Next page</value></data>
+  <data name="PageN" xml:space="preserve"><value>Page {0}</value></data>
+  <data name="AnalysisTitle" xml:space="preserve"><value>Free space analysis</value></data>
+  <data name="AnalysisTotal" xml:space="preserve"><value>Total unallocated: {0}</value></data>
+  <data name="NoFreeSpace" xml:space="preserve"><value>No unallocated space (1 MB or more).</value></data>
+  <data name="CoreTextNote" xml:space="preserve"><value>Analysis and plan details are shown in Vietnamese for now.</value></data>
+  <data name="PlanTitle" xml:space="preserve"><value>Extend plan preview</value></data>
+  <data name="PlanSelectHint" xml:space="preserve"><value>Select a data drive with a letter on the map or in the table to preview an extend plan.</value></data>
+  <data name="PlanButton" xml:space="preserve"><value>Plan extending {0}:</value></data>
+  <data name="PlanRefused" xml:space="preserve"><value>Refused</value></data>
+  <data name="PlanWrite" xml:space="preserve"><value>WRITE</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>This version of the app is read-only: there is no apply button. To carry it out, run the command below in Terminal (Admin).</value></data>
+  <data name="CopyCommand" xml:space="preserve"><value>Copy command</value></data>
+  <data name="Copied" xml:space="preserve"><value>Copied</value></data>
+  <data name="WinReUnknown" xml:space="preserve"><value>Not running as administrator, so WinRE could not be read - the plan treats WinRE as unknown.</value></data>
+  <data name="FooterBy" xml:space="preserve"><value>A TsuDEV product</value></data>
+  <data name="AboutDescription" xml:space="preserve"><value>Safe Windows disk partition management: analyze, plan and extend drives.</value></data>
+  <data name="AboutVersion" xml:space="preserve"><value>Version {0}</value></data>
+  <data name="AboutLicense" xml:space="preserve"><value>Open source, Apache-2.0 license</value></data>
+  <data name="Publisher" xml:space="preserve"><value>Publisher: TsuDEV</value></data>
+  <data name="Close" xml:space="preserve"><value>Close</value></data>
+  <data name="SampleData" xml:space="preserve"><value>Sample data</value></data>
+</root>

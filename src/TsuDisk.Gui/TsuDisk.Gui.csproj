@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Giao dien WPF (giai doan 2, ADR-0008). BAN DAU CHI DOC: ban do dia, phan tich vung trong, xem truoc ke hoach -
+       KHONG nut ap dung, KHONG goi PlanRunner, KHONG ma mang. Ten tep tsudisk-gui.exe (khong trung tsudisk.exe cua CLI
+       khi dat chung thu muc - Windows khong phan biet hoa thuong). KHONG bat PublishTrimmed (System.Management). -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.17763.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>TsuDisk.Gui</RootNamespace>
+    <AssemblyName>tsudisk-gui</AssemblyName>
+    <AssemblyTitle>TsuDisk - quản lý phân vùng ổ cứng Windows an toàn</AssemblyTitle>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>../../assets/brand/app/app.ico</ApplicationIcon>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <PublishTrimmed>false</PublishTrimmed>
+    <DebugType>embedded</DebugType>
+    <SatelliteResourceLanguages>vi</SatelliteResourceLanguages>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Token doc LUC BUILD tu ban sao chi-doc cua bo quy uoc (DESIGN_SYSTEM 1.2.1 + 7): khong chep ma mau vao app. -->
+    <EmbeddedResource Include="../../.standards/tokens/design-tokens.json" LogicalName="tokens/design-tokens.json" />
+    <EmbeddedResource Include="../../.standards/tokens/products/disk.json" LogicalName="tokens/disk.json" />
+    <Resource Include="../../assets/brand/app/icon-64.png" Link="Resources/icon-64.png" />
+    <Resource Include="../../assets/brand/app/icon-128.png" Link="Resources/icon-128.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../TsuDisk.Core/TsuDisk.Core.csproj" />
+    <ProjectReference Include="../TsuDisk.Windows/TsuDisk.Windows.csproj" />
+  </ItemGroup>
+</Project>

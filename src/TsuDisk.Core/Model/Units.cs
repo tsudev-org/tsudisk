@@ -34,7 +34,10 @@ public static class Units
     private static readonly CultureInfo Vi = CultureInfo.GetCultureInfo("vi-VN");
 
     /// <summary>Dinh dang kich thuoc kieu Windows (he 1024) voi dau phay thap phan tieng Viet: "265,11 GB".</summary>
-    public static string Format(long bytes)
+    public static string Format(long bytes) => FormatIn(bytes, Vi);
+
+    /// <summary>Nhu <see cref="Format(long)"/> nhung dau thap phan theo ngon ngu dang hien thi (giao dien en: "63.9 GB").</summary>
+    public static string FormatIn(long bytes, IFormatProvider provider)
     {
         var sign = bytes < 0 ? "-" : "";
         double value = Math.Abs((double)bytes);
@@ -45,7 +48,7 @@ public static class Units
             value /= 1024;
             index++;
         }
-        var text = value.ToString(index == 0 ? "0" : "0.##", Vi);
+        var text = value.ToString(index == 0 ? "0" : "0.##", provider);
         return $"{sign}{text} {units[index]}";
     }
 }
