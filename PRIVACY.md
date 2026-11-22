@@ -1,6 +1,7 @@
 # Quyền riêng tư
 
-TsuDisk là phần mềm **ngoại tuyến**: chạy trọn vẹn trên máy của bạn, không cần Internet, không cần tài khoản.
+TsuDisk là phần mềm **ngoại tuyến**: chạy trọn vẹn trên máy của bạn, không cần Internet, không cần tài khoản. Đăng
+nhập tài khoản TsuDEV là tùy chọn (mục "Khi bạn đăng nhập").
 
 ## TsuDisk đọc gì
 
@@ -20,9 +21,22 @@ cần nữa.
 
 ## TsuDisk gửi gì đi
 
-**Không gì cả.** Mã nguồn không có lệnh gọi mạng nào; không đo lường, không theo dõi, không tự cập nhật. Bạn tự kiểm
-chứng được: mọi lệnh gọi ra ngoài tiến trình nằm trong `src/TsuDisk.Windows/` (Storage API và ba công cụ hệ thống
-`reagentc`, `bcdedit`, `diskpart`).
+**Khi chưa đăng nhập: không gì cả.** Không đo lường, không theo dõi, không tự cập nhật; TsuDisk không kết nối mạng lần
+nào. Bạn tự kiểm chứng được: mọi lệnh gọi ra ngoài tiến trình nằm trong `src/TsuDisk.Windows/` (Storage API và các công
+cụ hệ thống như `reagentc`, `bcdedit`, `diskpart`, `mbr2gpt`), mã mạng duy nhất nằm trong `src/TsuDisk.Core/Pro/` và
+chỉ chạy khi đã đăng nhập.
+
+## Khi bạn đăng nhập (tùy chọn)
+
+`tsudisk dang-nhap` mở trình duyệt tới tsudev.com để bạn đăng nhập tài khoản TsuDEV, nhằm nhận quyền lợi TsuDEV Pro.
+Sau đó TsuDisk chỉ trao đổi với tsudev.com:
+
+- Mã đăng nhập (lưu trên máy, mã hóa bằng Windows DPAPI theo tài khoản Windows của bạn) và **mã cài đặt** ngẫu nhiên
+  (không suy ra từ phần cứng) để tsudev.com đếm số thiết bị của tài khoản.
+- Nhận về thông tin quyền lợi đã ký (gói Pro, hạn dùng, huy hiệu, số thiết bị) - làm mới tối đa mỗi ngày một lần.
+
+TsuDisk **không** gửi thông tin đĩa, phân vùng, nhật ký hay tệp nào của bạn lên mạng, kể cả khi đã đăng nhập. Dữ liệu
+tài khoản trên máy nằm ở `%LOCALAPPDATA%\tsudev\tsudisk`; `tsudisk dang-xuat` thu hồi phiên và xóa thư mục đó.
 
 ## Website disk.tsudev.com
 

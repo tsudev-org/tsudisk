@@ -12,7 +12,8 @@ nhất, không cần cài .NET.
 Một sản phẩm của [TsuDEV](https://tsudev.com). Trang sản phẩm: <https://disk.tsudev.com>
 
 **Hạng sản phẩm: C - Ngoại tuyến** (theo `.standards/docs/AUTH_AND_ACCOUNT.md` mục 1): chạy trọn vẹn không cần
-Internet, không tài khoản, không gửi dữ liệu đi đâu.
+Internet, không tài khoản, không gửi dữ liệu đi đâu. Đăng nhập tài khoản TsuDEV (`tsudisk dang-nhap`) là tùy chọn, chỉ
+để nhận quyền lợi TsuDEV Pro; chưa đăng nhập thì TsuDisk không kết nối mạng lần nào.
 
 ## Vì sao có TsuDisk
 
@@ -56,6 +57,7 @@ tsudisk suc-khoe                  # Sức khỏe ổ: trạng thái, nhiệt đ�
 tsudisk kiem-tra-gpt              # Kiểm tra toàn vẹn bảng GPT trên đĩa (Admin)
 tsudisk kiem-tra-mbr2gpt          # Đĩa Windows MBR chuyển sang GPT được không (mbr2gpt /validate, chỉ đọc, Admin)
 tsudisk sao-luu                   # Sao lưu sector GPT thô + bố cục + SHA-256 (Admin)
+tsudisk tai-khoan                 # Tài khoản TsuDEV và gói Pro (tùy chọn); dang-nhap / dang-xuat
 ```
 
 Tùy chọn của `ke-hoach` / `mo-rong` / `doi-ten` / `thu-nho` / `tao-phan-vung` / `xoa-phan-vung`:

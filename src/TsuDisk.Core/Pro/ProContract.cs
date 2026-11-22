@@ -11,8 +11,8 @@ public static class ProContract
     public const string EntitlementsUrl = "https://tsudev.com/api/me/entitlements";
 
     /// <summary>
-    /// Client OIDC native cua TsuDisk tren tsudev.com - CHUA DANG KY (ADR-0007 muc 3, phieu gui tsudev
-    /// 20261122-PRO-CLIENT). Cung la <c>aud</c> cua JWS quyen loi va tham so <c>app</c> cua trang Pro.
+    /// Client OIDC native cua TsuDisk tren tsudev.com - da dang ky 22/11/2026 (phieu tsudev
+    /// 20261122-DK1, ADR-0007). Cung la <c>aud</c> cua JWS quyen loi va tham so <c>app</c> cua trang Pro.
     /// </summary>
     public const string ClientId = "tsudisk";
 
@@ -40,12 +40,6 @@ public static class ProContract
     /// <summary>Thu muc du lieu cuc bo cua tai khoan (ADR-0007): <c>%LOCALAPPDATA%\tsudev\tsudisk\</c>.</summary>
     public static string DefaultStateDirectory() => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "tsudev", "tsudisk");
-
-    /// <summary>JWS quyen loi da dem (luong dang nhap - khi co - ghi vao day). Khong co tep ⇒ mien phi, khong loi.</summary>
-    public const string CachedEntitlementFile = "entitlement.jws";
-
-    /// <summary>JWKS cua tsudev.com dem cung luc voi JWS.</summary>
-    public const string CachedJwksFile = "jwks.json";
 
     /// <summary>Trang Pro cho ban ngoai cua hang (muc 7.3 "Kenh").</summary>
     public static string ProUrl(string clientId) => "https://tsudev.com/pro?app=" + Uri.EscapeDataString(clientId);
