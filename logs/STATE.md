@@ -3,16 +3,17 @@
 > Agent đọc file này ở đầu mỗi phiên và cập nhật ở cuối mỗi phiên.
 > Quy trình: `.standards/docs/AGENT_PROTOCOL.md`.
 
-> **Phiên kế tiếp**: đọc `logs/handover/20261123-03_phien-9-gui-tao-phan-vung.md`.
+> **Phiên kế tiếp**: đọc `logs/handover/20261124-01_phien-10-gui-mo-rong-o.md`.
 
 ## Hàng đợi task (làm từ trên xuống)
 
-- [ ] winget-pkgs #486490 (26.11.2202), #487170 (26.11.2301), #487205 (26.11.2302), #487246 (26.11.2303): chờ moderator cộng đồng duyệt;
-      merge => khối "Cài bằng lệnh" (PACKAGING 8.1).
+- [ ] winget-pkgs #486490 (26.11.2202), #487170 (26.11.2301), #487205 (26.11.2302): chờ moderator; #487246 (26.11.2303),
+      #487347 (26.11.2401): URL-Validation-Error 503 LicenseUrl github.com - cần tác giả (`nguyentrangtinhsu`) bình luận
+      xin chạy lại; bản sau dùng `disk.tsudev.com/ban-quyen/` (#76). Merge => khối "Cài bằng lệnh" (PACKAGING 8.1).
 - [ ] Pro: đăng nhập thật bằng tài khoản TsuDEV trên Windows (cần chủ dự án bấm trong trình duyệt) - THREAT_MODEL mục 4.
       Đồng bộ: chờ .NET `TsuSync` (PRO-D3, repo tsusync) + chủ dự án duyệt phạm vi (ADR-0007 "Việc còn chờ").
-- [ ] GUI tiếp: mở thêm thao tác ghi theo rủi ro (tạo phân vùng trong vùng trống, rồi mở rộng) - mỗi cái ADR bổ sung
-      + `AllowedOperations` + ca E2E GUI; màn Pro/Ủng hộ + hộp thoại nhắc gia hạn. Sau đó: thao tác khác theo rủi ro, màn Pro/Ủng hộ + hộp thoại nhắc gia hạn.
+- [ ] GUI tiếp (cần chủ dự án duyệt từng bước): thu nhỏ, xoá phân vùng theo rủi ro - mỗi cái ADR bổ sung +
+      `AllowedOperations` + ca E2E GUI; màn Pro/Ủng hộ + hộp thoại nhắc gia hạn.
 - [ ] Chuyển MBR -> GPT: ADR-0006 Đề xuất - chờ duyệt + kiểm Hyper-V Gen 1 -> Gen 2.
 - [ ] Giai đoạn 3: bộ cài, ký SignPath (D5).
 - [ ] Nợ thương hiệu: biến thể 16px đơn giản hóa; ảnh gốc lớn hơn/SVG (`docs/BRAND.md`).
@@ -23,6 +24,11 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 24/11/2026 (phiên 10) - Không có PR Dependabot. GUI mở rộng ổ (#74, ADR-0011, `ExtendForm`, test 377 -> 392, E2E GUI
+  58/58 G1-G10 trên CI). Phát hành **26.11.2401** (#75; đổi từ 2304 vì sang ngày 24/11): release.yml mọi job xanh,
+  SHA-256 + attestation hai exe đã kiểm, winget-pkgs#487347; website deploy-2026.11.24.1; Scoop scoop-bucket#33 (tay).
+  LicenseUrl winget -> disk.tsudev.com/ban-quyen/ (#76). Đồng bộ Pro: tsusync .NET vẫn chưa có máy khách HTTP.
 
 - 23/11/2026 (phiên 9) - Gộp Dependabot #59, #60. GUI tạo phân vùng trong vùng trống (#70, ADR-0010, test 349 -> 377,
   E2E GUI 35/35 trên CI). Phát hành **26.11.2303** (#71): mọi job release xanh (VT, cong-bo, winget-pkgs#487246);
@@ -105,6 +111,7 @@
 - 23/11/2026 - Giao diện WPF bản đầu chỉ đọc, `tsudisk-gui.exe` riêng (phát hành từ 26.11.2301): `docs/adr/0008-giao-dien-wpf-chi-doc.md`
 - 23/11/2026 - GUI áp dụng đổi chữ cái/nhãn qua đường chạy chung CLI, xác nhận hai lần: `docs/adr/0009-giao-dien-ap-dung-doi-ten.md`
 - 23/11/2026 - GUI tạo phân vùng trong vùng trống, xác nhận lần hai bằng số đĩa: `docs/adr/0010-giao-dien-tao-phan-vung.md`
+- 23/11/2026 - GUI mở rộng ổ, không tuỳ chọn riêng, chỉ áp dụng khi đọc được WinRE: `docs/adr/0011-giao-dien-mo-rong-o.md`
 
 ## Sự cố bảo mật
 
