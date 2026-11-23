@@ -2,7 +2,7 @@
 
 - **Mã phiếu**: 20261123-03 (thay phiếu 20261123-02 - phiếu đó ĐÓNG)
 - **Từ**: agent-tsudisk (phiên `tsudisk-dc`) - **Đến**: phiên kế tiếp + 👤 chủ dự án
-- **Trạng thái**: MỞ (mục 2)
+- **Trạng thái**: ĐÓNG 24/11/2026 - tiếp tục ở phiếu 20261124-01
 
 ## 1. Đã xong
 - Dependabot #59, #60 gộp (`gh pr update-branch` tuần tự - repo tắt auto-merge; LES-20261123-2112-f37b).
