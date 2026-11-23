@@ -11,8 +11,8 @@
       moderator cộng đồng duyệt; merge => khối "Cài bằng lệnh" (PACKAGING 8.1).
 - [ ] Pro: đăng nhập thật bằng tài khoản TsuDEV trên Windows (cần chủ dự án bấm trong trình duyệt) - THREAT_MODEL mục 4.
       Đồng bộ: chờ .NET `TsuSync` (PRO-D3, repo tsusync) + chủ dự án duyệt phạm vi (ADR-0007 "Việc còn chờ").
-- [ ] GUI: đổi tên đã merge (#63, ADR-0009) CHƯA phát hành - 👤 thử thật với quyền quản trị; agent làm E2E lái GUI
-      (UIA, VHDX) rồi phát hành. Sau đó: thao tác khác theo rủi ro, màn Pro/Ủng hộ + hộp thoại nhắc gia hạn.
+- [ ] GUI: đổi tên đã merge (#63, ADR-0009), E2E lái GUI trên VHDX xanh (#66) - CHƯA phát hành: 👤 thử thật với
+      quyền quản trị rồi gắn thẻ mới (sửa đoạn "chỉ đọc" ở trang Tải về + README). Sau đó: thao tác khác theo rủi ro, màn Pro/Ủng hộ + hộp thoại nhắc gia hạn.
 - [ ] Chuyển MBR -> GPT: ADR-0006 Đề xuất - chờ duyệt + kiểm Hyper-V Gen 1 -> Gen 2.
 - [ ] Giai đoạn 3: bộ cài, ký SignPath (D5).
 - [ ] Nợ thương hiệu: biến thể 16px đơn giản hóa; ảnh gốc lớn hơn/SVG (`docs/BRAND.md`).
@@ -23,6 +23,10 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 23/11/2026 (phiên 8, đợt 2) - E2E lái GUI `tests/e2e/run-e2e-gui.ps1` (#66): UI Automation trên VHDX trong CI
+  Windows, 17/17 kiểm tra đạt lần đầu (chỉ thấy ổ ảo; gõ sai/Hủy không đổi gì; đổi chữ cái + nhãn Succeeded, SHA-256
+  khớp). GUI thêm `--chi-o-ao`/`--dia`/`--thu-muc-nhat-ky`. Test 349. winget 26.11.2301 nộp: winget-pkgs#487170.
 
 - 23/11/2026 (phiên 8) - Phát hành **26.11.2301** kèm `tsudisk-gui.exe` (#62; thử trước bằng `v26.11.2301-beta.1`;
   VT 0/73 cả hai exe, SHA-256 + attestation GUI đã kiểm); job winget 401 (secret cũ). Website deploy-2026.11.23.1
