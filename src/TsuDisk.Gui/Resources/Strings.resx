@@ -64,12 +64,12 @@
   <data name="AnalysisTotal" xml:space="preserve"><value>Total unallocated: {0}</value></data>
   <data name="NoFreeSpace" xml:space="preserve"><value>No unallocated space (1 MB or more).</value></data>
   <data name="CoreTextNote" xml:space="preserve"><value>Analysis and plan details are shown in Vietnamese for now.</value></data>
-  <data name="PlanTitle" xml:space="preserve"><value>Extend plan preview</value></data>
+  <data name="PlanTitle" xml:space="preserve"><value>Plan a change</value></data>
   <data name="PlanSelectHint" xml:space="preserve"><value>Select a data drive with a letter on the map or in the table to preview an extend plan.</value></data>
   <data name="PlanButton" xml:space="preserve"><value>Plan extending {0}:</value></data>
   <data name="PlanRefused" xml:space="preserve"><value>Refused</value></data>
   <data name="PlanWrite" xml:space="preserve"><value>WRITE</value></data>
-  <data name="ReadOnlyNotice" xml:space="preserve"><value>This version of the app is read-only: there is no apply button. To carry it out, run the command below in Terminal (Admin).</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>Extending a drive has no apply button in the app yet. To carry it out, run the command below in Terminal (Admin).</value></data>
   <data name="CopyCommand" xml:space="preserve"><value>Copy command</value></data>
   <data name="Copied" xml:space="preserve"><value>Copied</value></data>
   <data name="WinReUnknown" xml:space="preserve"><value>Not running as administrator, so WinRE could not be read - the plan treats WinRE as unknown.</value></data>
@@ -80,4 +80,35 @@
   <data name="Publisher" xml:space="preserve"><value>Publisher: TsuDEV</value></data>
   <data name="Close" xml:space="preserve"><value>Close</value></data>
   <data name="SampleData" xml:space="preserve"><value>Sample data</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="AdminBadge" xml:space="preserve"><value>Administrator</value></data>
+  <data name="RenameTitle" xml:space="preserve"><value>Change drive letter or label</value></data>
+  <data name="RenameSelectHint" xml:space="preserve"><value>Select a data partition that has a drive letter (in the map or the table) to change its letter or label.</value></data>
+  <data name="RenameLetter" xml:space="preserve"><value>New drive letter</value></data>
+  <data name="RenameLabel" xml:space="preserve"><value>New label (empty = remove label)</value></data>
+  <data name="PlanRenameButton" xml:space="preserve"><value>Plan the change</value></data>
+  <data name="RenameSampleNotice" xml:space="preserve"><value>Sample data: nothing can be applied. On a real drive, run the command below in Terminal (Admin) or open TsuDisk as administrator.</value></data>
+  <data name="RenameNeedsAdmin" xml:space="preserve"><value>Changing a letter or label needs administrator rights. Reopen TsuDisk as administrator to apply it here, or run the command below in Terminal (Admin).</value></data>
+  <data name="RenameApplyNotice" xml:space="preserve"><value>You can apply this plan here. TsuDisk asks you to type the drive letter again, re-checks the disk before every write step, and undoes the change if a step fails.</value></data>
+  <data name="ApplyRename" xml:space="preserve"><value>Apply to {0}: ...</value></data>
+  <data name="RelaunchAsAdmin" xml:space="preserve"><value>Reopen as administrator</value></data>
+  <data name="RunTitle" xml:space="preserve"><value>Result</value></data>
+  <data name="RunDirectory" xml:space="preserve"><value>Log and plan saved in: {0}</value></data>
+  <data name="BusyClosing" xml:space="preserve"><value>TsuDisk is changing the disk. Wait for it to finish before closing the window.</value></data>
+  <data name="ConfirmTitle" xml:space="preserve"><value>Confirm the change</value></data>
+  <data name="ConfirmWarning" xml:space="preserve"><value>This writes to the disk. Partition positions and sizes do not change; programs or shortcuts that use the old drive letter may need to be updated.</value></data>
+  <data name="ConfirmPrompt" xml:space="preserve"><value>Type {0} to confirm:</value></data>
+  <data name="ConfirmApply" xml:space="preserve"><value>Change {0}:</value></data>
+  <data name="Step_Pending" xml:space="preserve"><value>Waiting</value></data>
+  <data name="Step_Running" xml:space="preserve"><value>Running</value></data>
+  <data name="Step_Done" xml:space="preserve"><value>Done</value></data>
+  <data name="Step_Skipped" xml:space="preserve"><value>Skipped</value></data>
+  <data name="Step_Failed" xml:space="preserve"><value>Failed</value></data>
+  <data name="Step_RolledBack" xml:space="preserve"><value>Undone</value></data>
+  <data name="Run_Running" xml:space="preserve"><value>Running...</value></data>
+  <data name="Run_Succeeded" xml:space="preserve"><value>Done: the change was applied and verified.</value></data>
+  <data name="Run_RolledBack" xml:space="preserve"><value>A step failed: TsuDisk undid the change and the disk is back to how it was.</value></data>
+  <data name="Run_NeedsAttention" xml:space="preserve"><value>A step failed and the undo was not complete. Follow the advice below.</value></data>
+  <data name="Run_DryRunCompleted" xml:space="preserve"><value>Dry run finished: nothing was changed.</value></data>
+  <data name="Run_Aborted" xml:space="preserve"><value>Stopped before any change: the disk layout changed since the plan was made. Plan again.</value></data>
 </root>

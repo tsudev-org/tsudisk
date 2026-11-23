@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using TsuDisk.Core.Execution;
 using TsuDisk.Core.Model;
 using TsuDisk.Core.Planning;
 using TsuDisk.Core.Presentation;
@@ -187,6 +188,11 @@ internal sealed record PageCell(int? Page, bool IsCurrent)
 
 internal sealed record StepItem(int Index, string Title, bool Writes);
 
+/// <summary>Mot dong tien do khi ap dung: trang thai buoc lay tu nhat ky (cung nhat ky CLI ghi ra dia).</summary>
+internal sealed record RunStepItem(int Index, string Title, string Status, string? Message);
+
+internal enum PlanKind { None, Extend, Rename }
+
 internal sealed class MainViewModel : Observable
 {
     public const string PartitionTable = "phan-vung";
@@ -202,19 +208,38 @@ internal sealed class MainViewModel : Observable
     private Refusal? _refusal;
     private bool _winReKnown = true;
     private bool _copied;
+    private readonly IPlanExecutor? _executor;
+    private PlanKind _planKind;
+    private RenameRequest? _renameRequest;
+    private IReadOnlySet<char> _lettersInUse = new HashSet<char>();
+    private IReadOnlyList<char> _renameLetters = [];
+    private char _renameLetter;
+    private string _renameLabel = "";
+    private bool _isBusy;
+    private RunJournal? _lastRun;
+    private string _lastRunDirectory = "";
+    private string? _runError;
 
-    public MainViewModel(IDiskSource source, GuiSettings settings)
+    public MainViewModel(IDiskSource source, GuiSettings settings, IPlanExecutor? executor = null)
     {
         _source = source;
         _settings = settings;
+        _executor = executor;
         Pager = new PagerViewModel(settings.PageSize(PartitionTable), size =>
         {
             _settings = _settings.WithPageSize(PartitionTable, size);
             SettingsStore.Save(_settings);
         });
         Pager.Changed += (_, _) => Raise(nameof(PageRows));
-        Refresh = new RelayCommand(_ => _ = LoadAsync(), _ => !IsLoading);
-        PlanExtend = new RelayCommand(_ => MakePlan(), _ => SelectedSegment?.CanPlanExtend == true);
+        Refresh = new RelayCommand(_ => _ = LoadAsync(), _ => !IsLoading && !IsBusy);
+        PlanExtend = new RelayCommand(_ => MakePlan(), _ => SelectedSegment?.CanPlanExtend == true && !IsBusy);
+        PlanRename = new RelayCommand(_ => MakeRenamePlan(), _ => CanRenameSelected && !IsBusy);
+        Apply = new RelayCommand(_ => _ = ApplyAsync(), _ => ShowApply && _executor!.IsAdministrator && !IsBusy);
+        RelaunchAsAdmin = new RelayCommand(_ =>
+        {
+            if (_executor?.RelaunchAsAdministrator() == true)
+                System.Windows.Application.Current.Shutdown(0);
+        }, _ => !IsBusy);
         CopyCommand = new RelayCommand(_ =>
         {
             System.Windows.Clipboard.SetText(Command);
@@ -247,6 +272,9 @@ internal sealed class MainViewModel : Observable
             Raise(nameof(PlanButtonText));
             Raise(nameof(AnalysisTotal));
             Raise(nameof(RefusalText));
+            Raise(nameof(PlanNotice));
+            Raise(nameof(ModeBadge));
+            RaiseRun();
         };
     }
 
@@ -258,7 +286,13 @@ internal sealed class MainViewModel : Observable
     public PagerViewModel Pager { get; }
     public ICommand Refresh { get; }
     public ICommand PlanExtend { get; }
+    public ICommand PlanRename { get; }
+    public ICommand Apply { get; }
+    public ICommand RelaunchAsAdmin { get; }
     public ICommand CopyCommand { get; }
+
+    /// <summary>Cua so chinh gan: hien hop thoai xac nhan lan hai, true = da go dung chu cai va bam ap dung.</summary>
+    public Func<Plan, bool>? ConfirmApply { get; set; }
     public IReadOnlyList<Choice<ThemeChoice>> ThemeChoices { get; }
     public IReadOnlyList<Choice<string>> LanguageChoices { get; }
 
@@ -314,12 +348,64 @@ internal sealed class MainViewModel : Observable
             if (!Set(ref _selectedSegment, value))
                 return;
             ClearPlan();
+            ResetRenameForm();
             if (value is not null && (value.Index < Pager.Window.FirstIndex || value.Index >= Pager.Window.FirstIndex + Pager.Window.PageSize))
                 Pager.Window = Pager.Window.WithPage(value.Index / Pager.Window.PageSize + 1);
             Raise(nameof(PlanButtonText));
             Raise(nameof(ShowPlanHint));
+            Raise(nameof(CanRenameSelected));
+            Raise(nameof(ShowRenameHint));
         }
     }
+
+    // ---------- Doi chu cai / nhan (ADR-0009) ----------
+
+    public bool CanRenameSelected => RenameForm.CanRename(SelectedSegment?.Partition);
+    public bool ShowRenameHint => !CanRenameSelected;
+    public IReadOnlyList<char> RenameLetters { get => _renameLetters; private set => Set(ref _renameLetters, value); }
+    public char RenameLetter { get => _renameLetter; set { if (Set(ref _renameLetter, value)) ClearPlanIf(PlanKind.Rename); } }
+    public string RenameLabel { get => _renameLabel; set { if (Set(ref _renameLabel, value ?? "")) ClearPlanIf(PlanKind.Rename); } }
+    public bool IsBusy
+    {
+        get => _isBusy;
+        private set
+        {
+            if (!Set(ref _isBusy, value))
+                return;
+            Raise(nameof(IsIdle));
+            CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
+    public bool IsIdle => !IsBusy;
+
+    /// <summary>Nhan tren dau trang: "Chi doc" tru khi dang chay voi quyen quan tri va duoc phep ap dung.</summary>
+    public string ModeBadge => _executor?.IsAdministrator == true ? Loc.Instance["AdminBadge"] : Loc.Instance["ReadOnlyBadge"];
+
+    /// <summary>Nut ap dung chi co cho ke hoach doi ten, o that (khong phai du lieu mau).</summary>
+    public bool ShowApply => _planKind == PlanKind.Rename && _plan is not null && _executor is not null;
+    public bool NeedsAdmin => ShowApply && !_executor!.IsAdministrator;
+    public bool CanApplyNow => ShowApply && _executor!.IsAdministrator;
+    public string ApplyText => _plan is { } p ? Loc.Instance.Format("ApplyRename", p.TargetLetter) : "";
+
+    public string PlanNotice => _planKind switch
+    {
+        PlanKind.Rename when _executor is null => Loc.Instance["RenameSampleNotice"],
+        PlanKind.Rename when !_executor.IsAdministrator => Loc.Instance["RenameNeedsAdmin"],
+        PlanKind.Rename => Loc.Instance["RenameApplyNotice"],
+        _ => Loc.Instance["ReadOnlyNotice"],
+    };
+
+    public bool HasRun => _lastRun is not null || _runError is not null;
+    public IReadOnlyList<RunStepItem> RunSteps => _lastRun is { } j
+        ? [.. j.Steps.Select(s => new RunStepItem(s.Index, s.Title, Loc.Instance[$"Step_{s.Status}"], s.Message))]
+        : [];
+    public string RunResult => _lastRun is { } j ? Loc.Instance[$"Run_{j.State}"] : "";
+    public IReadOnlyList<string> RunAdvice => _lastRun is { State: RunState.RolledBack or RunState.NeedsAttention } j
+        ? RecoveryAdvisor.Advise(j) : [];
+    public string RunDirectory => _lastRunDirectory.Length > 0 ? Loc.Instance.Format("RunDirectory", _lastRunDirectory) : "";
+    public string? RunError => _runError;
+    public bool HasRunError => _runError is not null;
 
     public string AnalysisTotal => SelectedDisk is { } d ? Loc.Instance.Format("AnalysisTotal", Units.FormatIn(d.Layout.UnallocatedTotal, Loc.Instance.Culture)) : "";
     public bool HasNoFreeSpace => SelectedDisk is not null && Advice.Count == 0;
@@ -337,7 +423,9 @@ internal sealed class MainViewModel : Observable
     public string RefusalText => _refusal is { } r ? $"{Loc.Instance["PlanRefused"]} ({r.Code}): {r.Message}" : "";
     public IReadOnlyList<string> RefusalHints => _refusal?.Hints ?? [];
     public bool ShowWinReNote => (HasPlan || HasRefusal) && !_winReKnown;
-    public string Command => _plan is { } p ? $"tsudisk mo-rong {p.TargetLetter}:" : "";
+    public string Command => _plan is null ? ""
+        : _planKind == PlanKind.Rename && _renameRequest is { } r ? RenameForm.Command(r)
+        : $"tsudisk mo-rong {_plan.TargetLetter}:";
     public bool Copied { get => _copied; private set => Set(ref _copied, value); }
 
     public async Task LoadAsync()
@@ -349,6 +437,7 @@ internal sealed class MainViewModel : Observable
         try
         {
             _layouts = await Task.Run(_source.ReadAll).ConfigureAwait(true);
+            _lettersInUse = await Task.Run(_source.LettersInUse).ConfigureAwait(true);
             RebuildDisks(keep);
         }
 #pragma warning disable CA1031 // Giao dien bao "Khong tai duoc du lieu" + Thu lai cho MOI loi doc (WMI, quyen, COM) - khong sap app.
@@ -405,24 +494,122 @@ internal sealed class MainViewModel : Observable
         var (winRe, known) = _source.ReadWinRe();
         _winReKnown = known;
         var result = ExtendPlanner.Plan(disk.Layout, winRe, new ExtendRequest(letter));
+        ClearRun();
+        _planKind = PlanKind.Extend;
+        _renameRequest = null;
         _plan = result.Plan;
         _refusal = result.Refusal;
         Copied = false;
         RaisePlan();
     }
 
+    /// <summary>Lap ke hoach doi ten (thuan). Ap dung la buoc rieng, qua hai lan xac nhan.</summary>
+    private void MakeRenamePlan()
+    {
+        if (SelectedDisk is not { } disk || SelectedSegment?.Partition is not { } partition || !RenameForm.CanRename(partition))
+            return;
+        ClearRun();
+        _winReKnown = true;
+        _renameRequest = RenameForm.Request(partition, RenameLetter, RenameLabel, _source.SystemDrive);
+        var result = RenamePlanner.Plan(disk.Layout, _lettersInUse, _renameRequest);
+        _planKind = PlanKind.Rename;
+        _plan = result.Plan;
+        _refusal = result.Refusal;
+        Copied = false;
+        RaisePlan();
+    }
+
+    private void ResetRenameForm()
+    {
+        var p = SelectedSegment?.Partition;
+        if (RenameForm.CanRename(p))
+        {
+            RenameLetters = RenameForm.LetterChoices(p!.DriveLetter!.Value, _lettersInUse);
+            _renameLetter = p.DriveLetter.Value;
+            _renameLabel = p.Label ?? "";
+        }
+        else
+        {
+            RenameLetters = [];
+            _renameLetter = default;
+            _renameLabel = "";
+        }
+        Raise(nameof(RenameLetter));
+        Raise(nameof(RenameLabel));
+    }
+
+    private async Task ApplyAsync()
+    {
+        if (_executor is null || _plan is not { } plan || _planKind != PlanKind.Rename || !_executor.IsAdministrator)
+            return;
+        // Xac nhan lan hai: go lai chu cai o trong hop thoai. Khong co hop thoai (vd. test) => KHONG ap dung.
+        if (ConfirmApply?.Invoke(plan) != true)
+            return;
+        IsBusy = true;
+        ClearRun();
+        var dispatcher = System.Windows.Application.Current.Dispatcher;
+        try
+        {
+            var (journal, dir) = await Task.Run(() => _executor.Run(plan, j => dispatcher.BeginInvoke(() =>
+            {
+                _lastRun = j;
+                RaiseRun();
+            }))).ConfigureAwait(true);
+            _lastRun = journal;
+            _lastRunDirectory = dir;
+        }
+#pragma warning disable CA1031 // Loi truoc khi PlanRunner bat dau (tao thu muc nhat ky, quyen) => bao tren giao dien, khong sap app.
+        catch (Exception ex)
+#pragma warning restore CA1031
+        {
+            _runError = $"{ex.GetType().Name}: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+            RaiseRun();
+        }
+        // Doc lai bo cuc that sau khi chay (thanh cong hay hoan tac) de giao dien khop dia.
+        ClearPlan();
+        await LoadAsync().ConfigureAwait(true);
+    }
+
+    private void ClearPlanIf(PlanKind kind)
+    {
+        if (_planKind == kind)
+            ClearPlan();
+    }
+
     private void ClearPlan()
     {
         _plan = null;
         _refusal = null;
+        _renameRequest = null;
+        _planKind = PlanKind.None;
         Copied = false;
         RaisePlan();
+    }
+
+    private void ClearRun()
+    {
+        _lastRun = null;
+        _lastRunDirectory = "";
+        _runError = null;
+        RaiseRun();
+    }
+
+    private void RaiseRun()
+    {
+        foreach (var name in new[] { nameof(HasRun), nameof(RunSteps), nameof(RunResult), nameof(RunAdvice), nameof(RunDirectory),
+            nameof(RunError), nameof(HasRunError) })
+            Raise(name);
     }
 
     private void RaisePlan()
     {
         foreach (var name in new[] { nameof(HasPlan), nameof(HasRefusal), nameof(PlanHeadline), nameof(PlanNotes), nameof(PlanSteps),
-            nameof(PlanInvariants), nameof(RefusalText), nameof(RefusalHints), nameof(ShowWinReNote), nameof(Command) })
+            nameof(PlanInvariants), nameof(RefusalText), nameof(RefusalHints), nameof(ShowWinReNote), nameof(Command),
+            nameof(ShowApply), nameof(NeedsAdmin), nameof(CanApplyNow), nameof(ApplyText), nameof(PlanNotice) })
             Raise(name);
         CommandManager.InvalidateRequerySuggested();
     }

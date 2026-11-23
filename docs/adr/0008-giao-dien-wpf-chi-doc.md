@@ -50,5 +50,5 @@ thử E2E hiện chỉ lái được CLI.
 ## Việc tiếp theo
 
 1. ~~Phát hành `tsudisk-gui.exe` cùng CLI (mục 7)~~ - 26.11.2301.
-2. Nối `PlanRunner` cho thao tác rủi ro Thấp trước (`doi-ten`), xác nhận hai lần, cần ADR bổ sung + E2E lái GUI.
+2. ~~Nối `PlanRunner` cho thao tác rủi ro Thấp trước (`doi-ten`)~~ - ADR-0009 (E2E lái GUI còn ở ADR-0009 "Việc tiếp theo").
 3. Màn Pro/Ủng hộ + huy hiệu, hộp thoại nhắc gia hạn (PRO2 mục 2.1 "GUI dùng hộp thoại").

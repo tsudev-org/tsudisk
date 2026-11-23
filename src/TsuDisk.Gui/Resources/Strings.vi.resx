@@ -64,12 +64,12 @@
   <data name="AnalysisTotal" xml:space="preserve"><value>Tổng vùng trống: {0}</value></data>
   <data name="NoFreeSpace" xml:space="preserve"><value>Không có vùng trống nào (từ 1 MB trở lên).</value></data>
   <data name="CoreTextNote" xml:space="preserve"><value></value></data>
-  <data name="PlanTitle" xml:space="preserve"><value>Xem trước kế hoạch mở rộng</value></data>
+  <data name="PlanTitle" xml:space="preserve"><value>Lập kế hoạch thay đổi</value></data>
   <data name="PlanSelectHint" xml:space="preserve"><value>Chọn một ổ dữ liệu có chữ cái trên bản đồ hoặc trong bảng để xem kế hoạch mở rộng.</value></data>
   <data name="PlanButton" xml:space="preserve"><value>Lập kế hoạch mở rộng {0}:</value></data>
   <data name="PlanRefused" xml:space="preserve"><value>Từ chối</value></data>
   <data name="PlanWrite" xml:space="preserve"><value>GHI</value></data>
-  <data name="ReadOnlyNotice" xml:space="preserve"><value>Bản giao diện này chỉ đọc: không có nút áp dụng. Muốn thực hiện, chạy lệnh dưới đây trong Terminal (Admin).</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>Mở rộng ổ chưa có nút áp dụng trong giao diện. Muốn thực hiện, chạy lệnh dưới đây trong Terminal (Admin).</value></data>
   <data name="CopyCommand" xml:space="preserve"><value>Sao chép lệnh</value></data>
   <data name="Copied" xml:space="preserve"><value>Đã sao chép</value></data>
   <data name="WinReUnknown" xml:space="preserve"><value>Chưa có quyền quản trị nên không đọc được WinRE - kế hoạch coi WinRE là không rõ.</value></data>
@@ -80,4 +80,35 @@
   <data name="Publisher" xml:space="preserve"><value>Nhà phát hành: TsuDEV</value></data>
   <data name="Close" xml:space="preserve"><value>Đóng</value></data>
   <data name="SampleData" xml:space="preserve"><value>Dữ liệu mẫu</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Hủy</value></data>
+  <data name="AdminBadge" xml:space="preserve"><value>Quản trị</value></data>
+  <data name="RenameTitle" xml:space="preserve"><value>Đổi chữ cái hoặc nhãn ổ</value></data>
+  <data name="RenameSelectHint" xml:space="preserve"><value>Chọn một phân vùng dữ liệu có chữ cái ổ (trên bản đồ hoặc trong bảng) để đổi chữ cái hoặc nhãn.</value></data>
+  <data name="RenameLetter" xml:space="preserve"><value>Chữ cái mới</value></data>
+  <data name="RenameLabel" xml:space="preserve"><value>Nhãn mới (để trống = xóa nhãn)</value></data>
+  <data name="PlanRenameButton" xml:space="preserve"><value>Lập kế hoạch đổi</value></data>
+  <data name="RenameSampleNotice" xml:space="preserve"><value>Dữ liệu mẫu: không áp dụng được. Trên ổ thật, chạy lệnh dưới đây trong Terminal (Admin) hoặc mở TsuDisk với quyền quản trị.</value></data>
+  <data name="RenameNeedsAdmin" xml:space="preserve"><value>Đổi chữ cái hoặc nhãn cần quyền quản trị. Mở lại TsuDisk với quyền quản trị để áp dụng ngay tại đây, hoặc chạy lệnh dưới đây trong Terminal (Admin).</value></data>
+  <data name="RenameApplyNotice" xml:space="preserve"><value>Có thể áp dụng kế hoạch này ngay tại đây. TsuDisk yêu cầu gõ lại chữ cái ổ, kiểm lại đĩa trước mỗi bước ghi và tự hoàn tác nếu một bước lỗi.</value></data>
+  <data name="ApplyRename" xml:space="preserve"><value>Áp dụng cho {0}: ...</value></data>
+  <data name="RelaunchAsAdmin" xml:space="preserve"><value>Mở lại với quyền quản trị</value></data>
+  <data name="RunTitle" xml:space="preserve"><value>Kết quả</value></data>
+  <data name="RunDirectory" xml:space="preserve"><value>Nhật ký và kế hoạch lưu tại: {0}</value></data>
+  <data name="BusyClosing" xml:space="preserve"><value>TsuDisk đang thay đổi đĩa. Chờ xong rồi hãy đóng cửa sổ.</value></data>
+  <data name="ConfirmTitle" xml:space="preserve"><value>Xác nhận thay đổi</value></data>
+  <data name="ConfirmWarning" xml:space="preserve"><value>Thao tác này ghi lên đĩa. Vị trí và kích thước phân vùng không đổi; chương trình hoặc lối tắt dùng chữ cái ổ cũ có thể phải chỉnh lại.</value></data>
+  <data name="ConfirmPrompt" xml:space="preserve"><value>Gõ {0} để xác nhận:</value></data>
+  <data name="ConfirmApply" xml:space="preserve"><value>Đổi {0}:</value></data>
+  <data name="Step_Pending" xml:space="preserve"><value>Chờ</value></data>
+  <data name="Step_Running" xml:space="preserve"><value>Đang chạy</value></data>
+  <data name="Step_Done" xml:space="preserve"><value>Xong</value></data>
+  <data name="Step_Skipped" xml:space="preserve"><value>Bỏ qua</value></data>
+  <data name="Step_Failed" xml:space="preserve"><value>Lỗi</value></data>
+  <data name="Step_RolledBack" xml:space="preserve"><value>Đã hoàn tác</value></data>
+  <data name="Run_Running" xml:space="preserve"><value>Đang chạy...</value></data>
+  <data name="Run_Succeeded" xml:space="preserve"><value>Xong: thay đổi đã áp dụng và đã kiểm lại.</value></data>
+  <data name="Run_RolledBack" xml:space="preserve"><value>Một bước bị lỗi: TsuDisk đã hoàn tác, đĩa trở lại như trước.</value></data>
+  <data name="Run_NeedsAttention" xml:space="preserve"><value>Một bước bị lỗi và việc hoàn tác chưa trọn vẹn. Làm theo gợi ý dưới đây.</value></data>
+  <data name="Run_DryRunCompleted" xml:space="preserve"><value>Chạy thử xong: không có gì thay đổi.</value></data>
+  <data name="Run_Aborted" xml:space="preserve"><value>Dừng trước khi thay đổi: bố cục đĩa đã khác lúc lập kế hoạch. Hãy lập lại kế hoạch.</value></data>
 </root>

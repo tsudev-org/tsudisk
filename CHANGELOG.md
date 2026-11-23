@@ -2,6 +2,13 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
+## [Chưa phát hành]
+
+- Giao diện cửa sổ: đổi chữ cái và/hoặc nhãn ổ dữ liệu ngay trong ứng dụng (cần quyền quản trị; có nút "Mở lại với
+  quyền quản trị"). Phải xác nhận hai lần: bấm "Áp dụng" rồi gõ lại chữ cái ổ. Dùng chung đường chạy với lệnh
+  `tsudisk doi-ten` (kiểm lại đĩa trước mỗi bước ghi, tự hoàn tác khi lỗi, nhật ký trong `%ProgramData%\TsuDisk\nhat-ky`).
+  Mở rộng ổ trong giao diện vẫn chỉ xem trước kèm lệnh.
+
 ## [26.11.2301] - 23/11/2026
 
 - Giao diện cửa sổ `tsudisk-gui.exe` (bản xem trước, CHỈ ĐỌC), tệp tải riêng
