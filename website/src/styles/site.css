@@ -244,3 +244,9 @@ kbd { border: 1px solid var(--border-strong); border-bottom-width: 2px; border-r
 
 /* Logo đầy đủ ở trang chủ: ảnh có nền tối riêng, bo góc theo token, không phóng to quá bản gốc. */
 .logo-day-du img { display: block; width: 160px; height: auto; border-radius: var(--radius-lg); margin: 0 auto 1rem; }
+
+/* Ảnh giao diện ở trang Tải về: hiện ảnh Sáng hoặc Tối theo data-theme (theme.js), không theo hệ điều hành. */
+.anh-gui { margin: 1rem 0 1.5rem; }
+.anh-gui img { display: block; width: 100%; }
+.anh-gui figcaption { margin-top: 0.5rem; font-size: 0.875rem; color: var(--text-muted); }
+:root[data-theme="dark"] .anh-gui__sang, :root:not([data-theme="dark"]) .anh-gui__toi { display: none; }

@@ -1,8 +1,9 @@
 name: Phat hanh
 
 # Gan tag vYY.M.DDNN tren main ->
-#   build (Windows): test, dong goi tsudisk.exe, chay lai E2E VHDX, kiem thong tin phien ban trong exe, dat ten theo
-#     VERSIONING.md v3 ({goi}_{ver}_{os}-{arch}-{loai}).
+#   build (Windows): test, dong goi tsudisk.exe (CLI) + tsudisk-gui.exe (giao dien, ADR-0008), chay lai E2E VHDX,
+#     kiem thong tin phien ban trong ca hai exe, chup thu giao dien (du lieu mau), dat ten theo VERSIONING.md v3
+#     ({goi}_{ver}_{os}-{arch}-{loai}): tsudisk_{ver}_windows-x64-portable.exe, tsudisk-gui_{ver}_windows-x64-portable.exe.
 #   publish (Linux): SBOM SPDX, SHA256SUMS.txt ky keyless Sigstore (SHA256SUMS.txt.sigstore.json), chung thuc nguon goc
 #     build (GitHub Artifact Attestation) cho exe + SBOM, tao GitHub Release o dang NHAP. DISTRIBUTION_TRUST.md muc 2.
 #   virustotal: workflow dung chung tsudev-org/.github quet exe, ghi link bao cao vao Release notes (muc 3).
@@ -50,9 +51,22 @@ jobs:
         env:
           SUFFIX: ${{ steps.ver.outputs.suffix }}
         run: dotnet publish src/TsuDisk.Cli -c Release -r win-x64 -o publish -p:VersionSuffix=$env:SUFFIX
+      - name: Dong goi giao dien tsudisk-gui.exe (ADR-0008)
+        env:
+          SUFFIX: ${{ steps.ver.outputs.suffix }}
+        run: dotnet publish src/TsuDisk.Gui -c Release -r win-x64 -o publish-gui -p:VersionSuffix=$env:SUFFIX
       - name: Thong tin phien ban trong exe (DISTRIBUTION_TRUST 1.1.4)
         shell: pwsh
-        run: ./scripts/kiem-thong-tin-exe.ps1 -Exe publish/tsudisk.exe -Version "${{ steps.ver.outputs.version }}"
+        run: |
+          ./scripts/kiem-thong-tin-exe.ps1 -Exe publish/tsudisk.exe -Version "${{ steps.ver.outputs.version }}"
+          ./scripts/kiem-thong-tin-exe.ps1 -Exe publish-gui/tsudisk-gui.exe -Version "${{ steps.ver.outputs.version }}" -BoQuaChay
+      - name: Giao dien khoi dong duoc (chup du lieu mau, khong doc/ghi dia)
+        shell: pwsh
+        run: |
+          $out = Join-Path $PWD 'gui-thu'
+          $p = Start-Process -FilePath publish-gui/tsudisk-gui.exe -ArgumentList @('--du-lieu-mau', '--chup-man-hinh', $out) -Wait -PassThru
+          if ($p.ExitCode -ne 0) { Get-Content (Join-Path $out 'loi.txt') -ErrorAction SilentlyContinue; throw "tsudisk-gui ma thoat $($p.ExitCode)" }
+          if ((Get-ChildItem $out -Filter 'tsudisk-gui_*.png').Count -lt 4) { throw 'tsudisk-gui chup thieu anh' }
       - name: E2E tren o ao VHDX
         shell: powershell
         run: ./tests/e2e/run-e2e.ps1 -Exe ./publish/tsudisk.exe
@@ -61,6 +75,7 @@ jobs:
         run: |
           New-Item -ItemType Directory dist | Out-Null
           Copy-Item publish/tsudisk.exe "dist/tsudisk_${{ steps.ver.outputs.version }}_windows-x64-portable.exe"
+          Copy-Item publish-gui/tsudisk-gui.exe "dist/tsudisk-gui_${{ steps.ver.outputs.version }}_windows-x64-portable.exe"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: dist
@@ -90,7 +105,9 @@ jobs:
           name: dist
           path: dist
       - name: Khoi phuc goi NuGet (de SBOM doc project.assets.json)
-        run: dotnet restore src/TsuDisk.Cli -r win-x64
+        run: |
+          dotnet restore src/TsuDisk.Cli -r win-x64
+          dotnet restore src/TsuDisk.Gui -r win-x64 -p:EnableWindowsTargeting=true
       - name: SBOM (SPDX) cua ma nguon va goi phu thuoc
         uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
         with:
@@ -113,6 +130,7 @@ jobs:
         with:
           subject-path: |
             dist/tsudisk_*.exe
+            dist/tsudisk-gui_*.exe
             dist/tsudisk_*_sbom.spdx.json
       - name: Tao GitHub Release (NHAP - chi xuat ban sau khi VirusTotal sach)
         env:
@@ -131,6 +149,7 @@ jobs:
             --certificate-identity-regexp '^https://github.com/tsudev-org/tsudisk/\.github/workflows/release\.yml@refs/tags/v' \
             --certificate-oidc-issuer https://token.actions.githubusercontent.com
           gh attestation verify tsudisk_*_windows-x64-portable.exe --repo tsudev-org/tsudisk
+          gh attestation verify tsudisk-gui_*_windows-x64-portable.exe --repo tsudev-org/tsudisk
           ```
           EOF
           pre=(); [[ "$PRERELEASE" == "true" ]] && pre=(--prerelease)
@@ -160,7 +179,7 @@ jobs:
     uses: tsudev-org/.github/.github/workflows/virustotal.yml@8a393ebd89349300637c8c57e89c12492b174e4d
     with:
       tag: ${{ github.ref_name }}
-      patterns: tsudisk_*.exe
+      patterns: tsudisk_*.exe tsudisk-gui_*.exe
     secrets:
       VT_API_KEY: ${{ secrets.VT_API_KEY }}
 

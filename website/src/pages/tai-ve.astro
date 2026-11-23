@@ -1,6 +1,10 @@
 ---
 import Trang from '../layouts/Trang.astro';
+import { Picture } from 'astro:assets';
 import { banMoiNhat, mb, RELEASES_URL, REPO, REPO_URL } from '../lib/noi-dung';
+// Ảnh giao diện lấy thẳng từ nguồn trong repo lúc build (CI Windows chụp bằng `tsudisk-gui.exe --chup-man-hinh`).
+import guiSang from '../../../docs/ui/gui-chi-doc/tsudisk-gui_vi_sang.png';
+import guiToi from '../../../docs/ui/gui-chi-doc/tsudisk-gui_vi_toi.png';
 
 const ban = await banMoiNhat();
 const vd = ban?.goi[0]?.ten ?? 'tsudisk_<phiên bản>_windows-x64-portable.exe';
@@ -12,6 +16,7 @@ const vd = ban?.goi[0]?.ten ?? 'tsudisk_<phiên bản>_windows-x64-portable.exe'
       <ul>
         <li><a href="#cai-bang-lenh">Cài bằng lệnh</a></li>
         <li><a href="#chon-goi">Chọn gói</a></li>
+        <li><a href="#giao-dien-cua-so">Giao diện cửa sổ</a></li>
         <li><a href="#yeu-cau">Yêu cầu</a></li>
         <li><a href="#kiem-tra">Kiểm tra tệp</a></li>
         <li><a href="#bat-dau">Bắt đầu</a></li>
@@ -63,6 +68,14 @@ scoop install tsudev/tsudisk</code></pre>
           </ul>
         </>
       )}
+
+      <h2 id="giao-dien-cua-so">Giao diện cửa sổ (xem trước)</h2>
+      <p><code>tsudisk-gui.exe</code> hiện bản đồ đĩa, bảng phân vùng, phân tích vùng trống và kế hoạch mở rộng ổ, kèm đúng lệnh để chạy bằng <code>tsudisk</code>. Bản xem trước này <strong>chỉ đọc</strong>: không có nút áp dụng, không cần quyền quản trị, không ghi gì lên đĩa. Tiếng Việt/tiếng Anh và chế độ Sáng/Tối theo Windows, đổi được trong ứng dụng.</p>
+      <figure class="anh-gui">
+        <Picture class="anh-gui__sang" src={guiSang} formats={['avif', 'webp']} widths={[720, 1440]} sizes="(max-width: 960px) 100vw, 720px" alt="Cửa sổ TsuDisk chế độ Sáng: bản đồ đĩa, bảng phân vùng và phần phân tích vùng trống" />
+        <Picture class="anh-gui__toi" src={guiToi} formats={['avif', 'webp']} widths={[720, 1440]} sizes="(max-width: 960px) 100vw, 720px" alt="Cửa sổ TsuDisk chế độ Tối: bản đồ đĩa, bảng phân vùng và phần phân tích vùng trống" />
+        <figcaption>TsuDisk trên Windows 11 với dữ liệu mẫu (ảnh hiện theo chế độ Sáng/Tối của trang).</figcaption>
+      </figure>
 
       <h2 id="yeu-cau">Yêu cầu</h2>
       <ul>

@@ -2,11 +2,13 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
-## [Chưa phát hành]
+## [26.11.2301] - 23/11/2026
 
-- Giao diện cửa sổ `tsudisk-gui.exe` (bản xem trước, CHỈ ĐỌC): bản đồ đĩa, bảng phân vùng, phân tích vùng trống, xem
-  trước kế hoạch mở rộng kèm lệnh để chạy bằng `tsudisk`. Không có nút áp dụng. Tiếng Việt/tiếng Anh và Sáng/Tối theo
-  Windows, đổi được trong ứng dụng. Chưa có trong bản phát hành.
+- Giao diện cửa sổ `tsudisk-gui.exe` (bản xem trước, CHỈ ĐỌC), tệp tải riêng
+  `tsudisk-gui_26.11.2301_windows-x64-portable.exe`: bản đồ đĩa, bảng phân vùng, phân tích vùng trống, xem trước kế
+  hoạch mở rộng kèm lệnh để chạy bằng `tsudisk`. Không có nút áp dụng, không cần quyền quản trị. Tiếng Việt/tiếng Anh
+  và Sáng/Tối theo Windows, đổi được trong ứng dụng. Được quét VirusTotal, có SHA-256 và chứng thực nguồn gốc build như
+  `tsudisk.exe`.
 - Kích thước trong giao diện tiếng Anh dùng dấu chấm thập phân (`63.9 GB`).
 
 ## [26.11.2202] - 22/11/2026

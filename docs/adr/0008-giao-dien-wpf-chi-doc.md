@@ -31,6 +31,9 @@ thử E2E hiện chỉ lái được CLI.
    cả dữ liệu mẫu lẫn ổ thật của runner, nên GUI được kiểm trên Windows thật ở mọi PR.
 7. **Chưa phát hành** `tsudisk-gui.exe` ở bản này: CI build + chụp + tải artifact. Đưa vào Release (VirusTotal,
    SHA256SUMS, attestation, Scoop/winget) ở PR riêng sau khi chủ dự án xem giao diện.
+   - *Cập nhật 23/11/2026*: chủ dự án đã duyệt ảnh; từ 26.11.2301 Release có
+     `tsudisk-gui_{ver}_windows-x64-portable.exe` (VirusTotal, SHA256SUMS, attestation). Scoop thêm `bin`/`shortcuts`
+     ở kho `scoop-bucket`. winget: gói `tsudev.TsuDisk` vẫn chỉ có CLI (gói đầu đang chờ duyệt) - xét sau khi merge.
 
 ## Hệ quả
 
@@ -46,6 +49,6 @@ thử E2E hiện chỉ lái được CLI.
 
 ## Việc tiếp theo
 
-1. Phát hành `tsudisk-gui.exe` cùng CLI (mục 7).
+1. ~~Phát hành `tsudisk-gui.exe` cùng CLI (mục 7)~~ - 26.11.2301.
 2. Nối `PlanRunner` cho thao tác rủi ro Thấp trước (`doi-ten`), xác nhận hai lần, cần ADR bổ sung + E2E lái GUI.
 3. Màn Pro/Ủng hộ + huy hiệu, hộp thoại nhắc gia hạn (PRO2 mục 2.1 "GUI dùng hộp thoại").

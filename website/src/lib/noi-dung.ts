@@ -134,9 +134,10 @@ export interface BanPhatHanh { tag: string; phienBan: string; ngay: string; url:
 export const LOAI_GOI: { ma: string; tieuDe: string; moTa: string; mau: RegExp }[] = [
   { ma: 'setup', tieuDe: 'Bộ cài đặt', moTa: 'Cài vào Program Files, thêm tsudisk vào PATH, có mục gỡ cài đặt.', mau: /^tsudisk_.+_x64-setup\.exe$/ },
   { ma: 'portable', tieuDe: 'Bản di động', moTa: 'Một tệp tsudisk.exe chạy thẳng, không cài, không cần .NET. Mở Terminal (Admin) ở thư mục chứa tệp.', mau: /^tsudisk_.+_(windows-)?x64-portable\.exe$/ },
+  { ma: 'gui', tieuDe: 'Giao diện cửa sổ (xem trước, chỉ đọc)', moTa: 'Một tệp tsudisk-gui.exe chạy thẳng: bản đồ đĩa, phân tích vùng trống, xem trước kế hoạch. Chưa có nút áp dụng; thao tác ghi đĩa vẫn dùng tsudisk.exe.', mau: /^tsudisk-gui_.+_windows-x64-portable\.exe$/ },
 ];
 const PHU: { tieuDe: string; moTa: string; mau: RegExp }[] = [
-  { tieuDe: 'SBOM', moTa: 'Danh mục thành phần phần mềm (CycloneDX) của bản phát hành.', mau: /sbom\.json$/ },
+  { tieuDe: 'SBOM', moTa: 'Danh mục thành phần phần mềm (SPDX) của bản phát hành.', mau: /sbom(\.spdx)?\.json$/ },
 ];
 
 let boNho: Promise<BanPhatHanh | null> | undefined;
