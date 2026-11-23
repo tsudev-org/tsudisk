@@ -36,13 +36,18 @@
 ## 3. Việc tiếp theo cho agent
 
 1. Theo dõi winget-pkgs #486490 (2202) + #487170 (2301); merge => khối "Cài bằng lệnh".
-2. E2E lái GUI bằng UI Automation trên VHDX (ADR-0009 "Việc tiếp theo" 1) rồi phát hành GUI đổi tên (thẻ mới,
-   cập nhật đoạn "chỉ đọc" ở `website/src/pages/tai-ve.astro` + README).
+2. ~~E2E lái GUI bằng UI Automation trên VHDX~~ - XONG #66 (17/17 đạt trên CI Windows). Còn: phát hành GUI đổi tên
+   (thẻ mới, cập nhật đoạn "chỉ đọc" ở `website/src/pages/tai-ve.astro` + README) sau khi chủ dự án thử mục 2.2.
 3. Đồng bộ Pro: vẫn chờ tsusync có máy khách HTTP .NET (23/11: `clients/dotnet` mới có lớp mã hoá) + phạm vi duyệt.
 4. Scoop: Excavator của scoop-bucket vẫn đỏ do `tsudev-contact` (hash 404) - việc của phiên tsucontact; bản tsudisk
    sau có thể phải cập nhật tay lần nữa nếu chưa sửa.
 
 ## 4. Cảnh báo
+
+- E2E GUI chọn điều khiển theo `x:Name` (AutomationId): đổi tên `Map`, `DiskBox`, `RenameLetterBox`, `RenameLabelBox`,
+  `PlanRenameButton`, `ApplyRenameButton`, `RunResultText`, `ConfirmWindow`/`Typed`/`ApplyButton`/`CancelButton` thì sửa
+  `tests/e2e/run-e2e-gui.ps1`. Máy dev: Windows PowerShell 5.1 gọi từ WSL lỗi nạp module (`Add-Type`); thử UIA cục bộ
+  bằng `pwsh.exe` + `--du-lieu-mau` (không cần quản trị, không có đường ghi).
 
 - `v26.11.2301` KHÔNG chứa #63 (thẻ ở `a4a157f`). Bản kế tiếp phải có mục CHANGELOG cho tính năng đổi tên GUI.
 - Kiểm tệp token: chỉ `wc -c` / `gh api user` với `GH_TOKEN="$(< tệp)"`. Phiên này lỡ dùng `awk substr` + `tail -c1|od`
