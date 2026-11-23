@@ -69,7 +69,7 @@
   <data name="PlanButton" xml:space="preserve"><value>Plan extending {0}:</value></data>
   <data name="PlanRefused" xml:space="preserve"><value>Refused</value></data>
   <data name="PlanWrite" xml:space="preserve"><value>WRITE</value></data>
-  <data name="ReadOnlyNotice" xml:space="preserve"><value>Extending a drive has no apply button in the app yet. To carry it out, run the command below in Terminal (Admin).</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>This plan is for viewing only. To carry it out, run the command below in Terminal (Admin).</value></data>
   <data name="CopyCommand" xml:space="preserve"><value>Copy command</value></data>
   <data name="Copied" xml:space="preserve"><value>Copied</value></data>
   <data name="WinReUnknown" xml:space="preserve"><value>Not running as administrator, so WinRE could not be read - the plan treats WinRE as unknown.</value></data>
@@ -127,4 +127,13 @@
   <data name="ConfirmWarningCreate" xml:space="preserve"><value>This writes to the disk: a new partition is created and formatted in the free space. Existing partitions keep their position, size and data. Windows wipes the start of the free space - if a partition was just deleted there by mistake, cancel and recover it with TestDisk first.</value></data>
   <data name="ConfirmPromptDisk" xml:space="preserve"><value>Type the disk number {0} to confirm:</value></data>
   <data name="ConfirmApplyCreate" xml:space="preserve"><value>Create on disk {0}</value></data>
+  <data name="ApplyExtend" xml:space="preserve"><value>Extend {0}: ...</value></data>
+  <data name="ConfirmApplyExtend" xml:space="preserve"><value>Extend {0}:</value></data>
+  <data name="ExtendSampleNotice" xml:space="preserve"><value>Sample data: nothing can be applied. On a real disk, run the command below in Terminal (Admin) or open TsuDisk as administrator.</value></data>
+  <data name="ExtendNeedsAdmin" xml:space="preserve"><value>Extending a drive needs administrator rights. Reopen TsuDisk as administrator to apply it here, or run the command below in Terminal (Admin).</value></data>
+  <data name="ExtendWinReUnknown" xml:space="preserve"><value>The WinRE status could not be read, so the app does not apply this extend plan. Run the command below in Terminal (Admin) - the CLI reads WinRE again and asks for confirmation.</value></data>
+  <data name="ExtendApplyNotice" xml:space="preserve"><value>You can apply this plan here. TsuDisk asks you to type the drive letter again, re-checks the disk before every write step, and rolls back if a step fails. Extending needs no restart.</value></data>
+  <data name="ExtendApplyNoticeRecovery" xml:space="preserve"><value>You can apply this plan here. The plan moves the Recovery partition (disable WinRE, delete, extend, recreate Recovery, enable WinRE - KB5028997). TsuDisk asks you to type the drive letter again, saves the WinRE image to the log folder, and rolls back if a step fails. Do not shut down while it runs.</value></data>
+  <data name="ConfirmWarningExtend" xml:space="preserve"><value>This writes to the disk: the partition grows into the free space right after it. Its start position and data stay the same; other partitions do not change. Do not shut down or unplug the disk while it runs.</value></data>
+  <data name="ConfirmWarningExtendRecovery" xml:space="preserve"><value>This writes to the disk and DELETES then RECREATES the Recovery partition right after the drive (WinRE is disabled first and enabled again afterwards; the WinRE image is saved to the log folder). Data on the extended drive stays intact. Do not shut down or unplug the disk while it runs.</value></data>
 </root>

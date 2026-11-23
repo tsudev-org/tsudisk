@@ -2,6 +2,16 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
+## [Chưa phát hành]
+
+- Giao diện cửa sổ: mở rộng ổ dữ liệu NTFS/ReFS bằng vùng trống liền kề ngay trong ứng dụng (chọn ổ, "Lập kế hoạch mở
+  rộng", "Mở rộng X: ..."). Cần quyền quản trị; xác nhận hai lần: bấm nút rồi gõ lại chữ cái ổ. Dùng chung đường chạy
+  với `tsudisk mo-rong`: không dời dữ liệu, kiểm lại đĩa trước mỗi bước ghi, tự hoàn tác khi lỗi; nếu phân vùng Recovery
+  chứa WinRE nằm chắn thì dời Recovery theo KB5028997. Tạo lại Recovery rỗng (`--recovery tao-lai-rong`) vẫn chỉ ở
+  lệnh (ADR-0011).
+- Kiểm thử: mở rộng ổ trong giao diện được kiểm tự động trên ổ ảo VHDX (từ chối khi không liền kề hoặc Recovery không
+  chứa WinRE, hủy, gõ sai chữ cái, gõ đúng, dữ liệu nguyên vẹn).
+
 ## [26.11.2303] - 23/11/2026
 
 - Giao diện cửa sổ: tạo phân vùng dữ liệu mới trong vùng trống (chọn khối trống trên bản đồ, nhập kích thước MB hoặc để

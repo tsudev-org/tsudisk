@@ -45,4 +45,5 @@ một ổ vừa xoá nhầm (Windows xoá trắng đầu vùng trống khi tạo
 
 ## Việc tiếp theo
 
-1. Thao tác kế tiếp theo rủi ro: mở rộng ổ (dời/đổi kích thước phân vùng - rủi ro Cao hơn) - ADR riêng, kèm ca E2E GUI.
+1. Thao tác kế tiếp theo rủi ro: mở rộng ổ (dời/đổi kích thước phân vùng - rủi ro Cao hơn) - ADR riêng, kèm ca E2E GUI:
+   ADR-0011.

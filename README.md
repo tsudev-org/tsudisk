@@ -34,8 +34,8 @@ scoop install tsudev/tsudisk
 
 Giao diện cửa sổ (bản xem trước): tải thêm `tsudisk-gui_<phiên bản>_windows-x64-portable.exe` ở cùng trang. Cửa sổ
 hiện bản đồ đĩa, phân tích vùng trống, kế hoạch mở rộng kèm lệnh `tsudisk` tương ứng; đổi được chữ cái/nhãn ổ dữ
-liệu và tạo phân vùng mới trong vùng trống ngay trong ứng dụng (cần quyền quản trị, xác nhận hai lần). Mở rộng ổ vẫn
-chạy bằng lệnh `tsudisk`.
+liệu, tạo phân vùng mới trong vùng trống và mở rộng ổ bằng vùng trống liền kề ngay trong ứng dụng (cần quyền quản trị,
+xác nhận hai lần). Thu nhỏ, xoá phân vùng, WinRE và tuỳ chọn nâng cao vẫn chạy bằng lệnh `tsudisk`.
 
 ## Cách dùng
 
@@ -129,8 +129,8 @@ chỉ-đọc, và Recovery không chứa WinRE đang dùng (trừ khi bạn ch�
 - **E2E trên ổ ảo VHDX** (`tests/e2e/run-e2e.ps1`), chạy trong CI Windows và trên máy dev: dựng đĩa 3 GB có EFI,
   dữ liệu, Recovery, vùng trống; chạy `tsudisk` thật; kiểm phân vùng khác không xê dịch và tệp canh gác khớp SHA-256.
 - **E2E lái giao diện** (`tests/e2e/run-e2e-gui.ps1`): mở `tsudisk-gui.exe --chi-o-ao` (chỉ thấy và chỉ ghi ổ ảo), bấm
-  qua UI Automation để đổi chữ cái + nhãn rồi tạo phân vùng trong vùng trống trên một VHDX, kiểm hủy/gõ sai không đổi
-  gì, gõ đúng thì làm đúng và dữ liệu nguyên vẹn.
+  qua UI Automation để đổi chữ cái + nhãn, tạo phân vùng trong vùng trống rồi mở rộng ổ trên một VHDX, kiểm lời từ chối,
+  hủy/gõ sai không đổi gì, gõ đúng thì làm đúng và dữ liệu nguyên vẹn.
 
 ```bash
 dotnet test tests/TsuDisk.Core.Tests                         # mọi nền tảng

@@ -14,6 +14,9 @@ namespace TsuDisk.Core.Planning;
 /// </summary>
 public static class ExtendPlanner
 {
+    /// <summary>Ten thao tac trong <see cref="Plan.Operation"/> / nhat ky (giao dien dung de cho phep ap dung - ADR-0011).</summary>
+    public const string Operation = "extend";
+
     public static PlanResult Plan(DiskLayout layout, WinReStatus winRe, ExtendRequest request, TimeProvider? clock = null)
     {
         ArgumentNullException.ThrowIfNull(layout);
@@ -156,7 +159,7 @@ public static class ExtendPlanner
         var draft = new Plan(
             Id: Guid.NewGuid().ToString("N")[..12],
             CreatedAt: clock.GetLocalNow(),
-            Operation: "extend",
+            Operation: Operation,
             DiskNumber: layout.Disk.Number,
             TargetLetter: char.ToUpperInvariant(target.DriveLetter!.Value),
             LayoutFingerprint: LayoutFingerprint.Compute(layout),

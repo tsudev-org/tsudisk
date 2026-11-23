@@ -1,18 +1,21 @@
 #Requires -RunAsAdministrator
 <#
-  E2E LAI GIAO DIEN (ADR-0009, ADR-0010): tsudisk-gui.exe doi chu cai + nhan o, roi tao phan vung trong vung trong,
-  tren O AO VHDX bang UI Automation.
+  E2E LAI GIAO DIEN (ADR-0009, ADR-0010, ADR-0011): tsudisk-gui.exe doi chu cai + nhan o, tao phan vung trong vung
+  trong, roi mo rong o, tren O AO VHDX bang UI Automation.
   KHONG BAO GIO cham o that:
    - diskpart chon o bang `select vdisk file=<duong dan VHDX>`, khong chon theo so dia.
-   - Giao dien chay voi --chi-o-ao: chi liet ke o VHD/VHDX va RenamePlanner/CreatePartitionPlanner tu choi moi o khac
-     (VirtualDiskOnly).
+   - Giao dien chay voi --chi-o-ao: chi liet ke o VHD/VHDX va RenamePlanner/CreatePartitionPlanner/ExtendPlanner tu choi
+     moi o khac (VirtualDiskOnly).
   Chay: CI windows-latest (.github/workflows/ci.yml) va may dev (PowerShell Admin):
      powershell -ExecutionPolicy Bypass -File tests\e2e\run-e2e-gui.ps1 -Exe <duong dan tsudisk-gui.exe>
   Bo cuc (1 GB, GPT): MSR | DATA 512M (nhan GUIE2E, co chu cai) | trong.
   Kiem: (1) chi thay o ao; (2) xac nhan sai -> nut ap dung tat, Huy -> khong doi gi; (3) go dung chu cai -> doi chu cai
   + nhan thanh cong, nhat ky Succeeded, du lieu nguyen ven; (4) giao dien doc lai bo cuc moi; (5) tao phan vung: go sai
   so dia -> nut tat, Huy -> khong doi gi; (6) go dung so dia -> phan vung exFAT 200 MB moi trong vung trong, phan vung cu
-  giu nguyen vi tri/kich thuoc/du lieu, ghi duoc tep len o moi, ban do hien o moi.
+  giu nguyen vi tri/kich thuoc/du lieu, ghi duoc tep len o moi, ban do hien o moi; (7) mo rong o bi chan boi phan vung
+  khac -> tu choi NotAdjacent, khong co nut ap dung; (8) [NTFS][Recovery khong chua WinRE][trong] -> tu choi
+  RecoveryNotWinRe (giao dien khong co "tao lai Recovery rong"); (9) [NTFS][trong]: go sai chu cai, Huy -> khong doi;
+  (10) go dung chu cai -> o lon them, vi tri bat dau + du lieu giu nguyen, phan vung khac khong doi.
   Giao dien chon theo AutomationId (x:Name), khong theo chu - chay duoc o moi ngon ngu he thong.
 #>
 param(
@@ -95,6 +98,12 @@ function Test-ConfirmOpen([int]$ProcessId) {
 }
 
 function Get-Data([int]$DiskNumber, [long]$Offset) { Get-Partition -DiskNumber $DiskNumber | Where-Object Offset -eq $Offset }
+
+# Phan tu dang hien (Collapsed trong WPF => khong co trong cay UIA). Khong doi - dung de kiem "KHONG co nut".
+function Test-Shown($Root, [string]$Id) {
+    $e = $Root.FindFirst($Scope::Descendants, (New-Object System.Windows.Automation.PropertyCondition($UIA::AutomationIdProperty, $Id)))
+    return ($null -ne $e -and -not $e.Current.IsOffscreen)
+}
 
 $proc = $null
 $disk = $null
@@ -260,6 +269,99 @@ try {
         $createdBlock = Wait-Until { @($map.FindAll($Scope::Children, $listItem)) | Where-Object { $_.Current.Name -match "(^|, )$($created.DriveLetter):(,|$)" } | Select-Object -First 1 } 'khoi o moi tren ban do' 30
         Assert-True ($createdBlock.Current.Name -match 'GUI TAO') 'ban do hien o moi + nhan'
     }
+
+    Write-Host "`n=== Ca G7: mo rong ${New}: bi chan boi phan vung vua tao -> tu choi NotAdjacent ==="
+    $script:RefreshMap = { Invoke-Element (Find-ById $main 'RefreshButton'); Start-Sleep -Seconds 2 }
+    function Select-Letter([string]$Letter) {
+        $b = Wait-Until { @($map.FindAll($Scope::Children, $listItem)) | Where-Object { $_.Current.Name -match "(^|, )${Letter}:(,|$)" } | Select-Object -First 1 } "khoi ${Letter}: tren ban do" 30
+        $b.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+    }
+    function Get-Refusal { Wait-Until { $r = $main.FindFirst($Scope::Descendants, (New-Object System.Windows.Automation.PropertyCondition($UIA::AutomationIdProperty, 'RefusalTextBlock'))); if ($r -and $r.Current.ItemStatus) { $r.Current.ItemStatus } } 'ma tu choi' 20 }
+    Select-Letter $New
+    Invoke-Element (Find-ById $main 'PlanExtendButton')
+    $code = Get-Refusal
+    Assert-True ($code -eq 'NotAdjacent') "tu choi NotAdjacent (thuc te: $code)"
+    Assert-True (-not (Test-Shown $main 'ApplyPlanButton')) 'tu choi -> khong co nut ap dung'
+
+    Write-Host "`n=== Ca G8: [NTFS][Recovery khong chua WinRE][trong] -> tu choi RecoveryNotWinRe ==="
+    Invoke-Diskpart @(
+        "select vdisk file=`"$Vhd`"",
+        'create partition primary size=100',
+        'format quick fs=ntfs label=GUIMR',
+        'assign',
+        'create partition primary size=64 id=de94bba4-06d1-4d40-a16a-bfd50179d6ac',
+        'gpt attributes=0x8000000000000001'
+    ) | Out-Null
+    $grow = Get-Partition -DiskNumber $disk.Number | Where-Object { $_.DriveLetter -and $_.Offset -gt $created.Offset } | Select-Object -First 1
+    Assert-True ($null -ne $grow) 'diskpart tao o NTFS GUIMR'
+    $M = [string]$grow.DriveLetter
+    $sentinel2 = Join-Path "${M}:\" 'sentinel2.bin'
+    $bytes2 = New-Object byte[] (8MB); (New-Object Random 11).NextBytes($bytes2); [IO.File]::WriteAllBytes($sentinel2, $bytes2)
+    $hash2 = (Get-FileHash $sentinel2 -Algorithm SHA256).Hash
+    $volBefore = (Get-Volume -Partition $grow).Size
+    & $script:RefreshMap
+    Select-Letter $M
+    Invoke-Element (Find-ById $main 'PlanExtendButton')
+    $code = Get-Refusal
+    Assert-True ($code -eq 'RecoveryNotWinRe') "tu choi RecoveryNotWinRe (thuc te: $code)"
+    Assert-True (-not (Test-Shown $main 'ApplyPlanButton')) 'Recovery khong chua WinRE -> khong co nut ap dung'
+    Assert-True (@(Get-ChildItem $Logs -Directory).Count -eq 2) 'tu choi -> khong tao lan chay moi'
+
+    Write-Host "`n=== Ca G9: [NTFS][trong] - go sai chu cai, Huy -> khong doi ==="
+    $rec = Get-Partition -DiskNumber $disk.Number | Where-Object { $_.GptType -eq '{de94bba4-06d1-4d40-a16a-bfd50179d6ac}' } | Select-Object -First 1
+    Assert-True ($null -ne $rec) 'co phan vung Recovery thu'
+    Invoke-Diskpart @("select vdisk file=`"$Vhd`"", "select partition $($rec.PartitionNumber)", 'delete partition override') | Out-Null
+    $partsBefore = @(Get-Partition -DiskNumber $disk.Number)
+    & $script:RefreshMap
+    Wait-Until { -not (@($map.FindAll($Scope::Children, $listItem)) | Where-Object { $_.Current.ItemStatus -eq 'Recovery' }) } 'ban do het khoi Recovery' 30 | Out-Null
+    Select-Letter $M
+    Invoke-Element (Find-ById $main 'PlanExtendButton')
+    $apply = Find-ById $main 'ApplyPlanButton'
+    Wait-Until { $apply.Current.IsEnabled -and -not $apply.Current.IsOffscreen } 'nut Ap dung cho ke hoach mo rong' 20 | Out-Null
+    Invoke-Element $apply
+    $dialog = Find-ConfirmWindow $proc.Id
+    $confirmBtn = Find-ById $dialog 'ApplyButton'
+    Set-Text (Find-ById $dialog 'Typed') $New
+    Start-Sleep -Milliseconds 300
+    Assert-True (-not $confirmBtn.Current.IsEnabled) "go chu cai o KHAC (${New}) -> nut van tat"
+    Set-Text (Find-ById $dialog 'Typed') 'MO RONG'
+    Start-Sleep -Milliseconds 300
+    Assert-True (-not $confirmBtn.Current.IsEnabled) "go 'MO RONG' -> nut van tat"
+    Invoke-Element (Find-ById $dialog 'CancelButton')
+    Wait-Until { -not (Test-ConfirmOpen $proc.Id) } 'dong hop thoai' 10 | Out-Null
+    Assert-True ((Get-Data $disk.Number $grow.Offset).Size -eq $grow.Size) 'Huy -> kich thuoc giu nguyen'
+    Assert-True (@(Get-ChildItem $Logs -Directory).Count -eq 2) 'Huy -> khong tao lan chay moi'
+
+    Write-Host "`n=== Ca G10: go dung chu cai -> mo rong ${M}: vao vung trong lien ke ==="
+    Invoke-Element $apply
+    $dialog = Find-ConfirmWindow $proc.Id
+    $confirmBtn = Find-ById $dialog 'ApplyButton'
+    Set-Text (Find-ById $dialog 'Typed') "$($M.ToLowerInvariant()):"
+    Start-Sleep -Milliseconds 300
+    Assert-True ($confirmBtn.Current.IsEnabled) "go '$($M.ToLowerInvariant()):' -> nut xac nhan bat"
+    Invoke-Element $confirmBtn
+    $journal3 = Wait-Until {
+        Get-ChildItem $Logs -Recurse -Filter journal.json | ForEach-Object { Get-Content -Raw -Encoding UTF8 $_.FullName | ConvertFrom-Json } |
+            Where-Object { $_.plan.operation -eq 'extend' -and $_.state -ne 'Running' } | Select-Object -First 1
+    } 'nhat ky mo rong ket thuc' 240
+    Assert-True ($journal3.state -eq 'Succeeded') "nhat ky: extend $($journal3.state)"
+    $state = Wait-Until { $s = $result.Current.ItemStatus; if ($s -and $s -ne 'Running') { $s } } 'ket qua lan chay mo rong' 60
+    Assert-True ($state -eq 'Succeeded') 'giao dien bao Succeeded (mo rong)'
+    $grown = Get-Data $disk.Number $grow.Offset
+    Write-Host "  ${M}: $($grow.Size) -> $($grown.Size) byte"
+    Assert-True ($null -ne $grown -and $grown.Size -ge $grow.Size + 16MB) 'o lon them it nhat 16 MB, cung vi tri bat dau'
+    Assert-True ((Get-Volume -Partition $grown).Size -gt $volBefore) 'he tep NTFS lon theo'
+    Assert-True ((Get-FileHash $sentinel2 -Algorithm SHA256).Hash -eq $hash2) 'du lieu o mo rong nguyen ven (SHA-256 khop)'
+    $partsAfter = @(Get-Partition -DiskNumber $disk.Number)
+    Assert-True ($partsAfter.Count -eq $partsBefore.Count) 'so phan vung khong doi'
+    foreach ($old in $partsBefore | Where-Object Offset -ne $grow.Offset) {
+        $same = $partsAfter | Where-Object { $_.Offset -eq $old.Offset -and $_.Size -eq $old.Size }
+        Assert-True ($null -ne $same) "phan vung khac tai $($old.Offset) giu nguyen vi tri + kich thuoc"
+    }
+    Assert-True ((Get-FileHash (Join-Path "${New}:\" 'sentinel.bin') -Algorithm SHA256).Hash -eq $hashBefore) 'du lieu o dau tien nguyen ven (SHA-256 khop)'
+    $probe2 = Join-Path "${M}:\" 'probe2.bin'
+    [IO.File]::WriteAllBytes($probe2, (New-Object byte[] (32MB)))
+    Assert-True ((Get-Item $probe2).Length -eq 32MB) 'ghi duoc 32 MB len o vua mo rong'
 }
 catch {
     Write-Host "LOI: $_" -ForegroundColor Red

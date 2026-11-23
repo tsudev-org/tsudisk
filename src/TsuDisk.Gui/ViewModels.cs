@@ -242,7 +242,7 @@ internal sealed class MainViewModel : Observable
         PlanExtend = new RelayCommand(_ => MakePlan(), _ => SelectedSegment?.CanPlanExtend == true && !IsBusy);
         PlanRename = new RelayCommand(_ => MakeRenamePlan(), _ => CanRenameSelected && !IsBusy);
         PlanCreate = new RelayCommand(_ => MakeCreatePlan(), _ => CanCreateSelected && !IsBusy);
-        Apply = new RelayCommand(_ => _ = ApplyAsync(), _ => ShowApply && _executor!.IsAdministrator && !IsBusy);
+        Apply = new RelayCommand(_ => _ = ApplyAsync(), _ => CanApplyNow && !IsBusy);
         RelaunchAsAdmin = new RelayCommand(_ =>
         {
             if (_executor?.RelaunchAsAdministrator() == true)
@@ -413,12 +413,16 @@ internal sealed class MainViewModel : Observable
     /// <summary>Nhan tren dau trang: "Chi doc" tru khi dang chay voi quyen quan tri va duoc phep ap dung.</summary>
     public string ModeBadge => _executor?.IsAdministrator == true ? Loc.Instance["AdminBadge"] : Loc.Instance["ReadOnlyBadge"];
 
-    /// <summary>Nut ap dung chi co cho ke hoach doi ten / tao phan vung, o that (khong phai du lieu mau).</summary>
-    public bool ShowApply => _planKind is PlanKind.Rename or PlanKind.Create && _plan is not null && _executor is not null;
+    /// <summary>Nut ap dung cho ke hoach doi ten / tao phan vung / mo rong, o that (khong phai du lieu mau).</summary>
+    public bool ShowApply => _planKind is PlanKind.Rename or PlanKind.Create or PlanKind.Extend && _plan is not null && _executor is not null;
     public bool NeedsAdmin => ShowApply && !_executor!.IsAdministrator;
-    public bool CanApplyNow => ShowApply && _executor!.IsAdministrator;
+
+    /// <summary>Mo rong con can doc duoc WinRE (ADR-0011): khong doc duoc thi chi hien lenh CLI.</summary>
+    public bool CanApplyNow => ShowApply && _executor!.IsAdministrator
+        && (_planKind != PlanKind.Extend || ExtendForm.CanApply(_plan!, _winReKnown));
     public string ApplyText => _plan is not { } p ? ""
         : _planKind == PlanKind.Create ? Loc.Instance.Format("ApplyCreate", p.DiskNumber)
+        : _planKind == PlanKind.Extend ? Loc.Instance.Format("ApplyExtend", p.TargetLetter)
         : Loc.Instance.Format("ApplyRename", p.TargetLetter);
 
     public string PlanNotice => _planKind switch
@@ -429,6 +433,11 @@ internal sealed class MainViewModel : Observable
         PlanKind.Create when _executor is null => Loc.Instance["CreateSampleNotice"],
         PlanKind.Create when !_executor.IsAdministrator => Loc.Instance["CreateNeedsAdmin"],
         PlanKind.Create => Loc.Instance["CreateApplyNotice"],
+        PlanKind.Extend when _executor is null => Loc.Instance["ExtendSampleNotice"],
+        PlanKind.Extend when !_executor.IsAdministrator => Loc.Instance["ExtendNeedsAdmin"],
+        PlanKind.Extend when !_winReKnown => Loc.Instance["ExtendWinReUnknown"],
+        PlanKind.Extend when _plan is { } p && ExtendForm.RelocatesRecovery(p) => Loc.Instance["ExtendApplyNoticeRecovery"],
+        PlanKind.Extend => Loc.Instance["ExtendApplyNotice"],
         _ => Loc.Instance["ReadOnlyNotice"],
     };
 
@@ -461,11 +470,14 @@ internal sealed class MainViewModel : Observable
     public string PlanInvariants => _plan is { } p ? string.Join(" ", PlanText.Invariants(p)) : "";
     public string RefusalText => _refusal is { } r ? $"{Loc.Instance["PlanRefused"]} ({r.Code}): {r.Message}" : "";
     public IReadOnlyList<string> RefusalHints => _refusal?.Hints ?? [];
+
+    /// <summary>Ma tu choi may doc (ten RefusalCode) - E2E doc qua UIA ItemStatus, moi ngon ngu.</summary>
+    public string RefusalCodeText => _refusal?.Code.ToString() ?? "";
     public bool ShowWinReNote => (HasPlan || HasRefusal) && !_winReKnown;
     public string Command => _plan is null ? ""
         : _planKind == PlanKind.Rename && _renameRequest is { } r ? RenameForm.Command(r)
         : _planKind == PlanKind.Create && _createRequest is { } c ? CreateForm.Command(_plan.DiskNumber, c)
-        : $"tsudisk mo-rong {_plan.TargetLetter}:";
+        : ExtendForm.Command(_plan.TargetLetter);
     public bool Copied { get => _copied; private set => Set(ref _copied, value); }
 
     public async Task LoadAsync()
@@ -526,14 +538,14 @@ internal sealed class MainViewModel : Observable
         Raise(nameof(HasNoFreeSpace));
     }
 
-    /// <summary>Chi LAP ke hoach (thuan, tren mo hinh) - khong co duong nao tu day toi PlanRunner.</summary>
+    /// <summary>Lap ke hoach mo rong (thuan). Ap dung la buoc rieng, qua hai lan xac nhan (go lai chu cai) - ADR-0011.</summary>
     private void MakePlan()
     {
         if (SelectedDisk is not { } disk || SelectedSegment?.Partition?.DriveLetter is not { } letter)
             return;
         var (winRe, known) = _source.ReadWinRe();
         _winReKnown = known;
-        var result = ExtendPlanner.Plan(disk.Layout, winRe, new ExtendRequest(letter));
+        var result = ExtendPlanner.Plan(disk.Layout, winRe, ExtendForm.Request(letter, _source.VirtualOnly));
         ClearRun();
         _planKind = PlanKind.Extend;
         _renameRequest = null;
@@ -618,9 +630,9 @@ internal sealed class MainViewModel : Observable
 
     private async Task ApplyAsync()
     {
-        if (_executor is null || _plan is not { } plan || _planKind is not (PlanKind.Rename or PlanKind.Create) || !_executor.IsAdministrator)
+        if (_executor is null || _plan is not { } plan || !CanApplyNow)
             return;
-        // Xac nhan lan hai: go lai chu cai o (doi ten) / so dia (tao) trong hop thoai. Khong co hop thoai => KHONG ap dung.
+        // Xac nhan lan hai: go lai chu cai o (doi ten, mo rong) / so dia (tao) trong hop thoai. Khong co hop thoai => KHONG ap dung.
         if (ConfirmApply?.Invoke(plan) != true)
             return;
         IsBusy = true;
@@ -687,7 +699,7 @@ internal sealed class MainViewModel : Observable
     private void RaisePlan()
     {
         foreach (var name in new[] { nameof(HasPlan), nameof(HasRefusal), nameof(PlanHeadline), nameof(PlanNotes), nameof(PlanSteps),
-            nameof(PlanInvariants), nameof(RefusalText), nameof(RefusalHints), nameof(ShowWinReNote), nameof(Command),
+            nameof(PlanInvariants), nameof(RefusalText), nameof(RefusalHints), nameof(RefusalCodeText), nameof(ShowWinReNote), nameof(Command),
             nameof(ShowApply), nameof(NeedsAdmin), nameof(CanApplyNow), nameof(ApplyText), nameof(PlanNotice) })
             Raise(name);
         CommandManager.InvalidateRequerySuggested();

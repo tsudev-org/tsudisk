@@ -69,7 +69,7 @@
   <data name="PlanButton" xml:space="preserve"><value>Lập kế hoạch mở rộng {0}:</value></data>
   <data name="PlanRefused" xml:space="preserve"><value>Từ chối</value></data>
   <data name="PlanWrite" xml:space="preserve"><value>GHI</value></data>
-  <data name="ReadOnlyNotice" xml:space="preserve"><value>Mở rộng ổ chưa có nút áp dụng trong giao diện. Muốn thực hiện, chạy lệnh dưới đây trong Terminal (Admin).</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>Kế hoạch chỉ để xem. Muốn thực hiện, chạy lệnh dưới đây trong Terminal (Admin).</value></data>
   <data name="CopyCommand" xml:space="preserve"><value>Sao chép lệnh</value></data>
   <data name="Copied" xml:space="preserve"><value>Đã sao chép</value></data>
   <data name="WinReUnknown" xml:space="preserve"><value>Chưa có quyền quản trị nên không đọc được WinRE - kế hoạch coi WinRE là không rõ.</value></data>
@@ -127,4 +127,13 @@
   <data name="ConfirmWarningCreate" xml:space="preserve"><value>Thao tác này ghi lên đĩa: tạo và định dạng một phân vùng mới trong vùng trống. Các phân vùng có sẵn giữ nguyên vị trí, kích thước, dữ liệu. Windows xóa trắng phần đầu vùng trống - nếu ở đó vừa có một ổ bị xóa nhầm, hãy Hủy và cứu nó bằng TestDisk trước.</value></data>
   <data name="ConfirmPromptDisk" xml:space="preserve"><value>Gõ số đĩa {0} để xác nhận:</value></data>
   <data name="ConfirmApplyCreate" xml:space="preserve"><value>Tạo trên đĩa {0}</value></data>
+  <data name="ApplyExtend" xml:space="preserve"><value>Mở rộng {0}: ...</value></data>
+  <data name="ConfirmApplyExtend" xml:space="preserve"><value>Mở rộng {0}:</value></data>
+  <data name="ExtendSampleNotice" xml:space="preserve"><value>Dữ liệu mẫu: không áp dụng được. Trên ổ thật, chạy lệnh dưới đây trong Terminal (Admin) hoặc mở TsuDisk với quyền quản trị.</value></data>
+  <data name="ExtendNeedsAdmin" xml:space="preserve"><value>Mở rộng ổ cần quyền quản trị. Mở lại TsuDisk với quyền quản trị để áp dụng ngay tại đây, hoặc chạy lệnh dưới đây trong Terminal (Admin).</value></data>
+  <data name="ExtendWinReUnknown" xml:space="preserve"><value>Không đọc được trạng thái WinRE nên giao diện không áp dụng kế hoạch mở rộng. Chạy lệnh dưới đây trong Terminal (Admin) - CLI đọc lại WinRE và hỏi xác nhận.</value></data>
+  <data name="ExtendApplyNotice" xml:space="preserve"><value>Có thể áp dụng kế hoạch này ngay tại đây. TsuDisk yêu cầu gõ lại chữ cái ổ, kiểm lại đĩa trước mỗi bước ghi và tự hoàn tác nếu một bước lỗi. Mở rộng không cần khởi động lại.</value></data>
+  <data name="ExtendApplyNoticeRecovery" xml:space="preserve"><value>Có thể áp dụng kế hoạch này ngay tại đây. Kế hoạch dời phân vùng Recovery (tắt WinRE, xóa, mở rộng, tạo lại Recovery, bật WinRE - KB5028997). TsuDisk yêu cầu gõ lại chữ cái ổ, lưu ảnh WinRE vào nhật ký và tự hoàn tác nếu một bước lỗi. Không tắt máy khi đang chạy.</value></data>
+  <data name="ConfirmWarningExtend" xml:space="preserve"><value>Thao tác này ghi lên đĩa: phân vùng được nới vào vùng trống ngay sau nó. Vị trí bắt đầu và dữ liệu giữ nguyên; các phân vùng khác không đổi. Không tắt máy hoặc rút ổ khi đang chạy.</value></data>
+  <data name="ConfirmWarningExtendRecovery" xml:space="preserve"><value>Thao tác này ghi lên đĩa và XÓA rồi TẠO LẠI phân vùng Recovery ngay sau ổ (WinRE được tắt trước, bật lại sau; ảnh WinRE được lưu vào thư mục nhật ký). Dữ liệu của ổ được mở rộng giữ nguyên. Không tắt máy hoặc rút ổ khi đang chạy.</value></data>
 </root>

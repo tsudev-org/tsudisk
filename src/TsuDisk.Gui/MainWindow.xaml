@@ -25,7 +25,7 @@
           </Border>
         </StackPanel>
         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-          <Button Content="{g:T Refresh}" Command="{Binding Refresh}" Margin="0,0,12,0" />
+          <Button x:Name="RefreshButton" Content="{g:T Refresh}" Command="{Binding Refresh}" Margin="0,0,12,0" />
           <TextBlock Text="{g:T Theme}" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource text-secondary}" />
           <ComboBox Width="150" ItemsSource="{Binding ThemeChoices}" ItemTemplate="{StaticResource LabelItem}" SelectedValuePath="Value"
                     SelectedValue="{Binding Theme}" AutomationProperties.Name="{g:T Theme}" Margin="0,0,12,0" />
@@ -218,14 +218,14 @@
           </StackPanel>
         </Border>
 
-        <!-- Ke hoach: mo rong chi XEM TRUOC (chay bang CLI); doi chu cai/nhan (ADR-0009) va tao phan vung (ADR-0010) ap dung duoc
-             khi co quyen quan tri. -->
+        <!-- Ke hoach: mo rong (ADR-0011), doi chu cai/nhan (ADR-0009), tao phan vung (ADR-0010) - ap dung duoc khi co quyen
+             quan tri; khong co thi chi xem truoc + lenh CLI. -->
         <Border Style="{StaticResource Card}">
           <StackPanel>
             <TextBlock Text="{g:T PlanTitle}" Style="{StaticResource H2}" />
             <TextBlock Text="{g:T PlanSelectHint}" Foreground="{DynamicResource text-secondary}" Margin="0,0,0,12"
                        Visibility="{Binding ShowPlanHint, Converter={StaticResource Show}}" />
-            <Button Style="{StaticResource Primary}" Content="{Binding PlanButtonText}" Command="{Binding PlanExtend}" HorizontalAlignment="Left" />
+            <Button x:Name="PlanExtendButton" Style="{StaticResource Primary}" Content="{Binding PlanButtonText}" Command="{Binding PlanExtend}" HorizontalAlignment="Left" />
 
             <TextBlock Text="{g:T RenameTitle}" FontWeight="SemiBold" FontSize="15" Margin="0,20,0,4" />
             <TextBlock Text="{g:T RenameSelectHint}" Foreground="{DynamicResource text-secondary}" Margin="0,0,0,8"
@@ -284,7 +284,8 @@
             <StackPanel Margin="0,16,0,0" Visibility="{Binding HasRefusal, Converter={StaticResource Show}}">
               <Border BorderBrush="{DynamicResource danger}" BorderThickness="3,0,0,0" Padding="12" Background="{DynamicResource bg-subtle}">
                 <StackPanel>
-                  <TextBlock Text="{Binding RefusalText}" FontWeight="SemiBold" />
+                  <TextBlock x:Name="RefusalTextBlock" Text="{Binding RefusalText}" FontWeight="SemiBold" TextWrapping="Wrap"
+                             AutomationProperties.ItemStatus="{Binding RefusalCodeText}" />
                   <ItemsControl ItemsSource="{Binding RefusalHints}" Margin="0,6,0,0">
                     <ItemsControl.ItemTemplate>
                       <DataTemplate><TextBlock Text="{Binding StringFormat='- {0}'}" Foreground="{DynamicResource text-secondary}" Margin="0,2" /></DataTemplate>
