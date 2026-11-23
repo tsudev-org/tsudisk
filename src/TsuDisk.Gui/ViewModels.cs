@@ -191,7 +191,7 @@ internal sealed record StepItem(int Index, string Title, bool Writes);
 /// <summary>Mot dong tien do khi ap dung: trang thai buoc lay tu nhat ky (cung nhat ky CLI ghi ra dia).</summary>
 internal sealed record RunStepItem(int Index, string Title, string Status, string? Message);
 
-internal enum PlanKind { None, Extend, Rename }
+internal enum PlanKind { None, Extend, Rename, Create }
 
 internal sealed class MainViewModel : Observable
 {
@@ -219,6 +219,13 @@ internal sealed class MainViewModel : Observable
     private RunJournal? _lastRun;
     private string _lastRunDirectory = "";
     private string? _runError;
+    private UsableExtent? _createExtent;
+    private CreatePartitionRequest? _createRequest;
+    private IReadOnlyList<char> _createLetters = [];
+    private char _createLetter;
+    private string _createSize = "";
+    private string _createFileSystem = "NTFS";
+    private string _createLabel = "";
 
     public MainViewModel(IDiskSource source, GuiSettings settings, IPlanExecutor? executor = null)
     {
@@ -234,6 +241,7 @@ internal sealed class MainViewModel : Observable
         Refresh = new RelayCommand(_ => _ = LoadAsync(), _ => !IsLoading && !IsBusy);
         PlanExtend = new RelayCommand(_ => MakePlan(), _ => SelectedSegment?.CanPlanExtend == true && !IsBusy);
         PlanRename = new RelayCommand(_ => MakeRenamePlan(), _ => CanRenameSelected && !IsBusy);
+        PlanCreate = new RelayCommand(_ => MakeCreatePlan(), _ => CanCreateSelected && !IsBusy);
         Apply = new RelayCommand(_ => _ = ApplyAsync(), _ => ShowApply && _executor!.IsAdministrator && !IsBusy);
         RelaunchAsAdmin = new RelayCommand(_ =>
         {
@@ -274,6 +282,8 @@ internal sealed class MainViewModel : Observable
             Raise(nameof(RefusalText));
             Raise(nameof(PlanNotice));
             Raise(nameof(ModeBadge));
+            Raise(nameof(CreateAvailable));
+            Raise(nameof(ApplyText));
             RaiseRun();
         };
     }
@@ -290,11 +300,12 @@ internal sealed class MainViewModel : Observable
     public ICommand Refresh { get; }
     public ICommand PlanExtend { get; }
     public ICommand PlanRename { get; }
+    public ICommand PlanCreate { get; }
     public ICommand Apply { get; }
     public ICommand RelaunchAsAdmin { get; }
     public ICommand CopyCommand { get; }
 
-    /// <summary>Cua so chinh gan: hien hop thoai xac nhan lan hai, true = da go dung chu cai va bam ap dung.</summary>
+    /// <summary>Cua so chinh gan: hien hop thoai xac nhan lan hai, true = da go dung chu cai/so dia va bam ap dung.</summary>
     public Func<Plan, bool>? ConfirmApply { get; set; }
     public IReadOnlyList<Choice<ThemeChoice>> ThemeChoices { get; }
     public IReadOnlyList<Choice<string>> LanguageChoices { get; }
@@ -352,14 +363,31 @@ internal sealed class MainViewModel : Observable
                 return;
             ClearPlan();
             ResetRenameForm();
+            ResetCreateForm();
             if (value is not null && (value.Index < Pager.Window.FirstIndex || value.Index >= Pager.Window.FirstIndex + Pager.Window.PageSize))
                 Pager.Window = Pager.Window.WithPage(value.Index / Pager.Window.PageSize + 1);
             Raise(nameof(PlanButtonText));
             Raise(nameof(ShowPlanHint));
             Raise(nameof(CanRenameSelected));
             Raise(nameof(ShowRenameHint));
+            Raise(nameof(CanCreateSelected));
+            Raise(nameof(ShowCreateHint));
+            Raise(nameof(CreateAvailable));
         }
     }
+
+    // ---------- Tao phan vung trong vung trong (ADR-0010) ----------
+
+    public bool CanCreateSelected => _createExtent is not null;
+    public bool ShowCreateHint => !CanCreateSelected;
+    public string CreateAvailable => _createExtent is { } e ? Loc.Instance.Format("CreateAvailable", Units.FormatIn(e.Size, Loc.Instance.Culture)) : "";
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822", Justification = "XAML rang buoc theo thuoc tinh cua DataContext.")]
+    public IReadOnlyList<string> CreateFileSystems => CreatePartitionRequest.FileSystems;
+    public IReadOnlyList<char> CreateLetters { get => _createLetters; private set => Set(ref _createLetters, value); }
+    public char CreateLetter { get => _createLetter; set { if (Set(ref _createLetter, value)) ClearPlanIf(PlanKind.Create); } }
+    public string CreateSize { get => _createSize; set { if (Set(ref _createSize, value ?? "")) ClearPlanIf(PlanKind.Create); } }
+    public string CreateFileSystem { get => _createFileSystem; set { if (Set(ref _createFileSystem, value ?? "NTFS")) ClearPlanIf(PlanKind.Create); } }
+    public string CreateLabel { get => _createLabel; set { if (Set(ref _createLabel, value ?? "")) ClearPlanIf(PlanKind.Create); } }
 
     // ---------- Doi chu cai / nhan (ADR-0009) ----------
 
@@ -385,17 +413,22 @@ internal sealed class MainViewModel : Observable
     /// <summary>Nhan tren dau trang: "Chi doc" tru khi dang chay voi quyen quan tri va duoc phep ap dung.</summary>
     public string ModeBadge => _executor?.IsAdministrator == true ? Loc.Instance["AdminBadge"] : Loc.Instance["ReadOnlyBadge"];
 
-    /// <summary>Nut ap dung chi co cho ke hoach doi ten, o that (khong phai du lieu mau).</summary>
-    public bool ShowApply => _planKind == PlanKind.Rename && _plan is not null && _executor is not null;
+    /// <summary>Nut ap dung chi co cho ke hoach doi ten / tao phan vung, o that (khong phai du lieu mau).</summary>
+    public bool ShowApply => _planKind is PlanKind.Rename or PlanKind.Create && _plan is not null && _executor is not null;
     public bool NeedsAdmin => ShowApply && !_executor!.IsAdministrator;
     public bool CanApplyNow => ShowApply && _executor!.IsAdministrator;
-    public string ApplyText => _plan is { } p ? Loc.Instance.Format("ApplyRename", p.TargetLetter) : "";
+    public string ApplyText => _plan is not { } p ? ""
+        : _planKind == PlanKind.Create ? Loc.Instance.Format("ApplyCreate", p.DiskNumber)
+        : Loc.Instance.Format("ApplyRename", p.TargetLetter);
 
     public string PlanNotice => _planKind switch
     {
         PlanKind.Rename when _executor is null => Loc.Instance["RenameSampleNotice"],
         PlanKind.Rename when !_executor.IsAdministrator => Loc.Instance["RenameNeedsAdmin"],
         PlanKind.Rename => Loc.Instance["RenameApplyNotice"],
+        PlanKind.Create when _executor is null => Loc.Instance["CreateSampleNotice"],
+        PlanKind.Create when !_executor.IsAdministrator => Loc.Instance["CreateNeedsAdmin"],
+        PlanKind.Create => Loc.Instance["CreateApplyNotice"],
         _ => Loc.Instance["ReadOnlyNotice"],
     };
 
@@ -431,6 +464,7 @@ internal sealed class MainViewModel : Observable
     public bool ShowWinReNote => (HasPlan || HasRefusal) && !_winReKnown;
     public string Command => _plan is null ? ""
         : _planKind == PlanKind.Rename && _renameRequest is { } r ? RenameForm.Command(r)
+        : _planKind == PlanKind.Create && _createRequest is { } c ? CreateForm.Command(_plan.DiskNumber, c)
         : $"tsudisk mo-rong {_plan.TargetLetter}:";
     public bool Copied { get => _copied; private set => Set(ref _copied, value); }
 
@@ -525,6 +559,44 @@ internal sealed class MainViewModel : Observable
         RaisePlan();
     }
 
+    /// <summary>Lap ke hoach tao phan vung (thuan). Ap dung la buoc rieng, qua hai lan xac nhan (go lai so dia).</summary>
+    private void MakeCreatePlan()
+    {
+        if (SelectedDisk is not { } disk || _createExtent is not { } extent)
+            return;
+        ClearRun();
+        _winReKnown = true;
+        _planKind = PlanKind.Create;
+        _createRequest = null;
+        _plan = null;
+        if (!CreateForm.TryParseSizeMb(CreateSize, out var size))
+        {
+            _refusal = new Refusal(RefusalCode.InvalidOption, Loc.Instance["CreateSizeInvalid"], []);
+        }
+        else
+        {
+            _createRequest = CreateForm.Request(extent, size, CreateFileSystem, CreateLabel,
+                CreateLetter == default ? null : CreateLetter, _source.VirtualOnly);
+            var result = CreatePartitionPlanner.Plan(disk.Layout, _lettersInUse, _createRequest);
+            _plan = result.Plan;
+            _refusal = result.Refusal;
+        }
+        Copied = false;
+        RaisePlan();
+    }
+
+    private void ResetCreateForm()
+    {
+        _createExtent = SelectedDisk is { } disk ? CreateForm.ExtentFor(disk.Layout, SelectedSegment?.Segment) : null;
+        CreateLetters = _createExtent is not null && SelectedDisk is { } d ? CreateForm.LetterChoices(d.Layout, _lettersInUse) : [];
+        _createLetter = CreateLetters.Count > 0 ? CreateLetters[0] : default;
+        _createSize = "";
+        _createFileSystem = "NTFS";
+        _createLabel = "";
+        foreach (var name in new[] { nameof(CreateLetter), nameof(CreateSize), nameof(CreateFileSystem), nameof(CreateLabel) })
+            Raise(name);
+    }
+
     private void ResetRenameForm()
     {
         var p = SelectedSegment?.Partition;
@@ -546,9 +618,9 @@ internal sealed class MainViewModel : Observable
 
     private async Task ApplyAsync()
     {
-        if (_executor is null || _plan is not { } plan || _planKind != PlanKind.Rename || !_executor.IsAdministrator)
+        if (_executor is null || _plan is not { } plan || _planKind is not (PlanKind.Rename or PlanKind.Create) || !_executor.IsAdministrator)
             return;
-        // Xac nhan lan hai: go lai chu cai o trong hop thoai. Khong co hop thoai (vd. test) => KHONG ap dung.
+        // Xac nhan lan hai: go lai chu cai o (doi ten) / so dia (tao) trong hop thoai. Khong co hop thoai => KHONG ap dung.
         if (ConfirmApply?.Invoke(plan) != true)
             return;
         IsBusy = true;
@@ -591,6 +663,7 @@ internal sealed class MainViewModel : Observable
         _plan = null;
         _refusal = null;
         _renameRequest = null;
+        _createRequest = null;
         _planKind = PlanKind.None;
         Copied = false;
         RaisePlan();

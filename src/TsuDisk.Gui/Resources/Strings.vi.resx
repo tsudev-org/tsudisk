@@ -111,4 +111,20 @@
   <data name="Run_NeedsAttention" xml:space="preserve"><value>Một bước bị lỗi và việc hoàn tác chưa trọn vẹn. Làm theo gợi ý dưới đây.</value></data>
   <data name="Run_DryRunCompleted" xml:space="preserve"><value>Chạy thử xong: không có gì thay đổi.</value></data>
   <data name="Run_Aborted" xml:space="preserve"><value>Dừng trước khi thay đổi: bố cục đĩa đã khác lúc lập kế hoạch. Hãy lập lại kế hoạch.</value></data>
+  <data name="CreateTitle" xml:space="preserve"><value>Tạo phân vùng trong vùng trống</value></data>
+  <data name="CreateSelectHint" xml:space="preserve"><value>Chọn một vùng trống (trên bản đồ hoặc trong bảng) để tạo phân vùng dữ liệu mới ở đó.</value></data>
+  <data name="CreateAvailable" xml:space="preserve"><value>Vùng trống dùng được: {0}. Các phân vùng có sẵn không bị dời hay đổi kích thước.</value></data>
+  <data name="CreateSize" xml:space="preserve"><value>Kích thước MB (để trống = dùng hết)</value></data>
+  <data name="CreateFileSystem" xml:space="preserve"><value>Hệ tệp</value></data>
+  <data name="CreateLabel" xml:space="preserve"><value>Nhãn (không bắt buộc)</value></data>
+  <data name="CreateLetter" xml:space="preserve"><value>Chữ cái ổ</value></data>
+  <data name="PlanCreateButton" xml:space="preserve"><value>Lập kế hoạch tạo</value></data>
+  <data name="CreateSizeInvalid" xml:space="preserve"><value>Kích thước phải là số nguyên MB (ví dụ 2048), hoặc để trống để dùng hết vùng trống.</value></data>
+  <data name="CreateSampleNotice" xml:space="preserve"><value>Dữ liệu mẫu: không áp dụng được gì. Trên đĩa thật, chạy lệnh dưới đây trong Terminal (Admin) hoặc mở TsuDisk với quyền quản trị.</value></data>
+  <data name="CreateNeedsAdmin" xml:space="preserve"><value>Tạo phân vùng cần quyền quản trị. Mở lại TsuDisk với quyền quản trị để áp dụng tại đây, hoặc chạy lệnh dưới đây trong Terminal (Admin).</value></data>
+  <data name="CreateApplyNotice" xml:space="preserve"><value>Bạn có thể áp dụng kế hoạch này tại đây. TsuDisk yêu cầu gõ lại số đĩa, kiểm lại đĩa trước mỗi bước ghi, và chỉ xóa phân vùng vừa tạo nếu một bước bị lỗi.</value></data>
+  <data name="ApplyCreate" xml:space="preserve"><value>Tạo trên đĩa {0} ...</value></data>
+  <data name="ConfirmWarningCreate" xml:space="preserve"><value>Thao tác này ghi lên đĩa: tạo và định dạng một phân vùng mới trong vùng trống. Các phân vùng có sẵn giữ nguyên vị trí, kích thước, dữ liệu. Windows xóa trắng phần đầu vùng trống - nếu ở đó vừa có một ổ bị xóa nhầm, hãy Hủy và cứu nó bằng TestDisk trước.</value></data>
+  <data name="ConfirmPromptDisk" xml:space="preserve"><value>Gõ số đĩa {0} để xác nhận:</value></data>
+  <data name="ConfirmApplyCreate" xml:space="preserve"><value>Tạo trên đĩa {0}</value></data>
 </root>

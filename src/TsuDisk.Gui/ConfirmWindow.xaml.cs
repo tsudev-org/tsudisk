@@ -6,30 +6,35 @@ namespace TsuDisk.Gui;
 
 internal sealed partial class ConfirmWindow : Window
 {
-    private readonly char _letter;
+    private readonly Func<string?, bool> _matches;
 
     public ConfirmWindow(Plan plan)
     {
         ArgumentNullException.ThrowIfNull(plan);
         InitializeComponent();
-        _letter = plan.TargetLetter;
         var l = Loc.Instance;
+        // Doi ten: go lai chu cai o dang doi. Tao phan vung: go lai SO DIA se bi ghi (chu cai moi chua ton tai) - ADR-0010.
+        var create = plan.Operation == CreatePartitionPlanner.Operation;
+        var letter = plan.TargetLetter;
+        var disk = plan.DiskNumber;
+        _matches = create ? typed => CreateForm.ConfirmationMatches(typed, disk) : typed => RenameForm.ConfirmationMatches(typed, letter);
         Headline.Text = PlanText.Headline(plan);
         Steps.ItemsSource = plan.Steps.Select(s => $"{s.Index}. {(s.ChangesDisk ? $"[{l["PlanWrite"]}] " : "")}{s.Title}").ToList();
-        PromptLabel.Content = l.Format("ConfirmPrompt", _letter);
-        ApplyButton.Content = l.Format("ConfirmApply", _letter);
+        Warning.Text = l[create ? "ConfirmWarningCreate" : "ConfirmWarning"];
+        PromptLabel.Content = create ? l.Format("ConfirmPromptDisk", disk) : l.Format("ConfirmPrompt", letter);
+        ApplyButton.Content = create ? l.Format("ConfirmApplyCreate", disk) : l.Format("ConfirmApply", letter);
         SourceInitialized += (_, _) => ThemeManager.ApplyTitleBar(this);
         Loaded += (_, _) => Typed.Focus();
     }
 
     private void OnTyped(object sender, System.Windows.Controls.TextChangedEventArgs e)
     {
-        ApplyButton.IsEnabled = RenameForm.ConfirmationMatches(Typed.Text, _letter);
+        ApplyButton.IsEnabled = _matches(Typed.Text);
     }
 
     private void OnApply(object sender, RoutedEventArgs e)
     {
-        if (!RenameForm.ConfirmationMatches(Typed.Text, _letter))
+        if (!_matches(Typed.Text))
             return;
         DialogResult = true;
     }
