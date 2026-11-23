@@ -2,7 +2,7 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
-## [Chưa phát hành]
+## [26.11.2303] - 23/11/2026
 
 - Giao diện cửa sổ: tạo phân vùng dữ liệu mới trong vùng trống (chọn khối trống trên bản đồ, nhập kích thước MB hoặc để
   trống để dùng hết, chọn NTFS/exFAT/FAT32, nhãn, chữ cái). Cần quyền quản trị; xác nhận hai lần: bấm "Áp dụng" rồi gõ
