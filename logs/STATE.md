@@ -7,10 +7,8 @@
 
 ## Hàng đợi task (làm từ trên xuống)
 
-- [ ] 👤 Nạp lại `WINGET_TOKEN` (secret giữ token đã thu hồi; tệp đúng) + `gh run rerun 45172698369 --failed` để nộp
-      26.11.2301 lên winget (phiếu 20261123-02 mục 2.1).
-- [ ] winget-pkgs #486490 (26.11.2202): Validation 10/10 XANH, chờ moderator cộng đồng duyệt; merge => khối "Cài bằng
-      lệnh" (PACKAGING 8.1).
+- [ ] winget-pkgs #486490 (26.11.2202) + #487170 (26.11.2301, nộp 23/11 sau khi nạp lại `WINGET_TOKEN`): chờ
+      moderator cộng đồng duyệt; merge => khối "Cài bằng lệnh" (PACKAGING 8.1).
 - [ ] Pro: đăng nhập thật bằng tài khoản TsuDEV trên Windows (cần chủ dự án bấm trong trình duyệt) - THREAT_MODEL mục 4.
       Đồng bộ: chờ .NET `TsuSync` (PRO-D3, repo tsusync) + chủ dự án duyệt phạm vi (ADR-0007 "Việc còn chờ").
 - [ ] GUI: đổi tên đã merge (#63, ADR-0009) CHƯA phát hành - 👤 thử thật với quyền quản trị; agent làm E2E lái GUI

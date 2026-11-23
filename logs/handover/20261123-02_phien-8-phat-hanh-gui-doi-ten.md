@@ -20,7 +20,8 @@
 
 ## 2. Việc cần chủ dự án (👤)
 
-1. **Nạp lại `WINGET_TOKEN`** (agent bị chặn quyền khi chạy lệnh này). Tệp `~/.config/tsudev/winget.env` có token
+1. ~~**Nạp lại `WINGET_TOKEN`**~~ - XONG 23/11/2026 12:35 UTC (chủ dự án chạy); agent rerun job winget -> xanh,
+   microsoft/winget-pkgs#487170 (26.11.2301). Ghi chép cũ: Tệp `~/.config/tsudev/winget.env` có token
    HỢP LỆ (đã kiểm `gh api user`), nhưng được ghi lúc 11:46 UTC - SAU lần nạp secret 10:56 UTC, nên secret đang giữ
    token đã thu hồi:
    ```bash
@@ -34,7 +35,7 @@
 
 ## 3. Việc tiếp theo cho agent
 
-1. Sau mục 2.1: kiểm job winget xanh + PR winget-pkgs 26.11.2301; theo dõi #486490; merge => khối "Cài bằng lệnh".
+1. Theo dõi winget-pkgs #486490 (2202) + #487170 (2301); merge => khối "Cài bằng lệnh".
 2. E2E lái GUI bằng UI Automation trên VHDX (ADR-0009 "Việc tiếp theo" 1) rồi phát hành GUI đổi tên (thẻ mới,
    cập nhật đoạn "chỉ đọc" ở `website/src/pages/tai-ve.astro` + README).
 3. Đồng bộ Pro: vẫn chờ tsusync có máy khách HTTP .NET (23/11: `clients/dotnet` mới có lớp mã hoá) + phạm vi duyệt.
