@@ -16,10 +16,9 @@
 
 ## 2. Việc cần chủ dự án (👤)
 
-1. **Nạp lại `WINGET_TOKEN`** (Environment `packages`): phiên tsuswico báo token winget đã thay 23/11/2026, token cũ đã
-   thu hồi. Nếu secret vẫn là token cũ thì job winget của bản phát hành tới lỗi 401. Sau khi ghi token mới vào
-   `~/.config/tsudev/winget.env`:
-   `! gh secret set WINGET_TOKEN -R tsudev-org/tsudisk --env packages < ~/.config/tsudev/winget.env`
+1. ~~Nạp lại `WINGET_TOKEN`~~ - XONG 23/11/2026 10:56 UTC: chủ dự án đã chạy `gh secret set WINGET_TOKEN ... --env
+   packages < ~/.config/tsudev/winget.env` (token mới sau khi token cũ bị thu hồi). Bản phát hành tới: nếu job winget
+   vẫn 401 thì kiểm lại nội dung tệp.
 2. Xem ảnh GUI `docs/ui/gui-chi-doc/` (hoặc chạy `tsudisk-gui.exe` từ artifact CI) -> đồng ý thì phiên sau đưa GUI vào
    bản phát hành.
 3. Còn từ phiếu 20261122-02: thử `tsudisk dang-nhap` thật; duyệt/bác ADR-0006 và phạm vi đồng bộ Pro.
