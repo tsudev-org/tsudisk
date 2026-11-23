@@ -11,7 +11,7 @@
 - #71 phát hành 26.11.2303; thẻ `v26.11.2303`; release.yml mọi job xanh; winget-pkgs#487246; website deploy-2026.11.23.3.
 
 ## 2. Việc tiếp theo
-1. CHƯA LÀM (hết hạn mức phiên): kiểm `sha256sum -c` + `gh attestation verify` cho 2303; Scoop 26.11.2303 (Excavator
-   hoặc PR tay); `akb close` phiên SES-20261123-2058-212d + `akb sync --project tsudisk`.
+1. ~~Kiểm SHA-256/attestation 2303, Scoop, AKB~~ - XONG: `sha256sum -c` OK, `gh attestation verify` rc=0 hai exe;
+   scoop-bucket#32 MERGED (Excavator vẫn đỏ do tsudev-contact); AKB SES-20261123-2058-212d đóng + sync.
 2. winget-pkgs #486490/#487170/#487205/#487246 chờ moderator; merge => khối "Cài bằng lệnh" (PACKAGING 8.1).
 3. GUI tiếp theo rủi ro: mở rộng ổ (ADR riêng). Đồng bộ Pro: chờ tsusync máy khách HTTP .NET + phạm vi duyệt.
