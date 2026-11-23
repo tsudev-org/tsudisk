@@ -36,7 +36,7 @@ const files = {
     `PackageIdentifier: ${id}`, `PackageVersion: ${version}`, 'PackageLocale: en-US', `Publisher: ${pkg.publisher}`,
     'PublisherUrl: https://tsudev.com', `PublisherSupportUrl: https://github.com/${pkg.release.repo}/issues`,
     `PrivacyUrl: ${pkg.homepage}/quyen-rieng-tu/`, `PackageName: TsuDisk`, `PackageUrl: ${pkg.homepage}`, `License: ${pkg.license}`,
-    `LicenseUrl: https://github.com/${pkg.release.repo}/blob/main/LICENSE`, `ShortDescription: ${q(pkg.description.en)}`,
+    `LicenseUrl: ${pkg.homepage}/ban-quyen/`, `ShortDescription: ${q(pkg.description.en)}`,
     `Moniker: ${asset.command}`, 'Tags:', '- disk', '- partition', '- recovery', '- winre', `ReleaseNotesUrl: https://github.com/${pkg.release.repo}/releases/tag/v${version}`,
     'ManifestType: defaultLocale', `ManifestVersion: ${MV}`, '',
   ].join('\n'),
