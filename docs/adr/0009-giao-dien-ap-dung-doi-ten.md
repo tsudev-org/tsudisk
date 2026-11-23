@@ -1,6 +1,8 @@
 # ADR-0009: Giao diện áp dụng thao tác đầu tiên - đổi chữ cái/nhãn ổ
 
 - **Trạng thái**: Chấp nhận - 23/11/2026 (chủ dự án duyệt "GUI bước 2" trong phiên 8)
+- **Phát hành**: 26.11.2302 - trước đó E2E GUI đạt 17/17 trên CI và trên Windows 11 máy dev chạy quyền quản trị
+  (ổ ảo VHDX, chủ dự án ủy quyền 23/11/2026).
 - **Liên quan**: ADR-0008 (GUI bản đầu chỉ đọc, mục "Việc tiếp theo" 2), ADR-0002 (mọi thao tác là một `Plan`,
   bất biến, hoàn tác), `RenamePlanner` (rủi ro Thấp: không đổi hình học phân vùng). Bổ sung, không thay ADR-0008.
 

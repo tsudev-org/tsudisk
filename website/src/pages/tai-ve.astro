@@ -70,7 +70,7 @@ scoop install tsudev/tsudisk</code></pre>
       )}
 
       <h2 id="giao-dien-cua-so">Giao diện cửa sổ (xem trước)</h2>
-      <p><code>tsudisk-gui.exe</code> hiện bản đồ đĩa, bảng phân vùng, phân tích vùng trống và kế hoạch mở rộng ổ, kèm đúng lệnh để chạy bằng <code>tsudisk</code>. Bản xem trước này <strong>chỉ đọc</strong>: không có nút áp dụng, không cần quyền quản trị, không ghi gì lên đĩa. Tiếng Việt/tiếng Anh và chế độ Sáng/Tối theo Windows, đổi được trong ứng dụng.</p>
+      <p><code>tsudisk-gui.exe</code> hiện bản đồ đĩa, bảng phân vùng, phân tích vùng trống và kế hoạch mở rộng ổ, kèm đúng lệnh để chạy bằng <code>tsudisk</code>. Từ bản 26.11.2302, cửa sổ <strong>đổi được chữ cái và nhãn ổ dữ liệu</strong> ngay trong ứng dụng: cần quyền quản trị (có nút mở lại với quyền quản trị), phải bấm áp dụng rồi gõ lại chữ cái ổ, dùng chung cơ chế kiểm tra và tự hoàn tác với lệnh <code>tsudisk doi-ten</code>. Các thao tác khác (mở rộng ổ...) vẫn chỉ xem trước kèm lệnh để chạy bằng <code>tsudisk</code>; xem và lập kế hoạch không cần quyền quản trị, không ghi gì lên đĩa. Tiếng Việt/tiếng Anh và chế độ Sáng/Tối theo Windows, đổi được trong ứng dụng.</p>
       <figure class="anh-gui">
         <Picture class="anh-gui__sang" src={guiSang} formats={['avif', 'webp']} widths={[720, 1440]} sizes="(max-width: 960px) 100vw, 720px" alt="Cửa sổ TsuDisk chế độ Sáng: bản đồ đĩa, bảng phân vùng và phần phân tích vùng trống" />
         <Picture class="anh-gui__toi" src={guiToi} formats={['avif', 'webp']} widths={[720, 1440]} sizes="(max-width: 960px) 100vw, 720px" alt="Cửa sổ TsuDisk chế độ Tối: bản đồ đĩa, bảng phân vùng và phần phân tích vùng trống" />

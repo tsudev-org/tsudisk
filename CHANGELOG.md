@@ -2,12 +2,14 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
-## [Chưa phát hành]
+## [26.11.2302] - 23/11/2026
 
 - Giao diện cửa sổ: đổi chữ cái và/hoặc nhãn ổ dữ liệu ngay trong ứng dụng (cần quyền quản trị; có nút "Mở lại với
   quyền quản trị"). Phải xác nhận hai lần: bấm "Áp dụng" rồi gõ lại chữ cái ổ. Dùng chung đường chạy với lệnh
   `tsudisk doi-ten` (kiểm lại đĩa trước mỗi bước ghi, tự hoàn tác khi lỗi, nhật ký trong `%ProgramData%\TsuDisk\nhat-ky`).
   Mở rộng ổ trong giao diện vẫn chỉ xem trước kèm lệnh.
+- Kiểm thử: thao tác đổi tên trong giao diện được kiểm tự động trên ổ ảo VHDX ở mỗi thay đổi mã (bấm qua giao diện
+  bằng UI Automation: hủy, gõ sai, gõ đúng, dữ liệu nguyên vẹn).
 
 ## [26.11.2301] - 23/11/2026
 

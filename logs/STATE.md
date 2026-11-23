@@ -7,12 +7,12 @@
 
 ## Hàng đợi task (làm từ trên xuống)
 
-- [ ] winget-pkgs #486490 (26.11.2202) + #487170 (26.11.2301, nộp 23/11 sau khi nạp lại `WINGET_TOKEN`): chờ
-      moderator cộng đồng duyệt; merge => khối "Cài bằng lệnh" (PACKAGING 8.1).
+- [ ] winget-pkgs #486490 (26.11.2202), #487170 (26.11.2301), #487205 (26.11.2302): chờ moderator cộng đồng duyệt;
+      merge => khối "Cài bằng lệnh" (PACKAGING 8.1).
 - [ ] Pro: đăng nhập thật bằng tài khoản TsuDEV trên Windows (cần chủ dự án bấm trong trình duyệt) - THREAT_MODEL mục 4.
       Đồng bộ: chờ .NET `TsuSync` (PRO-D3, repo tsusync) + chủ dự án duyệt phạm vi (ADR-0007 "Việc còn chờ").
-- [ ] GUI: đổi tên đã merge (#63, ADR-0009) CHƯA phát hành - 👤 thử thật với quyền quản trị; agent làm E2E lái GUI
-      (UIA, VHDX) rồi phát hành. Sau đó: thao tác khác theo rủi ro, màn Pro/Ủng hộ + hộp thoại nhắc gia hạn.
+- [ ] GUI tiếp: mở thêm thao tác ghi theo rủi ro (tạo phân vùng trong vùng trống, rồi mở rộng) - mỗi cái ADR bổ sung
+      + `AllowedOperations` + ca E2E GUI; màn Pro/Ủng hộ + hộp thoại nhắc gia hạn. Sau đó: thao tác khác theo rủi ro, màn Pro/Ủng hộ + hộp thoại nhắc gia hạn.
 - [ ] Chuyển MBR -> GPT: ADR-0006 Đề xuất - chờ duyệt + kiểm Hyper-V Gen 1 -> Gen 2.
 - [ ] Giai đoạn 3: bộ cài, ký SignPath (D5).
 - [ ] Nợ thương hiệu: biến thể 16px đơn giản hóa; ảnh gốc lớn hơn/SVG (`docs/BRAND.md`).
@@ -23,6 +23,14 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 23/11/2026 (phiên 8, đợt 3, chủ dự án ủy quyền) - E2E GUI chạy trên Windows 11 máy dev với quyền quản trị (VHDX,
+  UAC) 17/17. Phát hành **26.11.2302** (#68): GUI đổi chữ cái/nhãn; VT 0/73 cả hai exe, SHA-256 + attestation đã kiểm;
+  winget-pkgs#487205; website deploy-2026.11.23.2 (ảnh GUI mới); Scoop scoop-bucket#31. Phiếu SEC1 áp dụng, ĐÓNG.
+
+- 23/11/2026 (phiên 8, đợt 2) - E2E lái GUI `tests/e2e/run-e2e-gui.ps1` (#66): UI Automation trên VHDX trong CI
+  Windows, 17/17 kiểm tra đạt lần đầu (chỉ thấy ổ ảo; gõ sai/Hủy không đổi gì; đổi chữ cái + nhãn Succeeded, SHA-256
+  khớp). GUI thêm `--chi-o-ao`/`--dia`/`--thu-muc-nhat-ky`. Test 349. winget 26.11.2301 nộp: winget-pkgs#487170.
 
 - 23/11/2026 (phiên 8) - Phát hành **26.11.2301** kèm `tsudisk-gui.exe` (#62; thử trước bằng `v26.11.2301-beta.1`;
   VT 0/73 cả hai exe, SHA-256 + attestation GUI đã kiểm); job winget 401 (secret cũ). Website deploy-2026.11.23.1
@@ -104,7 +112,9 @@
   filter-repo). Token không chạm dữ liệu người dùng (D1). Token CŨ (hết hạn 17/12/2026 18:36 UTC) đã bị xóa - đối
   chiếu danh sách github.com/settings/tokens 18/11/2026: chỉ còn token mới (hết hạn 18/12/2026) và một token
   `winget tsudev` khác chưa từng dùng. Chủ dự án đã xem security-log: không có thao tác lạ trong lúc lộ. ĐÓNG.
-  Phòng ngừa: nạp secret chỉ bằng `gh secret set ... < tệp`, ghi tệp bằng `cat > tệp` (không dán token lên dòng lệnh).
+  Phòng ngừa (cập nhật SEC1 23/11/2026): nhận token bằng `tsu-nhan-bi-mat` (clipboard, xoá lịch sử Win+V), ví dụ
+  `tsu-nhan-bi-mat --tiento ghp_ --stdout | gh secret set WINGET_TOKEN -R tsudev-org/tsudisk --env packages`; KHÔNG dán
+  token vào chat/terminal/tệp. Phiếu `logs/handover/20261123-SEC1_nhan-bi-mat-qua-clipboard.md`.
 - 17/11/2026 (ghi bổ sung) - Phiên 4 in giá trị `~/.config/tsudev/{winget,virustotal}.env` ra transcript (phiếu
   20261118-01 mục 2). PAT winget cũ đã thay ở sự cố trên. Khóa VirusTotal: tài khoản miễn phí, chủ dự án
   không đổi được khóa - CHẤP NHẬN rủi ro (khóa chỉ lộ trong transcript cục bộ/phiên Claude, không công khai; gói miễn
