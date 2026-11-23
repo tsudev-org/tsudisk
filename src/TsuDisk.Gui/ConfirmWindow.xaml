@@ -5,7 +5,8 @@
         Title="{g:T ConfirmTitle}" Width="560" SizeToContent="Height" ResizeMode="NoResize" ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner" Background="{DynamicResource bg-surface}" Foreground="{DynamicResource text-primary}"
         FontFamily="{DynamicResource font-body}" FontSize="14" UseLayoutRounding="True" AutomationProperties.AutomationId="ConfirmWindow">
-  <!-- Xac nhan lan HAI (ADR-0009): lan mot la bam "Ap dung" o cua so chinh; o day phai go lai chu cai o. Esc/Huy = khong
+  <!-- Xac nhan lan HAI (ADR-0009/0010): lan mot la bam "Ap dung" o cua so chinh; o day phai go lai chu cai o (doi ten)
+       hoac so dia (tao phan vung). Esc/Huy = khong
        thay doi gi (Enter KHONG bao gio tu ap dung: phai bam nut). -->
   <StackPanel Margin="24">
     <TextBlock Text="{g:T ConfirmTitle}" FontFamily="{DynamicResource font-display}" FontSize="20" FontWeight="Bold" />
@@ -16,7 +17,7 @@
       </ItemsControl.ItemTemplate>
     </ItemsControl>
     <Border BorderBrush="{DynamicResource warning}" BorderThickness="3,0,0,0" Padding="12" Margin="0,12,0,0" Background="{DynamicResource bg-subtle}">
-      <TextBlock Text="{g:T ConfirmWarning}" TextWrapping="Wrap" />
+      <TextBlock x:Name="Warning" TextWrapping="Wrap" />
     </Border>
     <Label x:Name="PromptLabel" Target="{Binding ElementName=Typed}" Padding="0" Margin="0,16,0,6" Foreground="{DynamicResource text-primary}" />
     <TextBox x:Name="Typed" Width="120" HorizontalAlignment="Left" TextChanged="OnTyped" />

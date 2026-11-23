@@ -111,4 +111,20 @@
   <data name="Run_NeedsAttention" xml:space="preserve"><value>A step failed and the undo was not complete. Follow the advice below.</value></data>
   <data name="Run_DryRunCompleted" xml:space="preserve"><value>Dry run finished: nothing was changed.</value></data>
   <data name="Run_Aborted" xml:space="preserve"><value>Stopped before any change: the disk layout changed since the plan was made. Plan again.</value></data>
+  <data name="CreateTitle" xml:space="preserve"><value>Create a partition in free space</value></data>
+  <data name="CreateSelectHint" xml:space="preserve"><value>Select an unallocated block (in the map or the table) to create a new data partition there.</value></data>
+  <data name="CreateAvailable" xml:space="preserve"><value>Usable free space: {0}. Existing partitions are never moved or resized.</value></data>
+  <data name="CreateSize" xml:space="preserve"><value>Size in MB (empty = all of it)</value></data>
+  <data name="CreateFileSystem" xml:space="preserve"><value>File system</value></data>
+  <data name="CreateLabel" xml:space="preserve"><value>Label (optional)</value></data>
+  <data name="CreateLetter" xml:space="preserve"><value>Drive letter</value></data>
+  <data name="PlanCreateButton" xml:space="preserve"><value>Plan the partition</value></data>
+  <data name="CreateSizeInvalid" xml:space="preserve"><value>The size must be a whole number of MB (for example 2048), or empty to use all the free space.</value></data>
+  <data name="CreateSampleNotice" xml:space="preserve"><value>Sample data: nothing can be applied. On a real disk, run the command below in Terminal (Admin) or open TsuDisk as administrator.</value></data>
+  <data name="CreateNeedsAdmin" xml:space="preserve"><value>Creating a partition needs administrator rights. Reopen TsuDisk as administrator to apply it here, or run the command below in Terminal (Admin).</value></data>
+  <data name="CreateApplyNotice" xml:space="preserve"><value>You can apply this plan here. TsuDisk asks you to type the disk number again, re-checks the disk before every write step, and removes only the new partition if a step fails.</value></data>
+  <data name="ApplyCreate" xml:space="preserve"><value>Create on disk {0} ...</value></data>
+  <data name="ConfirmWarningCreate" xml:space="preserve"><value>This writes to the disk: a new partition is created and formatted in the free space. Existing partitions keep their position, size and data. Windows wipes the start of the free space - if a partition was just deleted there by mistake, cancel and recover it with TestDisk first.</value></data>
+  <data name="ConfirmPromptDisk" xml:space="preserve"><value>Type the disk number {0} to confirm:</value></data>
+  <data name="ConfirmApplyCreate" xml:space="preserve"><value>Create on disk {0}</value></data>
 </root>

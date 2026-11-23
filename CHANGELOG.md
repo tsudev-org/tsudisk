@@ -2,6 +2,15 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
+## [Chưa phát hành]
+
+- Giao diện cửa sổ: tạo phân vùng dữ liệu mới trong vùng trống (chọn khối trống trên bản đồ, nhập kích thước MB hoặc để
+  trống để dùng hết, chọn NTFS/exFAT/FAT32, nhãn, chữ cái). Cần quyền quản trị; xác nhận hai lần: bấm "Áp dụng" rồi gõ
+  lại số đĩa. Dùng chung đường chạy với `tsudisk tao-phan-vung`: phân vùng có sẵn giữ nguyên, lỗi giữa chừng chỉ xoá
+  phân vùng vừa tạo (ADR-0010).
+- Kiểm thử: thao tác tạo phân vùng trong giao diện được kiểm tự động trên ổ ảo VHDX (hủy, gõ sai số đĩa, gõ đúng, dữ
+  liệu ổ cũ nguyên vẹn).
+
 ## [26.11.2302] - 23/11/2026
 
 - Giao diện cửa sổ: đổi chữ cái và/hoặc nhãn ổ dữ liệu ngay trong ứng dụng (cần quyền quản trị; có nút "Mở lại với

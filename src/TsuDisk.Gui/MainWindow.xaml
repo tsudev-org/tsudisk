@@ -84,6 +84,8 @@
                 <Style TargetType="ListBoxItem">
                   <Setter Property="g:FractionPanel.Fraction" Value="{Binding Fraction}" />
                   <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
+                  <!-- Vai tro may doc (Free/Data/...) cho E2E chon vung trong o moi ngon ngu (ADR-0010). -->
+                  <Setter Property="AutomationProperties.ItemStatus" Value="{Binding Role}" />
                   <Setter Property="ToolTip" Value="{Binding AccessibleName}" />
                   <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                   <Setter Property="Template">
@@ -216,7 +218,8 @@
           </StackPanel>
         </Border>
 
-        <!-- Ke hoach: mo rong chi XEM TRUOC (chay bang CLI); doi chu cai/nhan ap dung duoc khi co quyen quan tri (ADR-0009). -->
+        <!-- Ke hoach: mo rong chi XEM TRUOC (chay bang CLI); doi chu cai/nhan (ADR-0009) va tao phan vung (ADR-0010) ap dung duoc
+             khi co quyen quan tri. -->
         <Border Style="{StaticResource Card}">
           <StackPanel>
             <TextBlock Text="{g:T PlanTitle}" Style="{StaticResource H2}" />
@@ -242,6 +245,41 @@
               </StackPanel>
               <Button x:Name="PlanRenameButton" Content="{g:T PlanRenameButton}" Command="{Binding PlanRename}" VerticalAlignment="Bottom" Margin="0,0,0,8" />
             </WrapPanel>
+
+            <!-- Tao phan vung trong vung trong (ADR-0010): chi hien khi dang chon mot vung trong dung duoc. -->
+            <TextBlock Text="{g:T CreateTitle}" FontWeight="SemiBold" FontSize="15" Margin="0,20,0,4" />
+            <TextBlock Text="{g:T CreateSelectHint}" Foreground="{DynamicResource text-secondary}" Margin="0,0,0,8"
+                       Visibility="{Binding ShowCreateHint, Converter={StaticResource Show}}" />
+            <StackPanel Visibility="{Binding CanCreateSelected, Converter={StaticResource Show}}" IsEnabled="{Binding IsIdle}">
+              <TextBlock Text="{Binding CreateAvailable}" Foreground="{DynamicResource text-secondary}" TextWrapping="Wrap" Margin="0,0,0,8" />
+              <WrapPanel>
+                <StackPanel Margin="0,0,16,8">
+                  <Label Content="{g:T CreateSize}" Target="{Binding ElementName=CreateSizeBox}" Padding="0" Margin="0,0,0,4"
+                         Foreground="{DynamicResource text-secondary}" />
+                  <TextBox x:Name="CreateSizeBox" Width="200" MaxLength="12" Text="{Binding CreateSize, UpdateSourceTrigger=PropertyChanged}"
+                           InputScope="Number" AutomationProperties.Name="{g:T CreateSize}" />
+                </StackPanel>
+                <StackPanel Margin="0,0,16,8">
+                  <Label Content="{g:T CreateFileSystem}" Target="{Binding ElementName=CreateFileSystemBox}" Padding="0" Margin="0,0,0,4"
+                         Foreground="{DynamicResource text-secondary}" />
+                  <ComboBox x:Name="CreateFileSystemBox" Width="110" ItemsSource="{Binding CreateFileSystems}" SelectedItem="{Binding CreateFileSystem}"
+                            AutomationProperties.Name="{g:T CreateFileSystem}" />
+                </StackPanel>
+                <StackPanel Margin="0,0,16,8">
+                  <Label Content="{g:T CreateLabel}" Target="{Binding ElementName=CreateLabelBox}" Padding="0" Margin="0,0,0,4"
+                         Foreground="{DynamicResource text-secondary}" />
+                  <TextBox x:Name="CreateLabelBox" Width="220" MaxLength="32" Text="{Binding CreateLabel, UpdateSourceTrigger=PropertyChanged}"
+                           AutomationProperties.Name="{g:T CreateLabel}" />
+                </StackPanel>
+                <StackPanel Margin="0,0,16,8">
+                  <Label Content="{g:T CreateLetter}" Target="{Binding ElementName=CreateLetterBox}" Padding="0" Margin="0,0,0,4"
+                         Foreground="{DynamicResource text-secondary}" />
+                  <ComboBox x:Name="CreateLetterBox" Width="96" ItemsSource="{Binding CreateLetters}" SelectedItem="{Binding CreateLetter}"
+                            ItemStringFormat="{}{0}:" AutomationProperties.Name="{g:T CreateLetter}" />
+                </StackPanel>
+                <Button x:Name="PlanCreateButton" Content="{g:T PlanCreateButton}" Command="{Binding PlanCreate}" VerticalAlignment="Bottom" Margin="0,0,0,8" />
+              </WrapPanel>
+            </StackPanel>
 
             <StackPanel Margin="0,16,0,0" Visibility="{Binding HasRefusal, Converter={StaticResource Show}}">
               <Border BorderBrush="{DynamicResource danger}" BorderThickness="3,0,0,0" Padding="12" Background="{DynamicResource bg-subtle}">
@@ -300,9 +338,9 @@
                     <TextBlock Text="{g:T Copied}" Foreground="{DynamicResource success}" VerticalAlignment="Center" Margin="8,0,0,0"
                                Visibility="{Binding Copied, Converter={StaticResource Show}}" />
                   </StackPanel>
-                  <!-- Xac nhan lan MOT: bam nut nay (chi khi co quyen quan tri); lan hai: go lai chu cai trong hop thoai. -->
+                  <!-- Xac nhan lan MOT: bam nut nay (chi khi co quyen quan tri); lan hai: go lai chu cai / so dia trong hop thoai. -->
                   <StackPanel Orientation="Horizontal" Margin="0,12,0,0" Visibility="{Binding ShowApply, Converter={StaticResource Show}}">
-                    <Button x:Name="ApplyRenameButton" Style="{StaticResource DangerOutline}" Content="{Binding ApplyText}" Command="{Binding Apply}"
+                    <Button x:Name="ApplyPlanButton" Style="{StaticResource DangerOutline}" Content="{Binding ApplyText}" Command="{Binding Apply}"
                             Visibility="{Binding CanApplyNow, Converter={StaticResource Show}}" />
                     <Button x:Name="RelaunchButton" Content="{g:T RelaunchAsAdmin}" Command="{Binding RelaunchAsAdmin}"
                             Visibility="{Binding NeedsAdmin, Converter={StaticResource Show}}" />

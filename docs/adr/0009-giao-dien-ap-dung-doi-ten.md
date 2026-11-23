@@ -46,4 +46,4 @@ Rủi ro mới nằm ở giao diện: bấm nhầm, giao diện cũ hơn bố c�
 
 1. ~~E2E lái GUI (UI Automation) đổi tên trên ổ ảo VHDX~~ - `tests/e2e/run-e2e-gui.ps1`.
 2. Mở thêm thao tác cho GUI theo thứ tự rủi ro (tạo phân vùng trong vùng trống, rồi mở rộng) - mỗi thao tác một ADR
-   bổ sung + thêm vào `AllowedOperations`.
+   bổ sung + thêm vào `AllowedOperations`. Tạo phân vùng: ADR-0010.

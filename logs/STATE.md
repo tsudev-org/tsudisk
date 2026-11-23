@@ -100,6 +100,7 @@
 - 22/11/2026 - TsuDEV Pro: lưu cục bộ, CLI chỉ in nhắc gia hạn, đăng nhập/đồng bộ chờ: `docs/adr/0007-pro-luu-cuc-bo-nhac-gia-han.md`
 - 23/11/2026 - Giao diện WPF bản đầu chỉ đọc, `tsudisk-gui.exe` riêng (phát hành từ 26.11.2301): `docs/adr/0008-giao-dien-wpf-chi-doc.md`
 - 23/11/2026 - GUI áp dụng đổi chữ cái/nhãn qua đường chạy chung CLI, xác nhận hai lần: `docs/adr/0009-giao-dien-ap-dung-doi-ten.md`
+- 23/11/2026 - GUI tạo phân vùng trong vùng trống, xác nhận lần hai bằng số đĩa: `docs/adr/0010-giao-dien-tao-phan-vung.md`
 
 ## Sự cố bảo mật
 
