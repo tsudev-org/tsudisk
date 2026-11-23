@@ -32,8 +32,9 @@ scoop bucket add tsudev https://github.com/tsudev-org/scoop-bucket
 scoop install tsudev/tsudisk
 ```
 
-Giao diện cửa sổ (bản xem trước, chỉ đọc): tải thêm `tsudisk-gui_<phiên bản>_windows-x64-portable.exe` ở cùng trang.
-Cửa sổ hiện bản đồ đĩa, phân tích vùng trống và kế hoạch mở rộng kèm lệnh `tsudisk` tương ứng; chưa có nút áp dụng.
+Giao diện cửa sổ (bản xem trước): tải thêm `tsudisk-gui_<phiên bản>_windows-x64-portable.exe` ở cùng trang. Cửa sổ
+hiện bản đồ đĩa, phân tích vùng trống, kế hoạch mở rộng kèm lệnh `tsudisk` tương ứng, và đổi được chữ cái/nhãn ổ dữ
+liệu ngay trong ứng dụng (cần quyền quản trị, xác nhận hai lần). Mở rộng ổ vẫn chạy bằng lệnh `tsudisk`.
 
 ## Cách dùng
 
