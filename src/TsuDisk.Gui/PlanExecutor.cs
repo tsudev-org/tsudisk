@@ -26,8 +26,15 @@ internal interface IPlanExecutor
 /// <param name="logRoot"><c>--thu-muc-nhat-ky</c>; null = %ProgramData%\TsuDisk\nhat-ky (cung thu muc voi CLI).</param>
 internal sealed class WindowsPlanExecutor(string? logRoot = null) : IPlanExecutor
 {
-    /// <summary>Giai doan nay giao dien CHI ap dung thao tac rui ro Thap da duyet: doi chu cai/nhan (ADR-0009).</summary>
-    public static readonly IReadOnlySet<string> AllowedOperations = new HashSet<string>(StringComparer.Ordinal) { RenamePlanner.Operation };
+    /// <summary>
+    /// Giao dien CHI ap dung thao tac da duyet tung cai mot theo rui ro: doi chu cai/nhan (ADR-0009), tao phan vung trong
+    /// vung trong (ADR-0010). Mo rong, thu nho, xoa... van chi chay bang CLI.
+    /// </summary>
+    public static readonly IReadOnlySet<string> AllowedOperations = new HashSet<string>(StringComparer.Ordinal)
+    {
+        RenamePlanner.Operation,
+        CreatePartitionPlanner.Operation,
+    };
 
     private readonly WindowsDiskBackend _backend = new();
 
