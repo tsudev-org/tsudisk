@@ -4,7 +4,7 @@
         xmlns:g="clr-namespace:TsuDisk.Gui"
         Title="{g:T ConfirmTitle}" Width="560" SizeToContent="Height" ResizeMode="NoResize" ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner" Background="{DynamicResource bg-surface}" Foreground="{DynamicResource text-primary}"
-        FontFamily="{DynamicResource font-body}" FontSize="14" UseLayoutRounding="True">
+        FontFamily="{DynamicResource font-body}" FontSize="14" UseLayoutRounding="True" AutomationProperties.AutomationId="ConfirmWindow">
   <!-- Xac nhan lan HAI (ADR-0009): lan mot la bam "Ap dung" o cua so chinh; o day phai go lai chu cai o. Esc/Huy = khong
        thay doi gi (Enter KHONG bao gio tu ap dung: phai bam nut). -->
   <StackPanel Margin="24">
@@ -21,7 +21,7 @@
     <Label x:Name="PromptLabel" Target="{Binding ElementName=Typed}" Padding="0" Margin="0,16,0,6" Foreground="{DynamicResource text-primary}" />
     <TextBox x:Name="Typed" Width="120" HorizontalAlignment="Left" TextChanged="OnTyped" />
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-      <Button Content="{g:T Cancel}" IsCancel="True" Margin="0,0,8,0" />
+      <Button x:Name="CancelButton" Content="{g:T Cancel}" IsCancel="True" Margin="0,0,8,0" />
       <Button x:Name="ApplyButton" Style="{StaticResource DangerOutline}" IsEnabled="False" Click="OnApply" />
     </StackPanel>
   </StackPanel>

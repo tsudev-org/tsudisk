@@ -279,6 +279,9 @@ internal sealed class MainViewModel : Observable
     }
 
     public bool IsSample => _source.IsSample;
+
+    /// <summary><c>--dia N</c>: dia chon san khi mo (E2E chon dung o ao vua tao).</summary>
+    public int? InitialDisk { get; init; }
     public ObservableCollection<DiskItem> Disks { get; } = [];
     public ObservableCollection<SegmentItem> Rows { get; } = [];
     public IEnumerable<SegmentItem> PageRows => Pager.Window.Slice(Rows);
@@ -401,6 +404,9 @@ internal sealed class MainViewModel : Observable
         ? [.. j.Steps.Select(s => new RunStepItem(s.Index, s.Title, Loc.Instance[$"Step_{s.Status}"], s.Message))]
         : [];
     public string RunResult => _lastRun is { } j ? Loc.Instance[$"Run_{j.State}"] : "";
+
+    /// <summary>Trang thai may doc (ten RunState, "Error" khi loi truoc khi chay) - E2E doc qua UIA ItemStatus.</summary>
+    public string RunStateCode => _runError is not null ? "Error" : _lastRun?.State.ToString() ?? "";
     public IReadOnlyList<string> RunAdvice => _lastRun is { State: RunState.RolledBack or RunState.NeedsAttention } j
         ? RecoveryAdvisor.Advise(j) : [];
     public string RunDirectory => _lastRunDirectory.Length > 0 ? Loc.Instance.Format("RunDirectory", _lastRunDirectory) : "";
@@ -430,7 +436,7 @@ internal sealed class MainViewModel : Observable
 
     public async Task LoadAsync()
     {
-        var keep = SelectedDisk?.Layout.Disk.Number;
+        var keep = SelectedDisk?.Layout.Disk.Number ?? InitialDisk;
         IsLoading = true;
         Error = null;
         Raise(nameof(IsEmpty));
@@ -510,7 +516,7 @@ internal sealed class MainViewModel : Observable
             return;
         ClearRun();
         _winReKnown = true;
-        _renameRequest = RenameForm.Request(partition, RenameLetter, RenameLabel, _source.SystemDrive);
+        _renameRequest = RenameForm.Request(partition, RenameLetter, RenameLabel, _source.SystemDrive, _source.VirtualOnly);
         var result = RenamePlanner.Plan(disk.Layout, _lettersInUse, _renameRequest);
         _planKind = PlanKind.Rename;
         _plan = result.Plan;
@@ -601,7 +607,7 @@ internal sealed class MainViewModel : Observable
     private void RaiseRun()
     {
         foreach (var name in new[] { nameof(HasRun), nameof(RunSteps), nameof(RunResult), nameof(RunAdvice), nameof(RunDirectory),
-            nameof(RunError), nameof(HasRunError) })
+            nameof(RunError), nameof(HasRunError), nameof(RunStateCode) })
             Raise(name);
     }
 

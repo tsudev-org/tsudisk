@@ -56,7 +56,7 @@
         <Border Style="{StaticResource Card}">
           <StackPanel>
             <TextBlock Text="{g:T MapTitle}" Style="{StaticResource H2}" />
-            <ComboBox ItemsSource="{Binding Disks}" SelectedItem="{Binding SelectedDisk}" ItemTemplate="{StaticResource LabelItem}"
+            <ComboBox x:Name="DiskBox" ItemsSource="{Binding Disks}" SelectedItem="{Binding SelectedDisk}" ItemTemplate="{StaticResource LabelItem}"
                       HorizontalAlignment="Left" MinWidth="560" AutomationProperties.Name="{g:T Disk}" Margin="0,0,0,16" />
 
             <TextBlock Text="{g:T Loading}" Foreground="{DynamicResource text-secondary}" Margin="0,0,0,12"
@@ -240,7 +240,7 @@
                 <TextBox x:Name="RenameLabelBox" Width="280" MaxLength="32" Text="{Binding RenameLabel, UpdateSourceTrigger=PropertyChanged}"
                          AutomationProperties.Name="{g:T RenameLabel}" />
               </StackPanel>
-              <Button Content="{g:T PlanRenameButton}" Command="{Binding PlanRename}" VerticalAlignment="Bottom" Margin="0,0,0,8" />
+              <Button x:Name="PlanRenameButton" Content="{g:T PlanRenameButton}" Command="{Binding PlanRename}" VerticalAlignment="Bottom" Margin="0,0,0,8" />
             </WrapPanel>
 
             <StackPanel Margin="0,16,0,0" Visibility="{Binding HasRefusal, Converter={StaticResource Show}}">
@@ -302,9 +302,9 @@
                   </StackPanel>
                   <!-- Xac nhan lan MOT: bam nut nay (chi khi co quyen quan tri); lan hai: go lai chu cai trong hop thoai. -->
                   <StackPanel Orientation="Horizontal" Margin="0,12,0,0" Visibility="{Binding ShowApply, Converter={StaticResource Show}}">
-                    <Button Style="{StaticResource DangerOutline}" Content="{Binding ApplyText}" Command="{Binding Apply}"
+                    <Button x:Name="ApplyRenameButton" Style="{StaticResource DangerOutline}" Content="{Binding ApplyText}" Command="{Binding Apply}"
                             Visibility="{Binding CanApplyNow, Converter={StaticResource Show}}" />
-                    <Button Content="{g:T RelaunchAsAdmin}" Command="{Binding RelaunchAsAdmin}"
+                    <Button x:Name="RelaunchButton" Content="{g:T RelaunchAsAdmin}" Command="{Binding RelaunchAsAdmin}"
                             Visibility="{Binding NeedsAdmin, Converter={StaticResource Show}}" />
                   </StackPanel>
                 </StackPanel>
@@ -334,7 +334,7 @@
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
-              <TextBlock Text="{Binding RunResult}" FontWeight="SemiBold" Margin="0,8,0,0" TextWrapping="Wrap" AutomationProperties.LiveSetting="Assertive" />
+              <TextBlock x:Name="RunResultText" Text="{Binding RunResult}" AutomationProperties.ItemStatus="{Binding RunStateCode}" FontWeight="SemiBold" Margin="0,8,0,0" TextWrapping="Wrap" AutomationProperties.LiveSetting="Assertive" />
               <ItemsControl ItemsSource="{Binding RunAdvice}" Margin="0,6,0,0">
                 <ItemsControl.ItemTemplate>
                   <DataTemplate><TextBlock Text="{Binding StringFormat='-> {0}'}" Foreground="{DynamicResource warning}" TextWrapping="Wrap" Margin="0,2" /></DataTemplate>

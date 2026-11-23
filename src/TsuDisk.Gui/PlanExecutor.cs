@@ -23,14 +23,15 @@ internal interface IPlanExecutor
     bool RelaunchAsAdministrator();
 }
 
-internal sealed class WindowsPlanExecutor : IPlanExecutor
+/// <param name="logRoot"><c>--thu-muc-nhat-ky</c>; null = %ProgramData%\TsuDisk\nhat-ky (cung thu muc voi CLI).</param>
+internal sealed class WindowsPlanExecutor(string? logRoot = null) : IPlanExecutor
 {
     /// <summary>Giai doan nay giao dien CHI ap dung thao tac rui ro Thap da duyet: doi chu cai/nhan (ADR-0009).</summary>
     public static readonly IReadOnlySet<string> AllowedOperations = new HashSet<string>(StringComparer.Ordinal) { RenamePlanner.Operation };
 
     private readonly WindowsDiskBackend _backend = new();
 
-    private static string LogRoot =>
+    private string LogRoot => logRoot ??
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "TsuDisk", "nhat-ky");
 
     public bool IsAdministrator => SystemTools.IsAdministrator();

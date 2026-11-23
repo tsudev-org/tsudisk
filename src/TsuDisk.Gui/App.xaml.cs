@@ -14,6 +14,8 @@ namespace TsuDisk.Gui;
 /// <c>--du-lieu-mau</c> dung bo cuc mau thay o that;
 /// <c>--chup-man-hinh &lt;thu-muc&gt;</c> ve cua so o vi/en x Sang/Toi ra PNG roi thoat (ma 0 = ve duoc het) - dung cho
 /// anh website/PR va kiem tren CI Windows. Che do chup KHONG doc/ghi tep cai dat.
+/// Cho E2E lai giao dien tren o ao (tests/e2e/run-e2e-gui.ps1): <c>--chi-o-ao</c> chi liet ke VA chi ghi o VHD/VHDX,
+/// <c>--dia N</c> chon san dia N, <c>--thu-muc-nhat-ky &lt;thu-muc&gt;</c> noi ghi nhat ky lan chay.
 /// </summary>
 internal sealed partial class App : Application
 {
@@ -37,10 +39,14 @@ internal sealed partial class App : Application
         var settings = SettingsStore.Load();
         Loc.Instance.SetLanguage(UiLanguage.Resolve(settings.Language, SystemLanguages()));
         ThemeManager.Start(settings.Theme);
-        IDiskSource source = sample ? new SampleDiskSource() : new WindowsDiskSource();
+        string? Value(string name) => Array.IndexOf(args, name) is var i and >= 0 && i + 1 < args.Length ? args[i + 1] : null;
+        IDiskSource source = sample ? new SampleDiskSource() : new WindowsDiskSource(args.Contains("--chi-o-ao"));
         // Duong ghi (ADR-0009) chi co khi chay o that, khong o che do du lieu mau/chup man hinh.
-        IPlanExecutor? executor = sample || shotDir is not null ? null : new WindowsPlanExecutor();
-        var model = new MainViewModel(source, settings, executor);
+        IPlanExecutor? executor = sample || shotDir is not null ? null : new WindowsPlanExecutor(Value("--thu-muc-nhat-ky"));
+        var model = new MainViewModel(source, settings, executor)
+        {
+            InitialDisk = int.TryParse(Value("--dia"), NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) ? n : null,
+        };
         var window = new MainWindow(model);
         MainWindow = window;
 

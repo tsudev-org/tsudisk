@@ -74,6 +74,18 @@ public class RenameFormTests
         Assert.False(result.Success);
     }
 
+    [Fact]
+    public void Virtual_only_flag_reaches_the_planner_and_refuses_a_physical_disk()
+    {
+        var request = RenameForm.Request(Drive('E'), 'F', "Data", 'C', virtualDiskOnly: true);
+        Assert.True(request.VirtualDiskOnly);
+        Assert.False(Machine().Disk.IsVirtual);
+        Assert.False(RenamePlanner.Plan(Machine(), new HashSet<char>(), request).Success);
+
+        var onVhd = Machine() with { Disk = Machine().Disk with { IsVirtual = true } };
+        Assert.True(RenamePlanner.Plan(onVhd, new HashSet<char>(), request).Success);
+    }
+
     [Theory]
     [InlineData('F', "Kho", "tsudisk doi-ten E: --chu-cai F --nhan Kho")]
     [InlineData('E', "Dữ liệu", "tsudisk doi-ten E: --nhan \"Dữ liệu\"")]
