@@ -21,6 +21,16 @@ internal sealed partial class MainWindow : Window
         // DATA_TABLE muc 7: thong bao "Dang hien thi a den b trong n muc" sau khi doi moc/trang (aria-live polite).
         model.Pager.Changed += (_, _) => Dispatcher.BeginInvoke(() =>
             UIElementAutomationPeer.FromElement(Summary)?.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged));
+        // Xac nhan lan hai truoc khi ghi dia (ADR-0009): hop thoai go lai chu cai o.
+        model.ConfirmApply = plan => new ConfirmWindow(plan) { Owner = this }.ShowDialog() == true;
+        // Dang ghi dia thi khong dong cua so giua chung (nhat ky van ghi sau moi buoc, nhung dung de nguoi dung tu cat).
+        Closing += (_, e) =>
+        {
+            if (!Model.IsBusy)
+                return;
+            e.Cancel = true;
+            MessageBox.Show(this, Loc.Instance["BusyClosing"], "TsuDisk", MessageBoxButton.OK, MessageBoxImage.Warning);
+        };
     }
 
     internal MainViewModel Model => (MainViewModel)DataContext;

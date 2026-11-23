@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Giao dien WPF (giai doan 2, ADR-0008). BAN DAU CHI DOC: ban do dia, phan tich vung trong, xem truoc ke hoach -
-       KHONG nut ap dung, KHONG goi PlanRunner, KHONG ma mang. Ten tep tsudisk-gui.exe (khong trung tsudisk.exe cua CLI
+  <!-- Giao dien WPF (giai doan 2, ADR-0008): ban do dia, phan tich vung trong, xem truoc ke hoach. Thao tac GHI duy nhat:
+       doi chu cai/nhan qua PlanExecution (ADR-0009, xac nhan hai lan, can quyen quan tri). KHONG ma mang. Ten tep tsudisk-gui.exe (khong trung tsudisk.exe cua CLI
        khi dat chung thu muc - Windows khong phan biet hoa thuong). KHONG bat PublishTrimmed (System.Management). -->
   <PropertyGroup>
     <OutputType>WinExe</OutputType>

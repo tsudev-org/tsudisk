@@ -28,7 +28,7 @@
 | Nghiệp vụ thuần | `src/TsuDisk.Core/` | `net10.0` | ✅ test đơn vị + FakeBackend tiêm lỗi |
 | Adapter hệ thống | `src/TsuDisk.Windows/` | `net10.0-windows10.0.17763.0` | ❌ - E2E VHDX trên Windows |
 | Điểm vào | `src/TsuDisk.Cli/` | `net10.0-windows10.0.17763.0` | ❌ - E2E VHDX trên Windows |
-| Giao diện (chỉ đọc, ADR-0008) | `src/TsuDisk.Gui/` | `net10.0-windows10.0.17763.0` (WPF) | Build ✅; chạy ❌ - CI Windows chụp vi/en × Sáng/Tối |
+| Giao diện (ADR-0008; ghi duy nhất: đổi tên, ADR-0009) | `src/TsuDisk.Gui/` | `net10.0-windows10.0.17763.0` (WPF) | Build ✅; chạy ❌ - CI Windows chụp vi/en × Sáng/Tối |
 
 `TsuDisk.Core` gồm:
 

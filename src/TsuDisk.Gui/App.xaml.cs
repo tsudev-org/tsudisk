@@ -38,7 +38,9 @@ internal sealed partial class App : Application
         Loc.Instance.SetLanguage(UiLanguage.Resolve(settings.Language, SystemLanguages()));
         ThemeManager.Start(settings.Theme);
         IDiskSource source = sample ? new SampleDiskSource() : new WindowsDiskSource();
-        var model = new MainViewModel(source, settings);
+        // Duong ghi (ADR-0009) chi co khi chay o that, khong o che do du lieu mau/chup man hinh.
+        IPlanExecutor? executor = sample || shotDir is not null ? null : new WindowsPlanExecutor();
+        var model = new MainViewModel(source, settings, executor);
         var window = new MainWindow(model);
         MainWindow = window;
 

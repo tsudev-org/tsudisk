@@ -14,14 +14,14 @@
   </Window.Resources>
 
   <DockPanel x:Name="Root" Background="{DynamicResource bg-base}">
-    <!-- Header: dau hieu + ten + nhan "Chi doc"; dieu khien giao dien/ngon ngu/gioi thieu ben phai. -->
+    <!-- Header: dau hieu + ten + nhan "Chi doc"/"Quan tri" (ModeBadge); dieu khien giao dien/ngon ngu/gioi thieu ben phai. -->
     <Border DockPanel.Dock="Top" Background="{DynamicResource bg-surface}" BorderBrush="{DynamicResource border}" BorderThickness="0,0,0,1" Padding="24,12">
       <DockPanel LastChildFill="False">
         <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
           <Image Source="Resources/icon-64.png" Width="28" Height="28" Margin="0,0,10,0" AutomationProperties.Name="TsuDisk" />
           <TextBlock Text="TsuDisk" FontFamily="{DynamicResource font-display}" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" />
           <Border Style="{StaticResource Badge}" Margin="12,0,0,0">
-            <TextBlock Text="{g:T ReadOnlyBadge}" FontSize="12" FontWeight="Medium" Foreground="{DynamicResource text-link}" />
+            <TextBlock Text="{Binding ModeBadge}" FontSize="12" FontWeight="Medium" Foreground="{DynamicResource text-link}" />
           </Border>
         </StackPanel>
         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
@@ -216,13 +216,32 @@
           </StackPanel>
         </Border>
 
-        <!-- Xem truoc ke hoach: CHI LAP ke hoach, khong co nut ap dung. -->
+        <!-- Ke hoach: mo rong chi XEM TRUOC (chay bang CLI); doi chu cai/nhan ap dung duoc khi co quyen quan tri (ADR-0009). -->
         <Border Style="{StaticResource Card}">
           <StackPanel>
             <TextBlock Text="{g:T PlanTitle}" Style="{StaticResource H2}" />
             <TextBlock Text="{g:T PlanSelectHint}" Foreground="{DynamicResource text-secondary}" Margin="0,0,0,12"
                        Visibility="{Binding ShowPlanHint, Converter={StaticResource Show}}" />
             <Button Style="{StaticResource Primary}" Content="{Binding PlanButtonText}" Command="{Binding PlanExtend}" HorizontalAlignment="Left" />
+
+            <TextBlock Text="{g:T RenameTitle}" FontWeight="SemiBold" FontSize="15" Margin="0,20,0,4" />
+            <TextBlock Text="{g:T RenameSelectHint}" Foreground="{DynamicResource text-secondary}" Margin="0,0,0,8"
+                       Visibility="{Binding ShowRenameHint, Converter={StaticResource Show}}" />
+            <WrapPanel Visibility="{Binding CanRenameSelected, Converter={StaticResource Show}}" IsEnabled="{Binding IsIdle}">
+              <StackPanel Margin="0,0,16,8">
+                <Label Content="{g:T RenameLetter}" Target="{Binding ElementName=RenameLetterBox}" Padding="0" Margin="0,0,0,4"
+                       Foreground="{DynamicResource text-secondary}" />
+                <ComboBox x:Name="RenameLetterBox" Width="96" ItemsSource="{Binding RenameLetters}" SelectedItem="{Binding RenameLetter}"
+                          ItemStringFormat="{}{0}:" AutomationProperties.Name="{g:T RenameLetter}" />
+              </StackPanel>
+              <StackPanel Margin="0,0,16,8">
+                <Label Content="{g:T RenameLabel}" Target="{Binding ElementName=RenameLabelBox}" Padding="0" Margin="0,0,0,4"
+                       Foreground="{DynamicResource text-secondary}" />
+                <TextBox x:Name="RenameLabelBox" Width="280" MaxLength="32" Text="{Binding RenameLabel, UpdateSourceTrigger=PropertyChanged}"
+                         AutomationProperties.Name="{g:T RenameLabel}" />
+              </StackPanel>
+              <Button Content="{g:T PlanRenameButton}" Command="{Binding PlanRename}" VerticalAlignment="Bottom" Margin="0,0,0,8" />
+            </WrapPanel>
 
             <StackPanel Margin="0,16,0,0" Visibility="{Binding HasRefusal, Converter={StaticResource Show}}">
               <Border BorderBrush="{DynamicResource danger}" BorderThickness="3,0,0,0" Padding="12" Background="{DynamicResource bg-subtle}">
@@ -271,7 +290,7 @@
               <TextBlock Text="{Binding PlanInvariants}" Style="{StaticResource Muted}" Margin="0,12,0,0" />
               <Border BorderBrush="{DynamicResource info}" BorderThickness="3,0,0,0" Padding="12" Margin="0,16,0,0" Background="{DynamicResource bg-subtle}">
                 <StackPanel>
-                  <TextBlock Text="{g:T ReadOnlyNotice}" />
+                  <TextBlock Text="{Binding PlanNotice}" TextWrapping="Wrap" />
                   <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                     <Border Background="{DynamicResource bg-base}" BorderBrush="{DynamicResource border}" BorderThickness="1"
                             CornerRadius="{DynamicResource radius-md}" Padding="12,8">
@@ -281,8 +300,47 @@
                     <TextBlock Text="{g:T Copied}" Foreground="{DynamicResource success}" VerticalAlignment="Center" Margin="8,0,0,0"
                                Visibility="{Binding Copied, Converter={StaticResource Show}}" />
                   </StackPanel>
+                  <!-- Xac nhan lan MOT: bam nut nay (chi khi co quyen quan tri); lan hai: go lai chu cai trong hop thoai. -->
+                  <StackPanel Orientation="Horizontal" Margin="0,12,0,0" Visibility="{Binding ShowApply, Converter={StaticResource Show}}">
+                    <Button Style="{StaticResource DangerOutline}" Content="{Binding ApplyText}" Command="{Binding Apply}"
+                            Visibility="{Binding CanApplyNow, Converter={StaticResource Show}}" />
+                    <Button Content="{g:T RelaunchAsAdmin}" Command="{Binding RelaunchAsAdmin}"
+                            Visibility="{Binding NeedsAdmin, Converter={StaticResource Show}}" />
+                  </StackPanel>
                 </StackPanel>
               </Border>
+            </StackPanel>
+
+            <!-- Ket qua ap dung: tien do tung buoc (tu nhat ky), ket qua, thu muc nhat ky, goi y khi hoan tac. -->
+            <StackPanel Margin="0,16,0,0" Visibility="{Binding HasRun, Converter={StaticResource Show}}">
+              <TextBlock Text="{g:T RunTitle}" FontWeight="SemiBold" FontSize="15" />
+              <TextBlock Text="{Binding RunError}" Foreground="{DynamicResource danger}" TextWrapping="Wrap" Margin="0,6,0,0"
+                         Visibility="{Binding HasRunError, Converter={StaticResource Show}}" />
+              <ItemsControl ItemsSource="{Binding RunSteps}" Margin="0,8,0,0" AutomationProperties.LiveSetting="Polite">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Grid Margin="0,3">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32" /><ColumnDefinition Width="120" /><ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="{Binding Index, StringFormat='{}{0}.'}" Foreground="{DynamicResource text-muted}" />
+                      <TextBlock Grid.Column="1" Text="{Binding Status}" FontWeight="Medium" />
+                      <StackPanel Grid.Column="2">
+                        <TextBlock Text="{Binding Title}" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding Message}" Style="{StaticResource Muted}" TextWrapping="Wrap"
+                                   Visibility="{Binding Text, RelativeSource={RelativeSource Self}, Converter={StaticResource Show}}" />
+                      </StackPanel>
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBlock Text="{Binding RunResult}" FontWeight="SemiBold" Margin="0,8,0,0" TextWrapping="Wrap" AutomationProperties.LiveSetting="Assertive" />
+              <ItemsControl ItemsSource="{Binding RunAdvice}" Margin="0,6,0,0">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate><TextBlock Text="{Binding StringFormat='-> {0}'}" Foreground="{DynamicResource warning}" TextWrapping="Wrap" Margin="0,2" /></DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBlock Text="{Binding RunDirectory}" Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,6,0,0" />
             </StackPanel>
           </StackPanel>
         </Border>

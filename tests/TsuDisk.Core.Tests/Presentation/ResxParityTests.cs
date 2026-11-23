@@ -29,6 +29,17 @@ public class ResxParityTests
     }
 
     [Fact]
+    public void EveryStepStatusAndRunState_HasLabel()
+    {
+        // Giao dien doc Step_{StepStatus} va Run_{RunState} theo ten enum (ADR-0009) - regex KeysUsedInGui khong thay.
+        var en = Load("Strings.resx");
+        foreach (var status in Enum.GetNames<TsuDisk.Core.Execution.StepStatus>())
+            Assert.True(en.ContainsKey($"Step_{status}"), $"Thiếu Step_{status}");
+        foreach (var state in Enum.GetNames<TsuDisk.Core.Execution.RunState>())
+            Assert.True(en.ContainsKey($"Run_{state}"), $"Thiếu Run_{state}");
+    }
+
+    [Fact]
     public void KeysUsedInGui_Exist()
     {
         var keys = Load("Strings.resx").Keys.ToHashSet();

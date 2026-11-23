@@ -255,13 +255,10 @@ internal static partial class Commands
             return ExitCodes.Ok;
         }
 
+        // Duong chay chung voi giao dien (ADR-0009): thu muc lan chay + plan.json + PlanRunner.
         var root = cli.Value("thu-muc-nhat-ky") ?? DefaultLogRoot;
-        var runDirectory = Path.Combine(root, $"{DateTime.Now:yyyyMMdd-HHmmss}-{plan.Id}{(dryRun ? "-chay-thu" : "")}");
-        Directory.CreateDirectory(runDirectory);
-        File.WriteAllText(Path.Combine(runDirectory, "plan.json"), TsuDiskJson.Serialize(plan), Encoding.UTF8);
-        var store = new ProgressJournalStore(new FileJournalStore(runDirectory));
-
-        var journal = new PlanRunner(Backend, store).Run(plan, new RunOptions(dryRun, runDirectory, ToolVersion));
+        var (journal, runDirectory) = PlanExecution.Run(Backend, dir => new ProgressJournalStore(new FileJournalStore(dir)), plan, root,
+            dryRun, ToolVersion, DateTime.Now);
         Console.WriteLine();
         Render.Journal(journal);
         Console.WriteLine($"\nNhật ký và bản sao lưu: {runDirectory}");

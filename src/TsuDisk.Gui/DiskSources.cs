@@ -4,7 +4,7 @@ using TsuDisk.Windows;
 
 namespace TsuDisk.Gui;
 
-/// <summary>Nguon bo cuc dia cho giao dien. CHI DOC: giao dien khong giu tham chieu nao toi thao tac ghi.</summary>
+/// <summary>Nguon bo cuc dia cho giao dien. CHI DOC: thao tac ghi di qua <see cref="IPlanExecutor"/> rieng (ADR-0009).</summary>
 internal interface IDiskSource
 {
     bool IsSample { get; }
@@ -13,6 +13,12 @@ internal interface IDiskSource
 
     /// <summary>Trang thai WinRE; khong co quyen quan tri => Disabled (giong CLI) va <c>known = false</c>.</summary>
     (WinReStatus Status, bool Known) ReadWinRe();
+
+    /// <summary>Chu cai dang dung o bat ky dau (moi dia, o mang, subst) - RenamePlanner can de tu choi chu cai trung.</summary>
+    IReadOnlySet<char> LettersInUse();
+
+    /// <summary>Chu cai o chua Windows (%SystemDrive%); khong bao gio doi chu cai o nay.</summary>
+    char? SystemDrive { get; }
 }
 
 internal sealed class WindowsDiskSource : IDiskSource
@@ -36,6 +42,10 @@ internal sealed class WindowsDiskSource : IDiskSource
             return (WinReStatus.Disabled, false);
         }
     }
+
+    public IReadOnlySet<char> LettersInUse() => _backend.DriveLettersInUse();
+
+    public char? SystemDrive => Environment.GetEnvironmentVariable("SystemDrive") is [var sys, ..] ? sys : null;
 }
 
 /// <summary>
@@ -69,6 +79,11 @@ internal sealed class SampleDiskSource : IDiskSource
     }
 
     public (WinReStatus Status, bool Known) ReadWinRe() => (new WinReStatus(true, 0, 4), true);
+
+    public IReadOnlySet<char> LettersInUse() =>
+        ReadAll().SelectMany(l => l.Partitions).Select(p => p.DriveLetter).OfType<char>().ToHashSet();
+
+    public char? SystemDrive => 'C';
 
     private static PartitionInfo Part(int disk, int number, long offset, long size, Guid type, char? letter, string? fs, long? free) =>
         new(disk, number, offset, size, type, null, letter, false, false, fs, letter == 'C' ? "Windows" : null, free);
