@@ -2,7 +2,7 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
-## [Chưa phát hành]
+## [26.11.2401] - 24/11/2026
 
 - Giao diện cửa sổ: mở rộng ổ dữ liệu NTFS/ReFS bằng vùng trống liền kề ngay trong ứng dụng (chọn ổ, "Lập kế hoạch mở
   rộng", "Mở rộng X: ..."). Cần quyền quản trị; xác nhận hai lần: bấm nút rồi gõ lại chữ cái ổ. Dùng chung đường chạy

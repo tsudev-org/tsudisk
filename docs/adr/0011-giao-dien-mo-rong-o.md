@@ -1,6 +1,7 @@
 # ADR-0011: Giao diện áp dụng thao tác thứ ba - mở rộng ổ bằng vùng trống liền kề
 
 - **Trạng thái**: Chấp nhận - 23/11/2026 (chủ dự án duyệt "GUI bước 4" trong phiên 10)
+- **Phát hành**: 26.11.2401 - trước đó E2E GUI đạt 58/58 trên CI Windows (ổ ảo VHDX, ca G1-G10, #74).
 - **Liên quan**: ADR-0009 (đường chạy chung `PlanExecution`, xác nhận hai lần, `AllowedOperations`), ADR-0010 (mẫu ADR
   bổ sung + ca E2E GUI), ADR-0002 (kế hoạch, bất biến, hoàn tác), ADR-0003 (WinRE/Recovery), `ExtendPlanner` (KB5028997).
   Bổ sung, không thay ADR-0009/0010.
