@@ -71,7 +71,7 @@ jobs:
       - name: E2E tren o ao VHDX
         shell: powershell
         run: ./tests/e2e/run-e2e.ps1 -Exe ./publish/tsudisk.exe
-      - name: Dong goi tsudisk-gui.exe (giao dien chi doc, ADR-0008)
+      - name: Dong goi tsudisk-gui.exe (ADR-0008/0009)
         run: dotnet publish src/TsuDisk.Gui -c Release -r win-x64 -o publish-gui
       - name: Giao dien - thong tin exe + chup vi/en x Sang/Toi (du lieu mau va o that cua runner)
         shell: pwsh
@@ -86,6 +86,9 @@ jobs:
             $n = (Get-ChildItem $out -Filter 'tsudisk-gui_*.png').Count
             if ($n -ne 4) { throw "$($run.Dir): can 4 anh, co $n" }
           }
+      - name: E2E lai giao dien doi ten tren o ao VHDX (UI Automation, ADR-0009)
+        shell: powershell
+        run: ./tests/e2e/run-e2e-gui.ps1 -Exe ./publish-gui/tsudisk-gui.exe
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: tsudisk-gui-anh

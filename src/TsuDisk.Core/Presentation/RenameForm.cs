@@ -26,7 +26,8 @@ public static class RenameForm
     }
 
     /// <summary>Yeu cau gui RenamePlanner: chu cai/nhan khong doi => null (giu nguyen).</summary>
-    public static RenameRequest Request(PartitionInfo partition, char newLetter, string newLabel, char? systemDrive)
+    /// <param name="virtualDiskOnly">Giao dien chay voi <c>--chi-o-ao</c> (E2E): RenamePlanner tu choi moi o khong phai VHD/VHDX.</param>
+    public static RenameRequest Request(PartitionInfo partition, char newLetter, string newLabel, char? systemDrive, bool virtualDiskOnly = false)
     {
         ArgumentNullException.ThrowIfNull(partition);
         ArgumentNullException.ThrowIfNull(newLabel);
@@ -37,6 +38,7 @@ public static class RenameForm
             newLabel == (partition.Label ?? "") ? null : newLabel)
         {
             SystemDrive = systemDrive is { } s ? char.ToUpperInvariant(s) : null,
+            VirtualDiskOnly = virtualDiskOnly,
         };
     }
 

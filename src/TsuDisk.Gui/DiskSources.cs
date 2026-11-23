@@ -9,6 +9,9 @@ internal interface IDiskSource
 {
     bool IsSample { get; }
 
+    /// <summary><c>--chi-o-ao</c>: chi o ao, va ke hoach ghi mang VirtualDiskOnly (RenamePlanner tu choi o that).</summary>
+    bool VirtualOnly => false;
+
     IReadOnlyList<DiskLayout> ReadAll();
 
     /// <summary>Trang thai WinRE; khong co quyen quan tri => Disabled (giong CLI) va <c>known = false</c>.</summary>
@@ -21,13 +24,17 @@ internal interface IDiskSource
     char? SystemDrive { get; }
 }
 
-internal sealed class WindowsDiskSource : IDiskSource
+/// <param name="virtualOnly"><c>--chi-o-ao</c>: chi liet ke o ao VHD/VHDX (E2E lai giao dien khong bao gio thay o that).</param>
+internal sealed class WindowsDiskSource(bool virtualOnly = false) : IDiskSource
 {
     private readonly WindowsDiskBackend _backend = new();
 
     public bool IsSample => false;
 
-    public IReadOnlyList<DiskLayout> ReadAll() => [.. _backend.ListDisks().Select(d => _backend.ReadLayout(d.Number))];
+    public bool VirtualOnly => virtualOnly;
+
+    public IReadOnlyList<DiskLayout> ReadAll() =>
+        [.. _backend.ListDisks().Where(d => !virtualOnly || d.IsVirtual).Select(d => _backend.ReadLayout(d.Number))];
 
     public (WinReStatus Status, bool Known) ReadWinRe()
     {

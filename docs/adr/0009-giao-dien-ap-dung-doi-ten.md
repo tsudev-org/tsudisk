@@ -34,12 +34,14 @@ Rủi ro mới nằm ở giao diện: bấm nhầm, giao diện cũ hơn bố c�
 
 - (+) GUI làm được việc thật đầu tiên mà không có logic an toàn riêng: mọi bất biến vẫn ở Core, dùng chung CLI.
 - (+) E2E VHDX của CLI (`doi-ten`: chữ cái + nhãn, xoá nhãn, từ chối ổ hệ thống) chạy đúng đường `PlanExecution` mà GUI dùng.
-- (-) Chưa có E2E lái chính GUI bằng UI Automation trên ổ ảo; phần riêng của GUI (hộp thoại, khoá nút) mới kiểm bằng
-  test logic + chạy tay. Việc tiếp theo: E2E UIA trên VHDX trước khi mở thêm thao tác ghi khác cho GUI.
+- (+) *Cập nhật 23/11/2026*: E2E lái GUI `tests/e2e/run-e2e-gui.ps1` (CI Windows): GUI chạy `--chi-o-ao` (chỉ liệt kê
+  ổ VHD/VHDX, kế hoạch mang `VirtualDiskOnly`), `--dia N`, `--thu-muc-nhat-ky`; điều khiển chọn theo AutomationId
+  (`x:Name`), kết quả máy đọc qua `ItemStatus` của `RunResultText`. Ca: chỉ thấy ổ ảo; gõ sai/Hủy không đổi gì và không
+  tạo lần chạy; gõ đúng => đổi chữ cái + nhãn, nhật ký Succeeded, dữ liệu khớp SHA-256, bản đồ đọc lại bố cục.
 - (-) "Mở lại với quyền quản trị" mở tiến trình mới (mất lựa chọn đang xem, cài đặt giao diện vẫn giữ).
 
 ## Việc tiếp theo
 
-1. E2E lái GUI (UI Automation) đổi tên trên ổ ảo VHDX.
+1. ~~E2E lái GUI (UI Automation) đổi tên trên ổ ảo VHDX~~ - `tests/e2e/run-e2e-gui.ps1`.
 2. Mở thêm thao tác cho GUI theo thứ tự rủi ro (tạo phân vùng trong vùng trống, rồi mở rộng) - mỗi thao tác một ADR
    bổ sung + thêm vào `AllowedOperations`.

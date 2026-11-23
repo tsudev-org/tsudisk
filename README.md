@@ -126,6 +126,9 @@ chỉ-đọc, và Recovery không chứa WinRE đang dùng (trừ khi bạn ch�
   tái hiện đúng từng byte lần mở rộng ổ C: thật ngày 16/11/2026 (EFI | MSR | C: | Recovery | 60 GB trống | G: | E:).
 - **E2E trên ổ ảo VHDX** (`tests/e2e/run-e2e.ps1`), chạy trong CI Windows và trên máy dev: dựng đĩa 3 GB có EFI,
   dữ liệu, Recovery, vùng trống; chạy `tsudisk` thật; kiểm phân vùng khác không xê dịch và tệp canh gác khớp SHA-256.
+- **E2E lái giao diện** (`tests/e2e/run-e2e-gui.ps1`): mở `tsudisk-gui.exe --chi-o-ao` (chỉ thấy và chỉ ghi ổ ảo), bấm
+  qua UI Automation để đổi chữ cái + nhãn trên một VHDX, kiểm hủy/gõ sai không đổi gì, gõ đúng thì đổi đúng và dữ liệu
+  nguyên vẹn.
 
 ```bash
 dotnet test tests/TsuDisk.Core.Tests                         # mọi nền tảng

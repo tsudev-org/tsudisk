@@ -55,6 +55,7 @@ dotnet publish src/TsuDisk.Gui -c Release -o artifacts/gui      # tsudisk-gui.ex
 #   tsudisk-gui.exe --du-lieu-mau --chup-man-hinh <thư-mục>     # ảnh vi/en x Sáng/Tối, chạy được trên máy dev
 # E2E trên ổ ảo VHDX (Windows, PowerShell Admin):
 #   powershell -ExecutionPolicy Bypass -File tests\e2e\run-e2e.ps1 -Exe artifacts\publish\tsudisk.exe
+#   powershell -ExecutionPolicy Bypass -File tests\e2e\run-e2e-gui.ps1 -Exe artifacts\gui\tsudisk-gui.exe  # lái GUI (UIA)
 cd website && npm ci && npm run build                           # website
 ```
 
