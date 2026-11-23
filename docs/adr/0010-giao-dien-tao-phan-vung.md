@@ -1,6 +1,7 @@
 # ADR-0010: Giao diện áp dụng thao tác thứ hai - tạo phân vùng trong vùng trống
 
 - **Trạng thái**: Chấp nhận - 23/11/2026 (chủ dự án duyệt "GUI bước 3" trong phiên 9)
+- **Phát hành**: 26.11.2303 - trước đó E2E GUI đạt 35/35 trên CI Windows (ổ ảo VHDX, ca G1-G6, #70).
 - **Liên quan**: ADR-0009 (đường chạy chung `PlanExecution`, xác nhận hai lần, `AllowedOperations`), ADR-0002 (mọi thao
   tác là một `Plan`, bất biến, hoàn tác), `CreatePartitionPlanner` (rủi ro Vừa: ghi bảng phân vùng + định dạng, nhưng chỉ
   trong vùng trống). Bổ sung, không thay ADR-0009.
