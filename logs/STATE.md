@@ -3,11 +3,12 @@
 > Agent đọc file này ở đầu mỗi phiên và cập nhật ở cuối mỗi phiên.
 > Quy trình: `.standards/docs/AGENT_PROTOCOL.md`.
 
-> **Phiên kế tiếp**: đọc `logs/handover/20261123-02_phien-8-phat-hanh-gui-doi-ten.md`.
+> **Phiên kế tiếp**: đọc `logs/handover/20261123-03_phien-9-gui-tao-phan-vung.md`.
 
 ## Hàng đợi task (làm từ trên xuống)
 
-- [ ] winget-pkgs #486490 (26.11.2202), #487170 (26.11.2301), #487205 (26.11.2302): chờ moderator cộng đồng duyệt;
+- [ ] Scoop 26.11.2303 (kiểm Excavator, PR tay nếu kẹt - LES-20261123-1929-5bbe); kiểm SHA256SUMS + attestation 2303.
+- [ ] winget-pkgs #486490 (26.11.2202), #487170 (26.11.2301), #487205 (26.11.2302), #487246 (26.11.2303): chờ moderator cộng đồng duyệt;
       merge => khối "Cài bằng lệnh" (PACKAGING 8.1).
 - [ ] Pro: đăng nhập thật bằng tài khoản TsuDEV trên Windows (cần chủ dự án bấm trong trình duyệt) - THREAT_MODEL mục 4.
       Đồng bộ: chờ .NET `TsuSync` (PRO-D3, repo tsusync) + chủ dự án duyệt phạm vi (ADR-0007 "Việc còn chờ").
@@ -23,6 +24,10 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 23/11/2026 (phiên 9) - Gộp Dependabot #59, #60. GUI tạo phân vùng trong vùng trống (#70, ADR-0010, test 349 -> 377,
+  E2E GUI 35/35 trên CI). Phát hành **26.11.2303** (#71): mọi job release xanh (VT, cong-bo, winget-pkgs#487246);
+  website deploy-2026.11.23.3. winget: 3 PR cũ vẫn chờ moderator (license/cla success).
 
 - 23/11/2026 (phiên 8, đợt 3, chủ dự án ủy quyền) - E2E GUI chạy trên Windows 11 máy dev với quyền quản trị (VHDX,
   UAC) 17/17. Phát hành **26.11.2302** (#68): GUI đổi chữ cái/nhãn; VT 0/73 cả hai exe, SHA-256 + attestation đã kiểm;
