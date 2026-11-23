@@ -28,12 +28,14 @@ internal sealed class WindowsPlanExecutor(string? logRoot = null) : IPlanExecuto
 {
     /// <summary>
     /// Giao dien CHI ap dung thao tac da duyet tung cai mot theo rui ro: doi chu cai/nhan (ADR-0009), tao phan vung trong
-    /// vung trong (ADR-0010). Mo rong, thu nho, xoa... van chi chay bang CLI.
+    /// vung trong (ADR-0010), mo rong o bang vung trong lien ke (ADR-0011). Thu nho, xoa, WinRE, MBR->GPT... van chi chay
+    /// bang CLI.
     /// </summary>
     public static readonly IReadOnlySet<string> AllowedOperations = new HashSet<string>(StringComparer.Ordinal)
     {
         RenamePlanner.Operation,
         CreatePartitionPlanner.Operation,
+        ExtendPlanner.Operation,
     };
 
     private readonly WindowsDiskBackend _backend = new();
