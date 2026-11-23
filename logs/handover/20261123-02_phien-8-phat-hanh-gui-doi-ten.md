@@ -2,7 +2,7 @@
 
 - **Mã phiếu**: 20261123-02 (nối tiếp 20261123-01 - phiếu đó ĐÓNG, việc còn lại chép sang đây)
 - **Từ**: agent-tsudisk (phiên `tsudisk-78`) - **Đến**: phiên kế tiếp của `tsudisk` + 👤 chủ dự án (mục 2)
-- **Trạng thái**: MỞ (mục 2, 3)
+- **Trạng thái**: MỞ (mục 2.3, 3) - cập nhật 23/11/2026 sau phát hành 26.11.2302
 
 ## 1. Đã xong
 
@@ -28,16 +28,17 @@
    gh secret set WINGET_TOKEN -R tsudev-org/tsudisk --env packages < ~/.config/tsudev/winget.env
    gh run rerun 45172698369 -R tsudev-org/tsudisk --failed
    ```
-2. Thử GUI đổi tên thật (cần quyền quản trị) trên một ổ dữ liệu không quan trọng/ổ USB: chọn ổ -> đổi chữ cái/nhãn ->
+2. ~~Thử GUI đổi tên thật~~ - chủ dự án ủy quyền agent: chạy E2E GUI trên Windows 11 máy dev với quyền quản trị (ổ
+   ảo VHDX - AGENTS B.5 cấm ghi ổ thật), 17/17; đã phát hành 26.11.2302. Ghi chép cũ: Thử GUI đổi tên thật (cần quyền quản trị) trên một ổ dữ liệu không quan trọng/ổ USB: chọn ổ -> đổi chữ cái/nhãn ->
    "Lập kế hoạch đổi" -> "Áp dụng" -> gõ lại chữ cái. Bản build: artifact CI của #63 hoặc
    `dotnet publish src/TsuDisk.Gui -c Release -o artifacts/gui`. Ổn thì phát hành bản kế tiếp.
 3. Còn từ phiếu trước: thử `tsudisk dang-nhap` thật; duyệt/bác ADR-0006 và phạm vi đồng bộ Pro.
 
 ## 3. Việc tiếp theo cho agent
 
-1. Theo dõi winget-pkgs #486490 (2202) + #487170 (2301); merge => khối "Cài bằng lệnh".
-2. ~~E2E lái GUI bằng UI Automation trên VHDX~~ - XONG #66 (17/17 đạt trên CI Windows). Còn: phát hành GUI đổi tên
-   (thẻ mới, cập nhật đoạn "chỉ đọc" ở `website/src/pages/tai-ve.astro` + README) sau khi chủ dự án thử mục 2.2.
+1. Theo dõi winget-pkgs #486490 (2202), #487170 (2301), #487205 (2302); merge => khối "Cài bằng lệnh".
+2. ~~E2E lái GUI~~ (#66) + ~~phát hành GUI đổi tên~~ - 26.11.2302 (#68), website deploy-2026.11.23.2, scoop-bucket#31.
+   Tiếp: thao tác ghi khác cho GUI (STATE).
 3. Đồng bộ Pro: vẫn chờ tsusync có máy khách HTTP .NET (23/11: `clients/dotnet` mới có lớp mã hoá) + phạm vi duyệt.
 4. Scoop: Excavator của scoop-bucket vẫn đỏ do `tsudev-contact` (hash 404) - việc của phiên tsucontact; bản tsudisk
    sau có thể phải cập nhật tay lần nữa nếu chưa sửa.
