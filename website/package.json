@@ -14,12 +14,12 @@
     "brand": "node scripts/brand-assets.mjs"
   },
   "dependencies": {
-    "astro": "7.4.11",
-    "marked": "18.2.0"
+    "astro": "7.4.13",
+    "marked": "18.2.1"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
-    "playwright": "1.65.0",
-    "wrangler": "4.161.0"
+    "playwright": "1.65.1",
+    "wrangler": "4.165.0"
   }
 }
