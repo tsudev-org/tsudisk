@@ -4,6 +4,13 @@
   "name": "TsuDisk",
   "source": "source/logo-tsudisk.png",
   "mode": "tile",
+  "vector": {
+    "_ghi_chu": "Logo vector xoá nền 24/11/2026 (phiếu 20261124-LG2): sinh bởi tsudev packages/brand/build-vector-marks.js từ vùng biểu tượng (iconCrop) của source/logo-tsudisk.png. Đổi logo: thay PNG gốc ⇒ chạy lại dây chuyền tsudev ⇒ chép 3 tệp về đây. Logo đầy đủ có chữ (fullSizes) đã gỡ: không trang nào dùng.",
+    "dark": "source/mark.svg",
+    "light": "source/mark-light.svg",
+    "adaptive": "source/mark-adaptive.svg",
+    "tileScale": 0.86
+  },
   "iconCrop": [
     163,
     167,
@@ -13,10 +20,6 @@
   "iconPadding": 0.04,
   "tileRadius": 0.22,
   "solidBg": "#0c0f16",
-  "fullSizes": [
-    360,
-    717
-  ],
   "ecosystem": {
     "id": "tsudev",
     "source": "source/logo-tsudev.png"

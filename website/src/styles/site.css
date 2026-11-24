@@ -60,6 +60,7 @@ pre {
 .thuong-hieu:hover { color: var(--text-primary); }
 .thuong-hieu picture { display: inline-flex; }
 .thuong-hieu img { width: 2.25rem; height: 2.25rem; object-fit: contain; }
+[data-theme="light"] .thuong-hieu .logo-toi, :root:not([data-theme="light"]) .thuong-hieu .logo-sang { display: none; }
 .thuong-hieu--nho { font-size: 1rem; }
 .thuong-hieu--nho img { width: 1.75rem; height: 1.75rem; }
 .menu { display: flex; gap: 0.15rem; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
@@ -243,7 +244,6 @@ kbd { border: 1px solid var(--border-strong); border-bottom-width: 2px; border-r
 }
 
 /* Logo đầy đủ ở trang chủ: ảnh có nền tối riêng, bo góc theo token, không phóng to quá bản gốc. */
-.logo-day-du img { display: block; width: 160px; height: auto; border-radius: var(--radius-lg); margin: 0 auto 1rem; }
 
 /* Ảnh giao diện ở trang Tải về: hiện ảnh Sáng hoặc Tối theo data-theme (theme.js), không theo hệ điều hành. */
 .anh-gui { margin: 1rem 0 1.5rem; }

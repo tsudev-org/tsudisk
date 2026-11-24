@@ -56,7 +56,8 @@ const dangO = (href: string) => duongDan.startsWith(href);
     <meta property="og:image:height" content="630">
     <meta property="og:url" content={url}>
     <meta name="twitter:card" content="summary_large_image">
-    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/favicon.ico" sizes="32x32">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="manifest" href="/manifest.webmanifest">
@@ -66,7 +67,7 @@ const dangO = (href: string) => duongDan.startsWith(href);
     <header class="dau-trang">
       <div class="khung dau-trang__trong">
         <a class="thuong-hieu" href="/" aria-label="TsuDisk - Trang chủ">
-          <picture><source type="image/avif" srcset="/brand/logo-tsudisk-48.avif 1x, /brand/logo-tsudisk-96.avif 2x, /brand/logo-tsudisk-144.avif 3x"><source type="image/webp" srcset="/brand/logo-tsudisk-48.webp 1x, /brand/logo-tsudisk-96.webp 2x, /brand/logo-tsudisk-144.webp 3x"><img src="/brand/logo-tsudisk.png" alt="" width="36" height="36"></picture>
+          <img class="logo-toi" src="/brand/logo-tsudisk.svg" alt="" width="36" height="36"><img class="logo-sang" src="/brand/logo-tsudisk-light.svg" alt="" width="36" height="36">
           <span>Tsu<span class="thuong-hieu__sp">Disk</span></span>
         </a>
         <nav aria-label="Chính">
