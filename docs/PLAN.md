@@ -84,7 +84,7 @@ bảng mọi lệnh). E2E xanh trên CI. PR đã gộp.
 Tiến độ (26/11/2026, phiên 14): Core `GuiGateSchedule` + `UpdateAction` + `ServerLockStore` (`426` từ `ProAccount` khoá
 CLI và GUI), `DataExport.StandardSources` dùng chung; GUI `GuiGate` + `UpdateRequiredWindow` (tương phản cao: màu hệ
 thống); 4 ảnh modal đã xem; UIA thử trên máy dev đạt (tên, hai nút, Maximized, IsModal, focus, Esc, Tab, WM_CLOSE).
-Test 543 -> 572. Còn: E2E GUI G1-G11 xanh trên CI + PR gộp. Cập nhật ngay = hành động theo kênh rồi đóng app (ADR-0012
+Test 543 -> 572. E2E GUI G1-G11 xanh trên CI (PR #88). Cập nhật ngay = hành động theo kênh rồi đóng app (ADR-0012
 "Ghi chú triển khai").
 
 ## Phase INT5 - Phát hành: nâng `latest` theo kênh
