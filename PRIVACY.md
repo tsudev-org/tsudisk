@@ -36,8 +36,9 @@ Sau đó TsuDisk chỉ trao đổi với tsudev.com:
   (không suy ra từ phần cứng) để tsudev.com đếm số thiết bị của tài khoản nhằm chống lạm dụng (không dùng để mời mua).
 - Nhận về thông tin quyền lợi đã ký (gói Pro, hạn dùng, huy hiệu, số thiết bị) - làm mới tối đa mỗi ngày một lần.
 - Tải bản kê phiên bản đã ký `tsudev.com/.well-known/tsudev/versions.json` (mỗi lần chạy lệnh, mở ứng dụng) để biết
-  đã có bản mới chưa; không gửi gì ngoài `User-Agent` và phiên bản kèm kênh cài đặt. Có bản mới thì TsuDisk yêu cầu cập
-  nhật trước khi chạy tiếp (vẫn xuất được dữ liệu bằng `tsudisk xuat-du-lieu`).
+  đã có bản mới chưa; không gửi gì ngoài `User-Agent` và phiên bản kèm kênh cài đặt. Giao diện tải lúc mở, mỗi 6 giờ
+  và khi quay lại sau ít nhất 30 phút. Có bản mới thì TsuDisk yêu cầu cập nhật trước khi chạy tiếp (vẫn xuất được dữ
+  liệu bằng `tsudisk xuat-du-lieu` hoặc nút **Xuất dữ liệu** của giao diện - tệp `.zip` chỉ lưu trên máy bạn).
 
 TsuDisk **không** gửi thông tin đĩa, phân vùng, nhật ký hay tệp nào của bạn lên mạng, kể cả khi đã đăng nhập. Dữ liệu
 tài khoản trên máy nằm ở `%LOCALAPPDATA%\tsudev\tsudisk`; `tsudisk dang-xuat` thu hồi phiên và xóa thư mục đó.

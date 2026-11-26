@@ -36,15 +36,18 @@ public sealed class VersionGate
     private readonly VersionManifestCache cache;
     private readonly Func<DateTimeOffset> clock;
     private readonly IReadOnlyDictionary<string, ReadOnlyMemory<byte>> keys;
+    private readonly ServerLockStore? serverLock;
 
     /// <param name="keys">Chi test truyen khoa thu; CLI/GUI luon dung <see cref="VersionKeys.Production"/>.</param>
+    /// <param name="serverLock">Dau <c>426</c> (ADR-0012 muc 8): con han cho dung ban dang chay ⇒ khoa, khong goi mang.</param>
     public VersionGate(IVersionSource source, VersionManifestCache cache, Func<DateTimeOffset> clock,
-        IReadOnlyDictionary<string, ReadOnlyMemory<byte>>? keys = null)
+        IReadOnlyDictionary<string, ReadOnlyMemory<byte>>? keys = null, ServerLockStore? serverLock = null)
     {
         this.source = source;
         this.cache = cache;
         this.clock = clock;
         this.keys = keys ?? VersionKeys.Production;
+        this.serverLock = serverLock;
     }
 
     public async Task<GateDecision> CheckAsync(string product, string channel, string currentVersion, CancellationToken cancel)
@@ -53,6 +56,9 @@ public sealed class VersionGate
             return new GateDecision(GateStatus.NotApplicable, null, null, null, null, false);
 
         var now = clock();
+        if (serverLock?.Load(current, now) is { } locked)
+            return locked;
+
         var cached = cache.Load() is { } doc
             ? VersionManifestVerifier.Verify(doc.Manifest, doc.Signature, now, null, keys)
             : null;

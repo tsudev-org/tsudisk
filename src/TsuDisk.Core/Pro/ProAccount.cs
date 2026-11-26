@@ -35,6 +35,8 @@ public enum RefreshStatus
     Rejected,
     /// <summary>Tien trinh tsudisk khac dang refresh: khong refresh song song (xem <see cref="ProAccountStore.TryLock"/>).</summary>
     Busy,
+    /// <summary>May chu tra <c>426 update_required</c> ⇒ app bi KHOA (ADR-0012 muc 8); giu JWS dem cu, khong xoa phien.</summary>
+    UpdateRequired,
 }
 
 public sealed record RefreshOutcome(RefreshStatus Status, Entitlement? Entitlement, string? Detail = null);
@@ -61,6 +63,12 @@ public sealed class ProAccount(
 
     /// <summary>Cho khoa refresh toi da bao lau (tien trinh tsudisk khac dang refresh).</summary>
     public TimeSpan LockWait { get; init; } = TimeSpan.FromSeconds(10);
+
+    /// <summary>
+    /// Goi khi may chu tra <c>426</c> o bat ky luot lay quyen loi nao (dang nhap, lam moi). CLI ghi
+    /// <see cref="Integrity.ServerLockStore"/> de cong phien ban cua CLI va GUI cung khoa (ADR-0012 muc 8).
+    /// </summary>
+    public Action<UpdateRequiredResponse>? UpdateRequired { get; init; }
 
     public bool IsSignedIn => store.HasSession;
 
@@ -188,8 +196,10 @@ public sealed class ProAccount(
             if (!string.IsNullOrEmpty(t.RefreshToken)) store.SaveRefreshToken(t.RefreshToken);
 
             var jwks = await http.GetJwksAsync(cancel).ConfigureAwait(false);
-            var ent = await FetchEntitlementAsync(t.AccessToken, installations.GetOrCreate(), jwks, cancel)
+            UpdateRequiredResponse? upgrade = null;
+            var ent = await FetchEntitlementAsync(t.AccessToken, installations.GetOrCreate(), jwks, cancel, u => upgrade = u)
                 .ConfigureAwait(false);
+            if (upgrade is not null) return new RefreshOutcome(RefreshStatus.UpdateRequired, CachedSource().Current(clock()), "update_required");
             if (ent is null) return new RefreshOutcome(RefreshStatus.Rejected, CachedSource().Current(clock()), "entitlement");
             return new RefreshOutcome(RefreshStatus.Updated, ent);
         }
@@ -216,9 +226,15 @@ public sealed class ProAccount(
     }
 
     private async Task<Entitlement?> FetchEntitlementAsync(string accessToken, string installation, string jwks,
-                                                          CancellationToken cancel)
+                                                          CancellationToken cancel, Action<UpdateRequiredResponse>? seen = null)
     {
         var fetch = await http.GetEntitlementAsync(accessToken, installation, cancel).ConfigureAwait(false);
+        if (fetch.UpdateRequired is { } upgrade)
+        {
+            seen?.Invoke(upgrade);
+            UpdateRequired?.Invoke(upgrade);
+            return null;
+        }
         if (fetch.Jws is null) return null;
         JwksKeySet keys;
         try { keys = JwksKeySet.Parse(jwks); }

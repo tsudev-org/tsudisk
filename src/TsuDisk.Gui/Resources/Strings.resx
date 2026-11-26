@@ -136,4 +136,15 @@
   <data name="ExtendApplyNoticeRecovery" xml:space="preserve"><value>You can apply this plan here. The plan moves the Recovery partition (disable WinRE, delete, extend, recreate Recovery, enable WinRE - KB5028997). TsuDisk asks you to type the drive letter again, saves the WinRE image to the log folder, and rolls back if a step fails. Do not shut down while it runs.</value></data>
   <data name="ConfirmWarningExtend" xml:space="preserve"><value>This writes to the disk: the partition grows into the free space right after it. Its start position and data stay the same; other partitions do not change. Do not shut down or unplug the disk while it runs.</value></data>
   <data name="ConfirmWarningExtendRecovery" xml:space="preserve"><value>This writes to the disk and DELETES then RECREATES the Recovery partition right after the drive (WinRE is disabled first and enabled again afterwards; the WinRE image is saved to the log folder). Data on the extended drive stays intact. Do not shut down or unplug the disk while it runs.</value></data>
+  <data name="LockCommandCopied" xml:space="preserve"><value>The update command was copied: {0}
+
+TsuDisk will now close. Open PowerShell, paste the command (Ctrl+V) and press Enter, then open TsuDisk again.</value></data>
+  <data name="LockCommandShown" xml:space="preserve"><value>Run this update command in PowerShell: {0}
+
+(The clipboard is busy - press Ctrl+C in this dialog to copy it.) TsuDisk will now close.</value></data>
+  <data name="LockOpened" xml:space="preserve"><value>The download page ({0}) was opened in your browser. TsuDisk will now close so you can replace it with the new version.</value></data>
+  <data name="LockExportPick" xml:space="preserve"><value>Choose a folder for the data export</value></data>
+  <data name="LockExporting" xml:space="preserve"><value>Exporting data...</value></data>
+  <data name="LockExported" xml:space="preserve"><value>Exported {0} files to: {1}</value></data>
+  <data name="LockExportFailed" xml:space="preserve"><value>Could not export data: {0}</value></data>
 </root>

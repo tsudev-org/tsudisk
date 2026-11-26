@@ -85,6 +85,8 @@ jobs:
             if ($p.ExitCode -ne 0) { Get-Content (Join-Path $out 'loi.txt') -ErrorAction SilentlyContinue; throw "tsudisk-gui $($run.Dir) ma thoat $($p.ExitCode)" }
             $n = (Get-ChildItem $out -Filter 'tsudisk-gui_*.png').Count
             if ($n -ne 4) { throw "$($run.Dir): can 4 anh, co $n" }
+            $k = (Get-ChildItem $out -Filter 'tsudisk-gui-khoa_*.png').Count   # modal khoa vi/en x Sang/Toi (ADR-0012)
+            if ($k -ne 4) { throw "$($run.Dir): can 4 anh modal khoa, co $k" }
           }
       - name: E2E lai giao dien doi ten tren o ao VHDX (UI Automation, ADR-0009)
         shell: powershell

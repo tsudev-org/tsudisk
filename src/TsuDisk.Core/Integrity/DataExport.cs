@@ -41,6 +41,24 @@ public static partial class DataExport
             || string.Equals(fileName, Pro.ProAccountStore.LockFile, StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary><c>%ProgramData%\TsuDisk\nhat-ky</c> - nhat ky lan chay + ban sao luu GPT (CLI va GUI ghi chung).</summary>
+    public static string DefaultLogRoot =>
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "TsuDisk", "nhat-ky");
+
+    /// <summary>Cai dat giao dien <c>%LOCALAPPDATA%\TsuDisk\giao-dien.json</c> (trung <c>TsuDisk.Gui.SettingsStore</c>).</summary>
+    public static string GuiSettingsPath => Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TsuDisk", "giao-dien.json");
+
+    /// <summary>
+    /// Nguon chung cho lenh <c>xuat-du-lieu</c> va nut tren modal khoa GUI (ADR-0012 muc 11). KHONG co thu muc trang thai
+    /// Pro (<c>%LOCALAPPDATA%\tsudev\tsudisk</c>: refresh token, dem ban ke) - do la bi mat/du lieu thiet bi.
+    /// </summary>
+    public static IReadOnlyList<ExportSource> StandardSources(string? logRoot = null) =>
+    [
+        new("nhat-ky", Path.GetFullPath(logRoot ?? DefaultLogRoot)),
+        new("cai-dat", GuiSettingsPath),
+    ];
+
     public static ExportResult Export(IEnumerable<ExportSource> sources, string destinationDirectory, string appVersion, DateTimeOffset now)
     {
         ArgumentNullException.ThrowIfNull(sources);

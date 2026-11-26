@@ -69,17 +69,23 @@ bảng mọi lệnh). E2E xanh trên CI. PR đã gộp.
 
 ## Phase INT4 - GUI: modal khoá + Xuất dữ liệu
 
-- [ ] `UpdateRequiredWindow`:
+- [x] `UpdateRequiredWindow`:
       - Toàn màn, không đóng được (Esc, Alt+F4, X); focus không ra khỏi cửa sổ; có tên UI Automation.
       - Sáng/Tối/tương phản cao; nguyên văn vi/en; đúng hai nút.
-- [ ] Lịch kiểm: khi mở, mỗi 6 giờ, khi kích hoạt lại sau ≥ 30 phút. Có thao tác đĩa đang chạy thì chờ xong mới hiện.
-- [ ] Nút **Cập nhật ngay** theo kênh: GitHub mở `url`; Scoop/winget hiện lệnh + sao chép. Nút **Xuất dữ liệu**: chọn
+- [x] Lịch kiểm: khi mở, mỗi 6 giờ, khi kích hoạt lại sau ≥ 30 phút. Có thao tác đĩa đang chạy thì chờ xong mới hiện.
+- [x] Nút **Cập nhật ngay** theo kênh: GitHub mở `url`; Scoop/winget hiện lệnh + sao chép. Nút **Xuất dữ liệu**: chọn
       thư mục, gọi `DataExport`.
-- [ ] `--chup-man-hinh` chụp thêm modal vi/en × Sáng/Tối, dùng dữ liệu mẫu chỉ để hiển thị, không đi qua quyết định của
+- [x] `--chup-man-hinh` chụp thêm modal vi/en × Sáng/Tối, dùng dữ liệu mẫu chỉ để hiển thị, không đi qua quyết định của
       cổng. Không thêm cờ hay biến môi trường nào bỏ qua cổng.
-- [ ] Ca E2E GUI G11: modal không đóng được bằng Esc/Alt+F4 (UIA) khi khởi chạy ở chế độ chụp mẫu.
+- [x] Ca E2E GUI G11: modal không đóng được bằng Esc/Alt+F4 (UIA) khi khởi chạy ở chế độ chụp mẫu.
 
 **Nghiệm thu**: E2E GUI xanh trên CI (G1-G11). Đã xem ảnh chụp 4 biến thể. Tương phản chữ ≥ 4,5:1 (test token). PR đã gộp.
+
+Tiến độ (26/11/2026, phiên 14): Core `GuiGateSchedule` + `UpdateAction` + `ServerLockStore` (`426` từ `ProAccount` khoá
+CLI và GUI), `DataExport.StandardSources` dùng chung; GUI `GuiGate` + `UpdateRequiredWindow` (tương phản cao: màu hệ
+thống); 4 ảnh modal đã xem; UIA thử trên máy dev đạt (tên, hai nút, Maximized, IsModal, focus, Esc, Tab, WM_CLOSE).
+Test 543 -> 572. Còn: E2E GUI G1-G11 xanh trên CI + PR gộp. Cập nhật ngay = hành động theo kênh rồi đóng app (ADR-0012
+"Ghi chú triển khai").
 
 ## Phase INT5 - Phát hành: nâng `latest` theo kênh
 

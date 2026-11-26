@@ -136,4 +136,15 @@
   <data name="ExtendApplyNoticeRecovery" xml:space="preserve"><value>Có thể áp dụng kế hoạch này ngay tại đây. Kế hoạch dời phân vùng Recovery (tắt WinRE, xóa, mở rộng, tạo lại Recovery, bật WinRE - KB5028997). TsuDisk yêu cầu gõ lại chữ cái ổ, lưu ảnh WinRE vào nhật ký và tự hoàn tác nếu một bước lỗi. Không tắt máy khi đang chạy.</value></data>
   <data name="ConfirmWarningExtend" xml:space="preserve"><value>Thao tác này ghi lên đĩa: phân vùng được nới vào vùng trống ngay sau nó. Vị trí bắt đầu và dữ liệu giữ nguyên; các phân vùng khác không đổi. Không tắt máy hoặc rút ổ khi đang chạy.</value></data>
   <data name="ConfirmWarningExtendRecovery" xml:space="preserve"><value>Thao tác này ghi lên đĩa và XÓA rồi TẠO LẠI phân vùng Recovery ngay sau ổ (WinRE được tắt trước, bật lại sau; ảnh WinRE được lưu vào thư mục nhật ký). Dữ liệu của ổ được mở rộng giữ nguyên. Không tắt máy hoặc rút ổ khi đang chạy.</value></data>
+  <data name="LockCommandCopied" xml:space="preserve"><value>Đã sao chép lệnh cập nhật: {0}
+
+TsuDisk sẽ đóng lại. Mở PowerShell, dán lệnh (Ctrl+V) rồi nhấn Enter, sau đó mở lại TsuDisk.</value></data>
+  <data name="LockCommandShown" xml:space="preserve"><value>Chạy lệnh cập nhật sau trong PowerShell: {0}
+
+(Không sao chép được vào bộ nhớ tạm - nhấn Ctrl+C trong hộp thoại này để chép.) TsuDisk sẽ đóng lại.</value></data>
+  <data name="LockOpened" xml:space="preserve"><value>Đã mở trang tải bản mới ({0}) trong trình duyệt. TsuDisk sẽ đóng lại để bạn thay bằng bản mới.</value></data>
+  <data name="LockExportPick" xml:space="preserve"><value>Chọn thư mục lưu tệp xuất dữ liệu</value></data>
+  <data name="LockExporting" xml:space="preserve"><value>Đang xuất dữ liệu...</value></data>
+  <data name="LockExported" xml:space="preserve"><value>Đã xuất {0} tệp vào: {1}</value></data>
+  <data name="LockExportFailed" xml:space="preserve"><value>Không xuất được dữ liệu: {0}</value></data>
 </root>

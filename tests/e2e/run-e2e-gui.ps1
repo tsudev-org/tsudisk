@@ -15,7 +15,8 @@
   giu nguyen vi tri/kich thuoc/du lieu, ghi duoc tep len o moi, ban do hien o moi; (7) mo rong o bi chan boi phan vung
   khac -> tu choi NotAdjacent, khong co nut ap dung; (8) [NTFS][Recovery khong chua WinRE][trong] -> tu choi
   RecoveryNotWinRe (giao dien khong co "tao lai Recovery rong"); (9) [NTFS][trong]: go sai chu cai, Huy -> khong doi;
-  (10) go dung chu cai -> o lon them, vi tri bat dau + du lieu giu nguyen, phan vung khac khong doi.
+  (10) go dung chu cai -> o lon them, vi tri bat dau + du lieu giu nguyen, phan vung khac khong doi; (11) modal khoa
+  (--du-lieu-mau --xem-khoa-mau, ADR-0012): dung hai nut, toan man, focus trong modal, Esc/Alt+F4/WM_CLOSE khong dong.
   Giao dien chon theo AutomationId (x:Name), khong theo chu - chay duoc o moi ngon ngu he thong.
 #>
 param(
@@ -362,6 +363,53 @@ try {
     $probe2 = Join-Path "${M}:\" 'probe2.bin'
     [IO.File]::WriteAllBytes($probe2, (New-Object byte[] (32MB)))
     Assert-True ((Get-Item $probe2).Length -eq 32MB) 'ghi duoc 32 MB len o vua mo rong'
+
+    Write-Host "`n=== Ca G11: modal khoa (che do xem mau) khong dong duoc bang Esc / Alt+F4 / dong cua so ==="
+    # Dong ban dang chay (G1-G10) truoc, roi mo ban xem mau: --du-lieu-mau => khong co duong ghi dia; --xem-khoa-mau
+    # chi HIEN modal voi phien ban mau (ADR-0012 muc 10), khong di qua cong va khong goi mang.
+    try {
+        $UIA::FromHandle($proc.MainWindowHandle).GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern).Close()
+        if (-not $proc.WaitForExit(15000)) { $proc.Kill() }
+    } catch { $proc.Kill() }
+    $proc = Start-Process -FilePath $Exe -PassThru -ArgumentList @('--du-lieu-mau', '--xem-khoa-mau', '--thu-muc-nhat-ky', "`"$Logs`"")
+    $lockCond = New-Object System.Windows.Automation.AndCondition(
+        (New-Object System.Windows.Automation.PropertyCondition($UIA::ProcessIdProperty, $proc.Id)),
+        (New-Object System.Windows.Automation.PropertyCondition($UIA::AutomationIdProperty, 'UpdateRequiredWindow')))
+    $modal = Wait-Until { $proc.Refresh(); if ($proc.HasExited) { throw "tsudisk-gui thoat som (ma $($proc.ExitCode))" }; $UIA::RootElement.FindFirst($Scope::Descendants, $lockCond) } 'modal khoa' 60
+    # Ten UIA cua cua so = tieu de nguyen van (vi hoac en theo ngon ngu he thong) = chu cua tieu de tren modal.
+    $heading = (Find-ById $modal 'UpdateRequiredTitle').Current.Name
+    Assert-True ($modal.Current.Name -and $modal.Current.Name -eq $heading) "modal co ten UIA = tieu de ('$heading')"
+    Assert-True ((Find-ById $modal 'UpdateRequiredBody').Current.Name.Length -gt 40) 'than modal doc duoc bang UIA'
+    $buttonCond = New-Object System.Windows.Automation.PropertyCondition($UIA::ControlTypeProperty, [System.Windows.Automation.ControlType]::Button)
+    $buttons = @($modal.FindAll($Scope::Descendants, $buttonCond))
+    $ids = ($buttons | ForEach-Object { $_.Current.AutomationId } | Sort-Object) -join ','
+    Assert-True ($buttons.Count -eq 2 -and $ids -eq 'ExportDataButton,UpdateNowButton') "dung hai nut: $ids"
+    $win = $modal.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)
+    Assert-True ($win.Current.WindowVisualState -eq [System.Windows.Automation.WindowVisualState]::Maximized) 'modal toan man (Maximized)'
+    Assert-True ($win.Current.IsModal) 'cua so la modal'
+    $modal.SetFocus()   # tien trinh mo tu nen co the khong duoc Windows cho len truoc; kich hoat roi moi kiem focus
+    $focused = Wait-Until { $f = $UIA::FocusedElement; if ($f -and $f.Current.ProcessId -eq $proc.Id) { $f } } 'focus trong modal' 20
+    Assert-True ($focused.Current.AutomationId -eq 'UpdateNowButton') "focus ban dau o nut Cap nhat ngay ($($focused.Current.AutomationId))"
+
+    Add-Type -AssemblyName System.Windows.Forms
+    function Test-LockAlive { $proc.Refresh(); return (-not $proc.HasExited) -and ($null -ne $UIA::RootElement.FindFirst($Scope::Descendants, $lockCond)) }
+    foreach ($key in @(@{ Keys = '{ESC}'; Name = 'Esc' }, @{ Keys = '%{F4}'; Name = 'Alt+F4' })) {
+        $modal.SetFocus()
+        Start-Sleep -Milliseconds 300
+        [System.Windows.Forms.SendKeys]::SendWait($key.Keys)
+        Start-Sleep -Milliseconds 1000
+        Assert-True (Test-LockAlive) "$($key.Name) khong dong modal"
+    }
+    try { $win.Close() } catch { Write-Host "  (WindowPattern.Close nem: $($_.Exception.Message))" }
+    Start-Sleep -Milliseconds 1000
+    Assert-True (Test-LockAlive) 'lenh dong cua so (WM_CLOSE, nhu nut X) khong dong modal'
+    # Tab xoay vong trong modal: 4 lan Tab van o mot trong hai nut cua modal.
+    for ($i = 0; $i -lt 4; $i++) { [System.Windows.Forms.SendKeys]::SendWait('{TAB}'); Start-Sleep -Milliseconds 200 }
+    $f2 = $UIA::FocusedElement
+    Assert-True ($f2.Current.ProcessId -eq $proc.Id -and @('UpdateNowButton', 'ExportDataButton') -contains $f2.Current.AutomationId) "Tab xoay vong trong modal ($($f2.Current.AutomationId))"
+    $proc.Kill()
+    $proc.WaitForExit(15000) | Out-Null
+    $proc = $null
 }
 catch {
     Write-Host "LOI: $_" -ForegroundColor Red

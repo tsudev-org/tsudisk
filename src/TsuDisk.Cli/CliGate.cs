@@ -29,9 +29,8 @@ internal static class CliGate
                 () =>
                 {
                     http = ProHook.NewHttpClient(VersionGate.FetchTimeout);
-                    return new VersionGate(new HttpVersionSource(http),
-                        new VersionManifestCache(Path.Combine(ProContract.DefaultStateDirectory(), "versions")),
-                        () => DateTimeOffset.UtcNow);
+                    return new VersionGate(new HttpVersionSource(http), new VersionManifestCache(VersionsDirectory),
+                        () => DateTimeOffset.UtcNow, serverLock: ServerLock);
                 },
                 channel, Commands.ToolVersion, CancellationToken.None).GetAwaiter().GetResult();
         }
@@ -40,15 +39,37 @@ internal static class CliGate
             http?.Dispose();
         }
 
-        if (!CommandGate.MustBlock(cli.Command, decision))
+        return CommandGate.MustBlock(cli.Command, decision) ? PrintLocked(cli, decision!, channel) : null;
+    }
+
+    /// <summary>Thu muc dem ban ke + dau 426 (<c>%LOCALAPPDATA%\tsudev\tsudisk\versions</c>), GUI dung chung.</summary>
+    internal static string VersionsDirectory => Path.Combine(ProContract.DefaultStateDirectory(), "versions");
+
+    internal static ServerLockStore ServerLock => new(VersionsDirectory);
+
+    /// <summary>
+    /// Sau luot lam moi quyen loi (ProHook): may chu vua tra 426 ⇒ dau da ghi ⇒ khoa lenh nay luon (ADR-0012 muc 8).
+    /// Doc tep, khong mang.
+    /// </summary>
+    public static int? CheckServerLock(CliArgs cli)
+    {
+        if (CommandGate.IsAllowedWhenLocked(cli.Command) || AppVersion.TryParse(Commands.ToolVersion) is not { } current)
             return null;
+        var decision = ServerLock.Load(current, DateTimeOffset.UtcNow);
+        return CommandGate.MustBlock(cli.Command, decision)
+            ? PrintLocked(cli, decision!, ProContract.DetectChannel(Environment.ProcessPath))
+            : null;
+    }
+
+    private static int PrintLocked(CliArgs cli, GateDecision decision, string channel)
+    {
         if (cli.Has("json"))
         {
-            Console.WriteLine(CommandGate.LockedJson(decision!, channel));
+            Console.WriteLine(CommandGate.LockedJson(decision, channel));
         }
         else
         {
-            foreach (var line in CommandGate.LockedLines(decision!, channel))
+            foreach (var line in CommandGate.LockedLines(decision, channel))
                 Console.Error.WriteLine(line);
         }
         return ExitCodes.UpdateRequired;
