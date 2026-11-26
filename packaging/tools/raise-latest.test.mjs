@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import {
-  loadPackage, raiseEndpoint, githubReleaseUrl, wingetPageUrl, scoopDownloadUrl, resolveChannelUrl, raise, redactor,
+  loadPackage, validatePackage, raiseEndpoint, githubReleaseUrl, wingetPageUrl, scoopDownloadUrl, resolveChannelUrl, raise, redactor,
 } from './raise-latest.mjs';
 
 const pkg = loadPackage();
@@ -61,7 +61,7 @@ test('github: POST dung endpoint, header token, body {latest,url}', async () => 
 
 test('409 version_not_newer = xong, khong thu lai', async () => {
   const f = fakeFetch(res(409, { error: 'version_not_newer', current: V }));
-  const out = await raise({ pkg, channel: 'github', version: V, url: 'u', token: TOKEN, fetchImpl: f, retryDelayMs: 0 });
+  const out = await raise({ pkg, channel: 'github', version: V, url: githubReleaseUrl(pkg, V), token: TOKEN, fetchImpl: f, retryDelayMs: 0 });
   assert.equal(out.status, 'already');
   assert.equal(f.calls.length, 1);
 });
@@ -70,31 +70,31 @@ test('409 download_unverified: thu lai toi da N lan roi bao loi', async () => {
   const bad = () => res(409, { error: 'download_unverified', reason: '404' });
   const f = fakeFetch(bad(), bad(), res(200, {}));
   const logs = [];
-  const out = await raise({ pkg, channel: 'github', version: V, url: 'u', token: TOKEN, fetchImpl: f, retries: 3,
+  const out = await raise({ pkg, channel: 'github', version: V, url: githubReleaseUrl(pkg, V), token: TOKEN, fetchImpl: f, retries: 3,
     retryDelayMs: 0, log: (m) => logs.push(m) });
   assert.equal(out.status, 'raised');
   assert.equal(f.calls.length, 3);
   assert.equal(logs.length, 2);
 
   const g = fakeFetch(bad(), bad(), bad(), bad(), bad());
-  await assert.rejects(raise({ pkg, channel: 'github', version: V, url: 'u', token: TOKEN, fetchImpl: g, retries: 3,
+  await assert.rejects(raise({ pkg, channel: 'github', version: V, url: githubReleaseUrl(pkg, V), token: TOKEN, fetchImpl: g, retries: 3,
     retryDelayMs: 0 }), /409/);
   assert.equal(g.calls.length, 4);
 });
 
 test('Loi khac (401, 400) khong thu lai; ban khong chinh thuc bi tu choi truoc khi goi mang', async () => {
   const f = fakeFetch(res(401, { error: 'invalid_versions_token' }));
-  await assert.rejects(raise({ pkg, channel: 'github', version: V, url: 'u', token: TOKEN, fetchImpl: f, retryDelayMs: 0 }), /401/);
+  await assert.rejects(raise({ pkg, channel: 'github', version: V, url: githubReleaseUrl(pkg, V), token: TOKEN, fetchImpl: f, retryDelayMs: 0 }), /401/);
   assert.equal(f.calls.length, 1);
   const g = fakeFetch();
-  await assert.rejects(raise({ pkg, channel: 'github', version: '26.11.2601-beta.1', url: 'u', token: TOKEN, fetchImpl: g }));
-  await assert.rejects(raise({ pkg, channel: 'github', version: V, url: 'u', token: '', fetchImpl: g }), /TSU_VERSIONS_TOKEN/);
+  await assert.rejects(raise({ pkg, channel: 'github', version: '26.11.2601-beta.1', url: githubReleaseUrl(pkg, V), token: TOKEN, fetchImpl: g }));
+  await assert.rejects(raise({ pkg, channel: 'github', version: V, url: githubReleaseUrl(pkg, V), token: '', fetchImpl: g }), /TSU_VERSIONS_TOKEN/);
   assert.equal(g.calls.length, 0);
 });
 
 test('Khong in token: may chu doi lai token trong than loi van bi che', async () => {
   const f = fakeFetch(res(500, `loi: ${TOKEN}`));
-  const err = await raise({ pkg, channel: 'github', version: V, url: 'u', token: TOKEN, fetchImpl: f, retryDelayMs: 0 })
+  const err = await raise({ pkg, channel: 'github', version: V, url: githubReleaseUrl(pkg, V), token: TOKEN, fetchImpl: f, retryDelayMs: 0 })
     .catch((e) => e);
   assert.ok(err instanceof Error);
   assert.ok(!err.message.includes(TOKEN));
@@ -131,4 +131,30 @@ test('CLI: dry-run kenh github in url, khong lo token; tham so sai -> ma thoat 1
   const bad = spawnSync(process.execPath, [SCRIPT, '--channel', 'github', '--version', TOKEN], { env, encoding: 'utf8' });
   assert.equal(bad.status, 1);
   assert.ok(!(bad.stdout + bad.stderr).includes(TOKEN));
+});
+
+test('package.json sai khuon bi tu choi truoc khi dung URL goi mang', () => {
+  const ok = { name: 'tsudisk', winget: 'tsudev.TsuDisk', release: { repo: 'tsudev-org/tsudisk' },
+    assets: { 'windows-x64': { file: 'tsudisk_{version}_windows-x64-portable.exe' } } };
+  assert.deepEqual(validatePackage(ok), ok);
+  for (const bad of [
+    { ...ok, name: '../evil' },
+    { ...ok, name: 'a/b' },
+    { ...ok, winget: 'x/../y' },
+    { ...ok, release: { repo: 'evil-org/tsudisk' } },
+    { ...ok, release: { repo: 'tsudev-org/a/../b' } },
+    { ...ok, assets: { 'windows-x64': { file: '../x_{version}.exe' } } },
+    { ...ok, assets: { 'windows-x64': { file: 'khong-co-ban.exe' } } },
+  ]) assert.throws(() => validatePackage(bad), /sai khuon/);
+});
+
+test('raise: url ngoai https://github.com bi tu choi, khong goi mang', async () => {
+  let called = false;
+  const f = async () => { called = true; return new Response('{}', { status: 200 }); };
+  for (const url of ['http://github.com/x', 'https://evil.example/x', 'https://github.com.evil.example/x',
+    'https://u:p@github.com/x', 'khong-phai-url']) {
+    await assert.rejects(raise({ pkg, channel: 'github', version: '26.11.2601', url, token: 'test-token-not-real',
+      fetchImpl: f }), /url/);
+  }
+  assert.equal(called, false);
 });

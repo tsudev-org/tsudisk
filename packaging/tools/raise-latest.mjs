@@ -20,18 +20,54 @@ export const CHANNELS = ['github', 'winget', 'scoop'];
 const SCOOP_BUCKET = 'tsudev-org/scoop-bucket';
 const WINGET_REPO = 'microsoft/winget-pkgs';
 
+// Khuon chat cho cac truong doc tu packaging/package.json truoc khi dung de dung URL goi mang (CodeQL
+// js/file-access-to-http): tep nam trong repo nhung van kiem, de mot thay doi sai khong bien thanh yeu cau toi dich la.
+const PKG_NAME_RE = /^[a-z0-9][a-z0-9-]{0,62}$/;
+const WINGET_ID_RE = /^[A-Za-z0-9]+(\.[A-Za-z0-9]+)+$/;
+const RELEASE_REPO_RE = /^tsudev-org\/[a-z0-9][a-z0-9-]{0,99}$/;
+const ASSET_FILE_RE = /^[A-Za-z0-9._-]*\{version\}[A-Za-z0-9._-]*$/;
+
+/** Kiem khuon goi; tra ban sao chi gom cac truong da kiem. Nem loi neu sai. */
+export function validatePackage(raw) {
+  const name = raw?.name;
+  const winget = raw?.winget;
+  const repo = raw?.release?.repo;
+  const file = raw?.assets?.['windows-x64']?.file;
+  if (typeof name !== 'string' || !PKG_NAME_RE.test(name)) throw new Error('package.json: name sai khuon');
+  if (typeof winget !== 'string' || !WINGET_ID_RE.test(winget)) throw new Error('package.json: winget sai khuon');
+  if (typeof repo !== 'string' || !RELEASE_REPO_RE.test(repo)) throw new Error('package.json: release.repo sai khuon');
+  if (typeof file !== 'string' || !ASSET_FILE_RE.test(file)) {
+    throw new Error('package.json: assets.windows-x64.file sai khuon');
+  }
+  return { name, winget, release: { repo }, assets: { 'windows-x64': { file } } };
+}
+
 export function loadPackage() {
-  return JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'package.json'), 'utf8'));
+  return validatePackage(
+    JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'package.json'), 'utf8')),
+  );
+}
+
+/** URL gui len may chu chi duoc la https://github.com/... (trang Release, cay winget-pkgs, tep tai Release). */
+export function assertAllowedUrl(url) {
+  let u;
+  try { u = new URL(url); } catch { throw new Error('url khong hop le'); }
+  if (u.protocol !== 'https:' || u.hostname !== 'github.com' || u.username || u.password || u.port) {
+    throw new Error(`url ngoai github.com: ${u.origin}`);
+  }
+  return u.href;
 }
 
 /** Thu muc manifest winget cua goi, vd `manifests/t/tsudev/TsuDisk`. */
 export function wingetDir(pkg) {
   const id = pkg.winget;
+  if (!WINGET_ID_RE.test(id ?? '')) throw new Error('ma winget sai khuon');
   return `manifests/${id[0].toLowerCase()}/${id.split('.').join('/')}`;
 }
 
 export function raiseEndpoint(pkg, channel) {
   if (!CHANNELS.includes(channel)) throw new Error(`kenh khong ho tro: ${channel}`);
+  if (!PKG_NAME_RE.test(pkg.name ?? '')) throw new Error('ten goi sai khuon');
   return `${ENDPOINT}/${encodeURIComponent(pkg.name)}/${channel}`;
 }
 
@@ -96,13 +132,14 @@ export async function raise({
 }) {
   if (!VERSION_RE.test(version)) throw new Error(`phien ban sai khuon YY.M.DDNN: ${version}`);
   if (!token) throw new Error('thieu TSU_VERSIONS_TOKEN');
+  const safeUrl = assertAllowedUrl(url);
   const redact = redactor(token);
   const endpoint = raiseEndpoint(pkg, channel);
   for (let attempt = 0; ; attempt++) {
     const r = await fetchImpl(endpoint, {
       method: 'POST',
       headers: { 'x-versions-token': token, 'content-type': 'application/json', 'user-agent': 'tsudisk-raise-latest' },
-      body: JSON.stringify({ latest: version, url }),
+      body: JSON.stringify({ latest: version, url: safeUrl }),
     });
     const text = await r.text();
     let body = {};
