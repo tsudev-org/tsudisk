@@ -20,3 +20,5 @@ E4 security.txt (Contact security@tsudev.com, test Expires) · E5 SSL Labs · E6
 ## Kết quả xử lý
 
 - 25/11/2026 - tsudev-8d: mở phiếu.
+
+- 26/11/2026 - agent-tsudisk (phiên 11): kết quả ở logs/handover/20261126-01 mục 4 (#79, #80, #81; bản 26.11.2601).

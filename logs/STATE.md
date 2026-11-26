@@ -3,10 +3,17 @@
 > Agent đọc file này ở đầu mỗi phiên và cập nhật ở cuối mỗi phiên.
 > Quy trình: `.standards/docs/AGENT_PROTOCOL.md`.
 
-> **Phiên kế tiếp**: đọc `logs/handover/20261124-01_phien-10-gui-mo-rong-o.md`.
+> **Phiên kế tiếp**: đọc `logs/handover/20261126-01_phien-11-sec3-lg4-sec2-phat-hanh-2601.md`.
 
 ## Hàng đợi task (làm từ trên xuống)
 
+- [ ] 👤 **Thu hồi PAT winget** (lộ trong phiên 11, xem Sự cố bảo mật) -> tạo token mới -> nộp winget 26.11.2601.
+- [ ] INT1: cổng phiên bản đọc `versions.json` đã ký (Ed25519 - BCL .NET 10 chưa thấy có sẵn, cần ADR chọn thư viện),
+      modal khoá GUI + thông báo CLI, bước nâng `latest` trong release.yml (secret `TSU_VERSIONS_TOKEN`). Mã sản phẩm
+      `tsudisk`, kênh github/scoop/winget. Cũng là chỗ thêm DPoP (PRODUCT_POLICY 7.4). Cần Opus (mật mã).
+- [ ] QR4 + UI1 (phiếu 20261124-QR1): đăng nhập QR, tương phản biểu tượng, cổng mã chết/ngân sách tốc độ.
+- [ ] UI2 phần B: hoạ tiết nền thẻ theo thể loại (phần A + nền Sáng mới + font đã xong ở #80).
+- [ ] E2E GUI ca G6 (tạo exFAT trên ổ ảo) chập chờn 1 lần ở #81 (chạy lại thì đạt) - nếu lặp lại, lưu nhật ký lần chạy.
 - [ ] winget-pkgs #486490 (26.11.2202), #487170 (26.11.2301), #487205 (26.11.2302): chờ moderator; #487246 (26.11.2303),
       #487347 (26.11.2401): URL-Validation-Error 503 LicenseUrl github.com - cần tác giả (`nguyentrangtinhsu`) bình luận
       xin chạy lại; bản sau dùng `disk.tsudev.com/ban-quyen/` (#76). Merge => khối "Cài bằng lệnh" (PACKAGING 8.1).
@@ -24,6 +31,12 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 26/11/2026 (phiên 11) - SEC3: NuGet lock file (#79), đóng CodeQL #3 #4 có bằng chứng, gitleaks toàn lịch sử sạch.
+  Bộ quy ước v8.0.0; LG4 (gỡ `ProNotice`), SYN1/PRO3 (nội dung Pro mới), `X-Tsu-App`, SEC2 `/security/`, UI2 A (CLS
+  0,076 -> 0, lề điện thoại) - #80, test 391. Website deploy-2026.11.26.1 (SSL Labs A+, Observatory A+ 150). Phát hành
+  **26.11.2601** (#81): VirusTotal 0/74 hai exe, SHA256SUMS + attestation đã kiểm; job winget lỗi 422 (thiếu scope
+  `workflow`), script đã sửa. Scoop chưa cập nhật. Còn 77 nhánh cũ trên remote (lệnh xoá bị chặn quyền, chờ chủ dự án).
 
 - 24/11/2026 (phiên 10) - Không có PR Dependabot. GUI mở rộng ổ (#74, ADR-0011, `ExtendForm`, test 377 -> 392, E2E GUI
   58/58 G1-G10 trên CI). Phát hành **26.11.2401** (#75; đổi từ 2304 vì sang ngày 24/11): release.yml mọi job xanh,
@@ -117,6 +130,11 @@
 
 > Ghi theo `.standards/docs/SECURITY_BASELINE.md` mục 9. Để trống nếu chưa có.
 
+- 26/11/2026 - **Lộ PAT winget** (classic, `public_repo`, tài khoản `nguyentrangtinhsu`): agent chạy
+  `cut -d= -f1 ~/.config/tsudev/winget.env` để xem tên biến, nhưng tệp chứa token trần nên cả giá trị hiện trong phiên
+  Claude (transcript cục bộ + phiên mô hình). Không vào git, không công khai; D1. Agent ngừng dùng token. **MỞ** - 👤
+  thu hồi tại github.com/settings/tokens, tạo token mới, nạp bằng `tsu-nhan-bi-mat`, xem security log. Phòng ngừa: tệp
+  trong `~/.config/tsudev/` coi như chỉ chứa bí mật - KHÔNG `cat/cut/head/grep` in nội dung; chỉ `< tệp` vào lệnh nhận.
 - 18/11/2026 - **Lộ PAT winget** (classic, `public_repo`, tài khoản `nguyentrangtinhsu`): khi nạp `WINGET_TOKEN`, token
   được dán vào terminal và hiện đầy đủ trong ảnh chụp gửi vào phiên Claude, đồng thời có thể đã vào `~/.bash_history`.
   Lộ khoảng vài phút trước khi thay. Đã làm: tạo token mới (hết hạn 17/12/2026), ghi lại `~/.config/tsudev/winget.env`,
