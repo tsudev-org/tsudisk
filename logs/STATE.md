@@ -3,14 +3,16 @@
 > Agent đọc file này ở đầu mỗi phiên và cập nhật ở cuối mỗi phiên.
 > Quy trình: `.standards/docs/AGENT_PROTOCOL.md`.
 
-> **Phiên kế tiếp**: đọc `logs/handover/20261126-01_phien-11-sec3-lg4-sec2-phat-hanh-2601.md`.
+> **Phiên kế tiếp**: đọc `logs/handover/20261126-02_phien-12-int1-plan-adr-0012.md`, `docs/PLAN.md`
+> và `logs/handover/20261126-DD1_phoi-hop-don-dia.md`.
 
 ## Hàng đợi task (làm từ trên xuống)
 
-- [ ] 👤 Xác nhận đã xoá PAT winget CŨ (sự cố 26/11); winget-pkgs#489979 (26.11.2601) chờ moderator.
-- [ ] INT1: cổng phiên bản đọc `versions.json` đã ký (Ed25519 - BCL .NET 10 chưa thấy có sẵn, cần ADR chọn thư viện),
-      modal khoá GUI + thông báo CLI, bước nâng `latest` trong release.yml (secret `TSU_VERSIONS_TOKEN`). Mã sản phẩm
-      `tsudisk`, kênh github/scoop/winget. Cũng là chỗ thêm DPoP (PRODUCT_POLICY 7.4). Cần Opus (mật mã).
+- [ ] winget-pkgs#489979 (26.11.2601) chờ moderator. (PAT winget cũ đã xoá - sự cố 26/11 ĐÓNG.)
+- [ ] 👤 Duyệt `docs/PLAN.md` + ADR-0012 (cổng phiên bản, Đề xuất). Duyệt xong làm lần lượt Phase INT2 -> INT7,
+      QR4-UI1, UI2-B - mỗi ngữ cảnh một Phase. INT6 (DPoP) bị chặn tới khi tsudev chốt hợp đồng DPoP desktop.
+- [ ] 👤 Dọn đĩa: phiếu `logs/handover/20261126-DD1_phoi-hop-don-dia.md` mục 3 (co VHDX, bản build tsudisk).
+      ⛔ Infatica đang chạy - phiên tsuguard theo dõi.
 - [ ] QR4 + UI1 (phiếu 20261124-QR1): đăng nhập QR, tương phản biểu tượng, cổng mã chết/ngân sách tốc độ.
 - [ ] UI2 phần B: hoạ tiết nền thẻ theo thể loại (phần A + nền Sáng mới + font đã xong ở #80).
 - [ ] E2E GUI ca G6 (tạo exFAT trên ổ ảo) chập chờn 1 lần ở #81 (chạy lại thì đạt) - nếu lặp lại, lưu nhật ký lần chạy.
@@ -31,6 +33,10 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 26/11/2026 (phiên 12) - Phase INT1: `docs/PLAN.md` + ADR-0012 (Đề xuất). Chủ dự án chốt: chỉ kiểm bản kê khi đã
+  đăng nhập; CLI khoá mọi lệnh trừ `phien-ban`/`tro-giup`/`dang-xuat`/`xuat-du-lieu`. Sự cố PAT winget 26/11 ĐÓNG.
+  Phiếu XK1 ĐÓNG (chấp nhận rủi ro). Phối hợp dọn đĩa: phiếu DD1.
 
 - 26/11/2026 (phiên 11) - SEC3: NuGet lock file (#79), đóng CodeQL #3 #4 có bằng chứng, gitleaks toàn lịch sử sạch.
   Bộ quy ước v8.0.0; LG4 (gỡ `ProNotice`), SYN1/PRO3 (nội dung Pro mới), `X-Tsu-App`, SEC2 `/security/`, UI2 A (CLS
@@ -125,6 +131,7 @@
 - 23/11/2026 - GUI áp dụng đổi chữ cái/nhãn qua đường chạy chung CLI, xác nhận hai lần: `docs/adr/0009-giao-dien-ap-dung-doi-ten.md`
 - 23/11/2026 - GUI tạo phân vùng trong vùng trống, xác nhận lần hai bằng số đĩa: `docs/adr/0010-giao-dien-tao-phan-vung.md`
 - 23/11/2026 - GUI mở rộng ổ, không tuỳ chọn riêng, chỉ áp dụng khi đọc được WinRE: `docs/adr/0011-giao-dien-mo-rong-o.md`
+- 26/11/2026 - (Đề xuất) Cổng phiên bản: bản kê ký Ed25519 (BouncyCastle), chỉ kiểm khi đã đăng nhập, khoá CLI/GUI, nâng `latest` theo kênh, DPoP: `docs/adr/0012-cong-phien-ban-ban-ke-ky-ed25519.md`
 
 ## Sự cố bảo mật
 
@@ -134,7 +141,7 @@
   `cut -d= -f1 ~/.config/tsudev/winget.env` để xem tên biến, nhưng tệp chứa token trần nên cả giá trị hiện trong phiên
   Claude (transcript cục bộ + phiên mô hình). Không vào git, không công khai; D1. Agent ngừng dùng token. Chủ dự án
   tạo token mới, nạp qua `tsu-nhan-bi-mat` 18:14 26/11 (`~/.config/tsudev/winget.env` + secret `WINGET_TOKEN`; kiểm:
-  scope `public_repo`, hết hạn 24/02/2027). **CÒN CHỜ** chủ dự án xác nhận đã xoá token cũ + xem security log. Phòng ngừa: tệp
+  scope `public_repo`, hết hạn 24/02/2027). Chủ dự án xác nhận đã xoá token cũ (26/11/2026, phiên 12). **ĐÓNG**. Phòng ngừa: tệp
   trong `~/.config/tsudev/` coi như chỉ chứa bí mật - KHÔNG `cat/cut/head/grep` in nội dung; chỉ `< tệp` vào lệnh nhận.
 - 18/11/2026 - **Lộ PAT winget** (classic, `public_repo`, tài khoản `nguyentrangtinhsu`): khi nạp `WINGET_TOKEN`, token
   được dán vào terminal và hiện đầy đủ trong ảnh chụp gửi vào phiên Claude, đồng thời có thể đã vào `~/.bash_history`.
