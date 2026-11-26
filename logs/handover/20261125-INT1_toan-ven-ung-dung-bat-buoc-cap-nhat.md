@@ -44,7 +44,8 @@
 | tsudev | ⬜ | ⬜ | ⬜ | đợt 1 |
 | tsudev-ui-flutter | ⬜ | ⬜ | - | đợt 1 |
 | qulythuchi / tsuscan / sound-db / lotus-share / app-la-ban | ⬜ | ⬜ | ⬜ | đợt 2 |
-| tsufiles / tsuswico / tsudisk / tsutramon / tsucwico / tsucontact | ⬜ | ⬜ (máy chủ quyết) | ⬜ | đợt 2 |
+| tsudisk | ✅ CLI + GUI (ADR-0012, #86-#88); thử thật 27/11 ĐẠT | ✅ nhận `426` ⇒ khoá (#88); DPoP `cnf.jkt` (#93) | ✅ OPEN 5.2: `DebugType=none` (#95); không trim/AOT (lệch chuẩn AGENTS B.4) | 26.11.2701 / 26.11.2702 |
+| tsufiles / tsuswico / tsutramon / tsucwico / tsucontact | ⬜ | ⬜ (máy chủ quyết) | ⬜ | đợt 2 |
 | TsuGameLabs (game-kit + 6 game) | ⬜ | ⬜ | ⬜ làm rối mạnh | đợt 2 |
 
 ## 4. Điều kiện đóng
@@ -55,3 +56,8 @@ ký lại bằng khoá khác ⇒ `403 untrusted_client` + modal không chính th
 ## 5. Kết quả xử lý
 
 - 25/11/2026 - projects-05: mở phiếu; tsudev-standards v7.0.0 PR #85. Chủ dự án gộp #85; bản sao phát vào `logs/handover/` của các repo (chưa commit - phiên repo tự commit).
+- 27/11/2026 - agent-tsudisk (Phase INT7): phát hành 26.11.2701 (bản đầu có cổng; VT 0/74, SHA256SUMS + attestation đã
+  kiểm) rồi 26.11.2702 (N+1, `nang-latest` nâng kênh github). Thử thật trên Windows, bản 26.11.2701 đã đăng nhập
+  (khoá thiết bị TPM): lệnh ghi/đọc đĩa thoát mã 6 + nguyên văn modal (cả `--json`); `phien-ban` và `xuat-du-lieu`
+  vẫn chạy (zip có `manifest.json`); GUI hiện "Update required" toàn màn, modal, đúng hai nút, WM_CLOSE không đóng.
+  Điều kiện đóng (1) ĐẠT cho tsudisk. Bẫy gặp: bản kê 503 lúc backend Render ngủ (phiếu tsudev VS1, app mở đúng thiết kế).

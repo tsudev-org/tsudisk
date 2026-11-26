@@ -11,7 +11,8 @@
 - [ ] winget-pkgs#489979 (26.11.2601) chờ moderator. (PAT winget cũ đã xoá - sự cố 26/11 ĐÓNG.)
 - [ ] Đồng bộ tsudev-standards v9.0.0 (tin từ phiên `mot-cong-dang-nhap-cp3`, 27/11): chạy `sync-standards.sh` HAI lượt,
       `.standards/scripts/check-central-login.sh`, lập phiếu RA_SOAT_DANG_NHAP (CHANGELOG 9.0.0 của bộ quy ước).
-- [ ] Phase INT7 kế tiếp (mỗi ngữ cảnh một Phase), rồi QR4-UI1, UI2-B.
+- [ ] Phase QR4-UI1 kế tiếp (mỗi ngữ cảnh một Phase), rồi UI2-B.
+- [ ] winget-pkgs#490479 (26.11.2701) chờ moderator; 26.11.2702: winget-pkgs#490487.
 - [ ] 👤 Dọn đĩa: phiếu `logs/handover/20261126-DD1_phoi-hop-don-dia.md` mục 3 (co VHDX, bản build tsudisk).
       ⛔ Infatica đang chạy - phiên tsuguard theo dõi.
 - [ ] QR4 + UI1 (phiếu 20261124-QR1): đăng nhập QR, tương phản biểu tượng, cổng mã chết/ngân sách tốc độ.
@@ -33,6 +34,12 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 27/11/2026 (phiên 17) - Phase INT7 XONG: phát hành **26.11.2701** (#95; bản đầu có cổng phiên bản; `DebugType=none`;
+  VT 0/74 hai exe; SHA256SUMS + attestation đã kiểm; website deploy-2026.11.27.1; Scoop scoop-bucket#35;
+  winget-pkgs#490479) rồi **26.11.2702** (#96, N+1; Scoop scoop-bucket#36). Thử thật: 26.11.2701 đã đăng nhập bị khoá
+  (CLI mã 6, GUI modal không đóng được), `xuat-du-lieu` vẫn chạy. Bản kê từng 503 do backend Render ngủ (phiếu tsudev
+  VS1, không mất khoá). Phiếu INT1: dòng tsudisk ✅.
 
 - 27/11/2026 (phiên 16) - Phase INT6 (#93): DPoP desktop theo tsudev ADR-0004 mục 6 - `Core/Pro/Dpop.cs`,
   `Windows/DpopKeyStore.cs` (CNG, TPM trước), JWS phải có `cnf.jkt` đúng khoá, thử lại một lần (nonce/lệch giờ). Test

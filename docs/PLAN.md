@@ -7,7 +7,7 @@
 > Quyết định chủ dự án 26/11/2026: chỉ kiểm khi đã đăng nhập; CLI bị khoá thì chặn mọi lệnh trừ
 > `phien-ban`/`tro-giup`/`dang-xuat`/`xuat-du-lieu`.
 
-**Trạng thái kế hoạch**: ĐÃ DUYỆT 26/11/2026. Phase INT3 xong; kế tiếp: Phase INT4.
+**Trạng thái kế hoạch**: ĐÃ DUYỆT 26/11/2026. Phase INT1-INT7 xong; kế tiếp: Phase QR4-UI1.
 
 ## Phase INT1 - Lập kế hoạch + ADR cổng phiên bản
 
@@ -131,9 +131,13 @@ của máy này: có".
 - [x] Phát hành bản mới (CHANGELOG, VirusTotal, SHA256SUMS + attestation, website deploy, Scoop, winget).
       26.11.2701 (#95, run 45897552660 mọi job xanh): VT 0/74 hai exe; SHA256SUMS + attestation hai exe đã kiểm;
       website deploy-2026.11.27.1; Scoop scoop-bucket#35; winget-pkgs#490479; bản kê github + scoop = 26.11.2701.
-- [ ] Thử thật trên Windows: cài bản N có cổng và đăng nhập. Phát hành N+1, `nang-latest` chạy. Bản N hiện modal (GUI)
+- [x] Thử thật trên Windows: cài bản N có cổng và đăng nhập. Phát hành N+1, `nang-latest` chạy. Bản N hiện modal (GUI)
       và thoát mã 6 (CLI). Xuất dữ liệu vẫn chạy.
-- [ ] Cập nhật bảng phiếu INT1 (dòng tsudisk) + phiếu gốc.
+      27/11: N = 26.11.2701 (đã đăng nhập, khoá TPM); trước N+1 `danh-sach` chạy bình thường. N+1 = 26.11.2702 (#96, run
+      45900280868 mọi job xanh, bản kê `github.latest = 26.11.2702`). Bản N: `danh-sach` mã 6 + nguyên văn, `--json` ra
+      `update_required`; `phien-ban` mã 0; `xuat-du-lieu` ra zip có `manifest.json`. GUI (UIA): cửa sổ "Update required"
+      Maximized, IsModal, đúng hai nút Export data / Update now, WM_CLOSE không đóng.
+- [x] Cập nhật bảng phiếu INT1 (dòng tsudisk) + phiếu gốc (phiên tsudev ghi vào phiếu gốc 27/11, vào git cùng PR CP3).
 
 Tiến độ (27/11/2026, phiên 17): rà soát cổng trước phát hành không thấy lỗi chặn (lỗi mạng/503/chữ ký sai/đệm hết hạn
 ⇒ `Unknown`, không chặn; kênh scoop/winget nhận đúng). PR #95 phát hành 26.11.2701 + `DebugType=none`.
@@ -142,6 +146,9 @@ Bản kê production từng trả 503 (27/11, backend Render ngủ + đệm Work
 
 **Nghiệm thu**: APP_INTEGRITY mục 8 đánh dấu đủ cho tsudisk (desktop OPEN: cổng + test, không SDK bên thứ ba, gia cố
 5.2 .NET: `DebugType=none` cho bản phát hành - KHÔNG trim/AOT theo AGENTS B.5, ghi lệch chuẩn).
+
+✅ Nghiệm thu 27/11/2026: APP_INTEGRITY mục 8 cho tsudisk - cổng + modal có test (INT2-INT4) và thử thật đạt; nhận `426`;
+không SDK bên thứ ba (I5); OPEN 5.2: `DebugType=none` (#95), lệch chuẩn trim/AOT ghi AGENTS B.4. Mục Android: không áp dụng.
 
 ## Phase QR4-UI1 - Đăng nhập QR + tương phản biểu tượng + cổng mã chết
 
