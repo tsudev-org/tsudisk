@@ -9,11 +9,8 @@
 ## Hàng đợi task (làm từ trên xuống)
 
 - [ ] winget-pkgs#489979 (26.11.2601) chờ moderator. (PAT winget cũ đã xoá - sự cố 26/11 ĐÓNG.)
-- [ ] Phase INT5 (nâng `latest` theo kênh): PR #89 ĐÃ GỘP. Dispatch đầu lỗi vì env `packages` chỉ cho tag `v*` ->
-      env mới `versions` (main + tag `v*`, chỉ `TSU_VERSIONS_TOKEN`) đã tạo, PR #90. 👤 nạp secret:
-      `set -a; . ~/.config/tsudev/keys/tsu-versions-2026.env; set +a; printf %s "$TSU_VERSIONS_TOKEN" | gh secret set TSU_VERSIONS_TOKEN --env versions -R tsudev-org/tsudisk`
-      rồi gộp #90 + `gh workflow run kenh-phat-hanh.yml -f version=26.11.2601`, kiểm bản kê. Lịch 6 giờ lỗi tới khi xong.
-      Sau đó INT7, QR4-UI1, UI2-B - mỗi ngữ cảnh một Phase. INT6 (DPoP) bị chặn tới khi tsudev chốt hợp đồng DPoP desktop.
+- [ ] Phase INT7 kế tiếp (mỗi ngữ cảnh một Phase), rồi QR4-UI1, UI2-B. INT6 (DPoP) bị chặn tới khi tsudev chốt hợp
+      đồng DPoP desktop. Còn: xoá `TSU_VERSIONS_TOKEN` cũ khỏi env `packages` (chờ chủ dự án đồng ý).
 - [ ] 👤 Dọn đĩa: phiếu `logs/handover/20261126-DD1_phoi-hop-don-dia.md` mục 3 (co VHDX, bản build tsudisk).
       ⛔ Infatica đang chạy - phiên tsuguard theo dõi.
 - [ ] QR4 + UI1 (phiếu 20261124-QR1): đăng nhập QR, tương phản biểu tượng, cổng mã chết/ngân sách tốc độ.
@@ -36,6 +33,11 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 27/11/2026 (phiên 15) - Phase INT5 XONG: #89 (raise-latest + job `nang-latest` + `kenh-phat-hanh.yml`, gia cố CodeQL
+  `js/file-access-to-http`), #90 (env `versions`: chỉ `TSU_VERSIONS_TOKEN`, main + tag `v*`; `WINGET_TOKEN` vẫn chỉ tag).
+  Dispatch 26.11.2601: bản kê github + scoop = 26.11.2601, winget bỏ qua đúng. Bẫy: biến trong tệp khoá là
+  `VERSIONS_RAISE_TOKEN`, không phải `TSU_VERSIONS_TOKEN`.
 
 - 26/11/2026 (phiên 14) - Phase INT4: GUI `UpdateRequiredWindow` (toàn màn, không đóng được, hai nút nguyên văn, tương
   phản cao) + `GuiGate` (mở / 6 giờ / quay lại >= 30 phút, chờ thao tác đĩa xong); `426` từ `ProAccount` -> dấu
