@@ -101,8 +101,13 @@ public sealed class EntitlementVerifier(JwksKeySet keys, string clientId)
             Str(p, "pro_source"),
             donor,
             Str(p, "badge") ?? "none",
-            devices), EntitlementError.None);
+            devices,
+            CnfJkt(p)), EntitlementError.None);
     }
+
+    /// <summary><c>cnf</c> la object co <c>jkt</c> dang chuoi (RFC 9449 muc 6.1); moi dang khac ⇒ null.</summary>
+    private static string? CnfJkt(JsonElement p)
+        => p.TryGetProperty("cnf", out var cnf) && cnf.ValueKind == JsonValueKind.Object ? Str(cnf, "jkt") : null;
 
     private bool AudienceMatches(JsonElement p)
     {

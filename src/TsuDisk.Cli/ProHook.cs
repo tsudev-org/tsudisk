@@ -39,6 +39,7 @@ internal static class ProHook
             ProContract.ClientId,
             () => DateTimeOffset.UtcNow)
         {
+            DpopKeys = new CngDpopKeyStore(),   // ADR-0012 muc 13: TPM neu co, khong thi KSP phan mem
             // ADR-0012 muc 8: 426 o bat ky luot lay quyen loi nao ⇒ ghi dau de cong CLI + GUI cung khoa.
             UpdateRequired = r => CliGate.ServerLock.TrySave(r, Commands.ToolVersion, DateTimeOffset.UtcNow),
         };
@@ -195,6 +196,8 @@ internal static class ProHook
         if (BadgeLabel(ent.Badge) is { } badge) Console.WriteLine("Huy hiệu: " + badge);
         Console.WriteLine("Thiết bị dùng tài khoản trong 30 ngày: " + ent.Devices30d.ToString(CultureInfo.InvariantCulture));
         Console.WriteLine("Thông tin quyền lợi lưu trên máy đến: " + DateTime(ent.ExpiresAt));
+        // Co Jkt = may chu da gan quyen loi voi khoa thiet bi (ProAccount bo JWS gan khoa khac).
+        Console.WriteLine("Gắn với khóa thiết bị của máy này: " + (ent.Jkt is null ? "không" : "có"));
         if (!isPro)
         {
             // PRODUCT_POLICY 3.7.3: cau dinh vi -> quyen loi dang chay that -> dieu khoan 7.5 + chinh sach thanh toan ->

@@ -111,13 +111,14 @@ GET bản kê thấy `products.tsudisk.channels.github.latest = 26.11.2601`, và
 
 ## Phase INT6 - DPoP cho máy khách desktop
 
-- [ ] Phiếu trao đổi với repo tsudev: chốt hợp đồng DPoP desktop gồm `token_endpoint`, `cnf.jkt` trong JWS quyền lợi,
-      `DPoP-Nonce`, thời điểm bắt buộc ở `/api/me/entitlements`. Chờ phía tsudev trả lời. Phase này BỊ CHẶN tới khi có
-      hợp đồng.
-- [ ] `TsuDisk.Windows/DpopKey`: CNG P-256, ưu tiên TPM (Platform Crypto Provider), nếu không có thì dùng Software KSP;
-      khoá không xuất được.
-- [ ] `ProHttp` gửi proof (`htm`, `htu`, `iat`, `jti`, `ath`), thử lại một lần khi nhận `use_dpop_nonce`.
-- [ ] ADR-0012 bổ sung, hoặc ADR-0013 nếu hợp đồng khác giả định.
+- [x] Phiếu trao đổi với repo tsudev (`20261127-DP1`): làm theo hợp đồng đang chạy (tsudev ADR-0004 mục 6: DPoP tuỳ
+      chọn ở `/api/me/entitlements`, `cnf.jkt`). Câu hỏi còn mở (thời điểm bắt buộc, `DPoP-Nonce`, `token_endpoint`)
+      không chặn việc phía máy khách.
+- [x] `TsuDisk.Windows/DpopKeyStore`: CNG P-256, ưu tiên TPM (Platform Crypto Provider), nếu không có thì dùng Software
+      KSP; khoá không xuất được. Đã thử trên Windows thật (TPM).
+- [x] `ProHttp` gửi proof (`htm`, `htu`, `iat`, `jti`, `ath`), thử lại một lần khi nhận `use_dpop_nonce` (và khi lệch
+      giờ).
+- [x] ADR-0012 bổ sung (ghi chú triển khai INT6).
 
 **Nghiệm thu**: test proof khớp RFC 9449 (vector tự kiểm bằng khoá thử). Đăng nhập thật trên Windows qua (👤 bấm trình
 duyệt). JWS quyền lợi có `cnf.jkt` khớp khoá. PR đã gộp.

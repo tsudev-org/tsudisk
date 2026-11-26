@@ -14,6 +14,7 @@
 | Refresh token (30 ngày, xoay vòng) | `%LOCALAPPDATA%\tsudev\tsudisk\` (DPAPI CurrentUser + entropy riêng) | Lấy JWS quyền lợi của nạn nhân, đếm thêm thiết bị vào tài khoản |
 | Access token (15 phút) | Chỉ trong bộ nhớ | Như trên, ngắn hạn |
 | Mã cài đặt (128 bit) | `installation-id` | Làm sai số `devices_30d` của tài khoản đó |
+| Khoá DPoP P-256 (`tsudev.tsudisk.dpop.v1`) | CNG: TPM (Platform Crypto Provider), không có thì Software KSP; theo người dùng, không xuất được | Ký bằng chứng DPoP để lấy JWS gắn `cnf.jkt` của thiết bị |
 | JWS quyền lợi đệm (≤ 7 ngày) | `entitlement.jws` + `jwks.json` | Không có - JWS có chữ ký, chỉ ẩn/hiện lời nhắc |
 | Bố cục đĩa, nhật ký, sao lưu GPT (D1) | `%ProgramData%\TsuDisk\nhat-ky` | **Không** đi qua đường nào trong phạm vi này |
 
@@ -37,6 +38,7 @@ Ranh giới: (A) tiến trình `tsudisk.exe` (có thể chạy quản trị) ↔
 | T11 | **Gọi mạng ngầm khi chưa đăng nhập** (I, vi phạm hạng C) | Mọi đường trừ `dang-nhap` kiểm `HasSession` trước khi chạm `ProHttp`; đọc không tạo tệp; `--json`/`--dong-y`/`--xac-nhan`/vào-ra chuyển hướng không bao giờ gọi tsudev.com | `ProOfflineGuardTests` (bộ xử lý HTTP ném lỗi + rà nguồn `ProHook.cs`) |
 | T12 | **Làm hỏng lệnh đĩa / kịch bản tự động** (D): tsudev.com chậm/sập, tệp hỏng, DPAPI lỗi | Nhắc Pro chạy ở ĐẦU lệnh, trước mọi bước ghi: timeout 5 s, mọi ngoại lệ nuốt, lệnh chạy tiếp; không đổi mã thoát; CHỈ IN, không bao giờ chờ phím | `Ngoai_tuyen_*`, `ProRenewalTests` |
 | T13 | **Lùi đồng hồ máy để kéo dài Pro đệm** (T) | Chỉ ảnh hưởng ẩn/hiện trong app trên máy đó; JWS vẫn bị giới hạn bởi chữ ký + máy chủ gate 402 cho mọi thứ có giá trị | Chấp nhận |
+| T14 | **Chép phiên sang máy khác / phát lại bằng chứng DPoP** (S) | Khoá không xuất được; mỗi bằng chứng gắn `htm`, `htu`, `ath`, `iat` ±60 s, `jti` 128 bit một lần; JWS phải mang `cnf.jkt` đúng khoá, không thì bỏ. **Giới hạn đã biết**: mã độc chạy cùng tài khoản vẫn KÝ được bằng khoá (không đọc được khoá); máy chủ chưa bắt buộc DPoP cho desktop (phiếu tsudev `20261127-DP1`) nên refresh token bị trộm vẫn lấy được JWS không `cnf`; đây không phải chứng thực app | `DpopTests` |
 
 ## 3. Rủi ro còn lại (chấp nhận, ghi rõ)
 

@@ -34,6 +34,9 @@ Sau đó TsuDisk chỉ trao đổi với tsudev.com:
 
 - Mã đăng nhập (lưu trên máy, mã hóa bằng Windows DPAPI theo tài khoản Windows của bạn) và **mã cài đặt** ngẫu nhiên
   (không suy ra từ phần cứng) để tsudev.com đếm số thiết bị của tài khoản nhằm chống lạm dụng (không dùng để mời mua).
+- **Khóa thiết bị** (DPoP, RFC 9449): TsuDisk tạo một cặp khóa trong Windows (đặt trong chip TPM nếu máy có), khóa
+  riêng không xuất được. Mỗi lượt lấy quyền lợi chỉ gửi **khóa công khai** và chữ ký, để quyền lợi trả về gắn với máy
+  này. Khóa không phải chứng thực phần cứng và không chứa thông tin về máy. `tsudisk dang-xuat` xóa khóa.
 - Nhận về thông tin quyền lợi đã ký (gói Pro, hạn dùng, huy hiệu, số thiết bị) - làm mới tối đa mỗi ngày một lần.
 - Tải bản kê phiên bản đã ký `tsudev.com/.well-known/tsudev/versions.json` (mỗi lần chạy lệnh, mở ứng dụng) để biết
   đã có bản mới chưa; không gửi gì ngoài `User-Agent` và phiên bản kèm kênh cài đặt. Giao diện tải lúc mở, mỗi 6 giờ
@@ -41,7 +44,7 @@ Sau đó TsuDisk chỉ trao đổi với tsudev.com:
   liệu bằng `tsudisk xuat-du-lieu` hoặc nút **Xuất dữ liệu** của giao diện - tệp `.zip` chỉ lưu trên máy bạn).
 
 TsuDisk **không** gửi thông tin đĩa, phân vùng, nhật ký hay tệp nào của bạn lên mạng, kể cả khi đã đăng nhập. Dữ liệu
-tài khoản trên máy nằm ở `%LOCALAPPDATA%\tsudev\tsudisk`; `tsudisk dang-xuat` thu hồi phiên và xóa thư mục đó.
+tài khoản trên máy nằm ở `%LOCALAPPDATA%\tsudev\tsudisk`; `tsudisk dang-xuat` thu hồi phiên, xóa thư mục đó và khóa thiết bị.
 
 ## Website disk.tsudev.com
 
