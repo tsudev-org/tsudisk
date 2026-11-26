@@ -2,6 +2,11 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
+## [26.11.2702] - 27/11/2026
+
+- Bản bảo trì, không đổi tính năng: kiểm thật đường cập nhật bắt buộc của 26.11.2701 (bản 26.11.2701 đã đăng nhập sẽ
+  được nhắc cập nhật lên bản này; dữ liệu vẫn xuất được bằng `xuat-du-lieu` hoặc nút **Xuất dữ liệu**).
+
 ## [26.11.2701] - 27/11/2026
 
 - Khi đã đăng nhập: TsuDisk tạo một khoá riêng của thiết bị (trong TPM nếu máy có, khoá không xuất được) và ký mỗi

@@ -128,7 +128,9 @@ của máy này: có".
 
 ## Phase INT7 - Phát hành bản có cổng + thử thật
 
-- [ ] Phát hành bản mới (CHANGELOG, VirusTotal, SHA256SUMS + attestation, website deploy, Scoop, winget).
+- [x] Phát hành bản mới (CHANGELOG, VirusTotal, SHA256SUMS + attestation, website deploy, Scoop, winget).
+      26.11.2701 (#95, run 45897552660 mọi job xanh): VT 0/74 hai exe; SHA256SUMS + attestation hai exe đã kiểm;
+      website deploy-2026.11.27.1; Scoop scoop-bucket#35; winget-pkgs#490479; bản kê github + scoop = 26.11.2701.
 - [ ] Thử thật trên Windows: cài bản N có cổng và đăng nhập. Phát hành N+1, `nang-latest` chạy. Bản N hiện modal (GUI)
       và thoát mã 6 (CLI). Xuất dữ liệu vẫn chạy.
 - [ ] Cập nhật bảng phiếu INT1 (dòng tsudisk) + phiếu gốc.
