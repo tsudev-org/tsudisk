@@ -9,8 +9,8 @@
 ## Hàng đợi task (làm từ trên xuống)
 
 - [ ] winget-pkgs#489979 (26.11.2601) chờ moderator. (PAT winget cũ đã xoá - sự cố 26/11 ĐÓNG.)
-- [ ] 👤 Duyệt `docs/PLAN.md` + ADR-0012 (cổng phiên bản, Đề xuất). Duyệt xong làm lần lượt Phase INT2 -> INT7,
-      QR4-UI1, UI2-B - mỗi ngữ cảnh một Phase. INT6 (DPoP) bị chặn tới khi tsudev chốt hợp đồng DPoP desktop.
+- [ ] Phase INT3 (CLI khoá lệnh + `xuat-du-lieu`) theo `docs/PLAN.md`, rồi INT4 -> INT7, QR4-UI1, UI2-B - mỗi ngữ cảnh
+      một Phase. INT6 (DPoP) bị chặn tới khi tsudev chốt hợp đồng DPoP desktop.
 - [ ] 👤 Dọn đĩa: phiếu `logs/handover/20261126-DD1_phoi-hop-don-dia.md` mục 3 (co VHDX, bản build tsudisk).
       ⛔ Infatica đang chạy - phiên tsuguard theo dõi.
 - [ ] QR4 + UI1 (phiếu 20261124-QR1): đăng nhập QR, tương phản biểu tượng, cổng mã chết/ngân sách tốc độ.
@@ -33,6 +33,10 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 26/11/2026 (phiên 12) - Phase INT2: Core `Integrity/` (kiểm bản kê JWS EdDSA tách nội dung bằng BouncyCastle 2.7.0,
+  khoá ghim `tsu-versions-2026`, đệm + chống phát lại, chốt chặn theo kênh, `426` từ `ProHttp`, `DataExport` zip +
+  SHA-256, nguyên văn modal vi/en). Test 391 -> 477, bao phủ `Integrity/` 91,7%. Chủ dự án duyệt PLAN + ADR-0012.
 
 - 26/11/2026 (phiên 12) - Phase INT1: `docs/PLAN.md` + ADR-0012 (Đề xuất). Chủ dự án chốt: chỉ kiểm bản kê khi đã
   đăng nhập; CLI khoá mọi lệnh trừ `phien-ban`/`tro-giup`/`dang-xuat`/`xuat-du-lieu`. Sự cố PAT winget 26/11 ĐÓNG.

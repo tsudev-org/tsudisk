@@ -11,13 +11,21 @@
           "System.CodeDom": "11.0.0"
         }
       },
+      "BouncyCastle.Cryptography": {
+        "type": "Transitive",
+        "resolved": "2.7.0",
+        "contentHash": "U+12df8UEWHgBi04YVf/Lgi2dy3SItlIYvHjjEVa/BngCQIzDCDRBk50DDByCfDvSbe5pRNFr3b7UrVK2kMcLw=="
+      },
       "System.CodeDom": {
         "type": "Transitive",
         "resolved": "11.0.0",
         "contentHash": "jhvI5UbF+HuOQ5k8lyNQN+pM6fn7OSWmVK99qK+EvepjY6Ec+lg3039rvgpvXw+cT135xtzfoPpLbqppois5XA=="
       },
       "tsudisk.core": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "BouncyCastle.Cryptography": "[2.7.0, )"
+        }
       }
     },
     "net10.0-windows10.0.17763/win-x64": {

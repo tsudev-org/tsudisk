@@ -45,3 +45,10 @@
 ## 4. Kết quả
 
 - 26/11/2026 - Mở phiếu và chia việc với `tsucwico-2e` qua SendMessage.
+- 26/11/2026 - Chủ dự án ủy quyền: `git clean -fdX` trong tsudisk đã chạy (giải phóng khoảng 1,1 GB; repo còn 27 MB).
+  Kiểm chứng: `dotnet restore --locked-mode` và `dotnet test` đạt 391/391. Số đo lúc đó: Ubuntu 154 -> 123 GB đã dùng
+  (phiên `tsucwico-2e` đang dọn), C còn 22 GB (94%). Mục 3.1 xong; mục 3.2-3.3 (fstrim + co VHDX) vẫn chờ 👤 làm sau cùng.
+  Đây là bước thu hồi lớn nhất: khoảng 75 GB.
+- 26/11/2026 - `tsucwico-2e` báo đã dọn xong toàn máy (C: 9,2 -> 22 GB). Báo cáo:
+  `~/projects/tsucwico/logs/handover/20261126-DD1_don-o-dia-toan-may.md`, AKB `LES-20261126-2231-b6f6`. Phần agent
+  đã xong; chỉ còn mục 3.2-3.3 cho 👤.

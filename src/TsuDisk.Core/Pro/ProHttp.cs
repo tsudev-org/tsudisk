@@ -14,7 +14,11 @@ public sealed record TokenResult(TokenSet? Tokens, string? Error, HttpStatusCode
 }
 
 /// <summary>Ket qua <c>/api/me/entitlements</c>: JWS compact, hoac ma HTTP + ma loi.</summary>
-public sealed record EntitlementFetch(string? Jws, HttpStatusCode Status, string? Error);
+/// <param name="UpdateRequired">May chu tra <c>426 update_required</c> (APP_INTEGRITY 2.1) ⇒ ben goi KHOA app (ADR-0012 muc 8).</param>
+public sealed record EntitlementFetch(string? Jws, HttpStatusCode Status, string? Error, UpdateRequiredResponse? UpdateRequired = null);
+
+/// <summary>Than <c>426</c>: <c>{"error":"update_required","latest":"...","url":"..."}</c>; url chi nhan https.</summary>
+public sealed record UpdateRequiredResponse(string? Latest, Uri? Url);
 
 /// <summary>
 /// Moi luot goi mang cua tinh nang Pro nam O DAY - mot cho de ra soat (QU-STD-AUTH hang C: chua dang
@@ -83,6 +87,8 @@ public sealed class ProHttp(HttpClient http, ProEndpoints endpoints, string clie
         using var res = await http.SendAsync(req, cancel).ConfigureAwait(false);
         var text = await res.Content.ReadAsStringAsync(cancel).ConfigureAwait(false);
         var json = TryParse(text);
+        if (UpdateRequiredFrom(res.StatusCode, json) is { } upgrade)
+            return new EntitlementFetch(null, res.StatusCode, "update_required", upgrade);
         if (!res.IsSuccessStatusCode) return new EntitlementFetch(null, res.StatusCode, Str(json, "error"));
         return new EntitlementFetch(Str(json, "jws"), res.StatusCode, null);
     }
@@ -98,6 +104,15 @@ public sealed class ProHttp(HttpClient http, ProEndpoints endpoints, string clie
         if (Str(json, "access_token") is not { Length: > 0 } access)
             return new TokenResult(null, "invalid_response", res.StatusCode);
         return new TokenResult(new TokenSet(access, Str(json, "refresh_token"), Str(json, "id_token")), null, res.StatusCode);
+    }
+
+    /// <summary>426 (Upgrade Required) la tin hieu khoa ke ca khi than JSON hong - may chu tu quyet (I1).</summary>
+    internal static UpdateRequiredResponse? UpdateRequiredFrom(HttpStatusCode status, JsonElement? json)
+    {
+        if ((int)status != 426) return null;
+        Uri? url = Str(json, "url") is { } u && Uri.TryCreate(u, UriKind.Absolute, out var parsed) && parsed.Scheme == Uri.UriSchemeHttps
+            ? parsed : null;
+        return new UpdateRequiredResponse(Str(json, "latest"), url);
     }
 
     private static JsonElement? TryParse(string text)
