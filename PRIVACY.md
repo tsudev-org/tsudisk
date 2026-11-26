@@ -24,7 +24,7 @@ cần nữa.
 **Khi chưa đăng nhập: không gì cả.** Không đo lường, không theo dõi, không tự cập nhật; TsuDisk không kết nối mạng lần
 nào. Bạn tự kiểm chứng được: mọi lệnh gọi ra ngoài tiến trình nằm trong `src/TsuDisk.Windows/` (Storage API và các công
 cụ hệ thống như `reagentc`, `bcdedit`, `diskpart`, `mbr2gpt`), mã mạng duy nhất nằm trong `src/TsuDisk.Core/Pro/` và
-chỉ chạy khi đã đăng nhập.
+`src/TsuDisk.Core/Integrity/`, và chỉ chạy khi đã đăng nhập.
 
 ## Khi bạn đăng nhập (tùy chọn)
 
@@ -35,6 +35,9 @@ Sau đó TsuDisk chỉ trao đổi với tsudev.com:
 - Mã đăng nhập (lưu trên máy, mã hóa bằng Windows DPAPI theo tài khoản Windows của bạn) và **mã cài đặt** ngẫu nhiên
   (không suy ra từ phần cứng) để tsudev.com đếm số thiết bị của tài khoản nhằm chống lạm dụng (không dùng để mời mua).
 - Nhận về thông tin quyền lợi đã ký (gói Pro, hạn dùng, huy hiệu, số thiết bị) - làm mới tối đa mỗi ngày một lần.
+- Tải bản kê phiên bản đã ký `tsudev.com/.well-known/tsudev/versions.json` (mỗi lần chạy lệnh, mở ứng dụng) để biết
+  đã có bản mới chưa; không gửi gì ngoài `User-Agent` và phiên bản kèm kênh cài đặt. Có bản mới thì TsuDisk yêu cầu cập
+  nhật trước khi chạy tiếp (vẫn xuất được dữ liệu bằng `tsudisk xuat-du-lieu`).
 
 TsuDisk **không** gửi thông tin đĩa, phân vùng, nhật ký hay tệp nào của bạn lên mạng, kể cả khi đã đăng nhập. Dữ liệu
 tài khoản trên máy nằm ở `%LOCALAPPDATA%\tsudev\tsudisk`; `tsudisk dang-xuat` thu hồi phiên và xóa thư mục đó.

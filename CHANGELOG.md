@@ -2,6 +2,15 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
+## [Chưa phát hành]
+
+- Lệnh mới `tsudisk xuat-du-lieu <thư mục>`: xuất nhật ký, bản sao lưu GPT và cài đặt giao diện ra một tệp `.zip` kèm
+  `manifest.json` liệt kê SHA-256 từng tệp. Không bao giờ xuất mã đăng nhập hay khoá của thiết bị.
+- Khi đã đăng nhập: trước mỗi lệnh, TsuDisk kiểm bản kê phiên bản đã ký của tsudev.com (chữ ký Ed25519). Nếu đã có bản
+  mới trên kênh cài đặt của bạn, lệnh dừng với hướng dẫn cập nhật (`scoop update tsudisk`, `winget upgrade
+  tsudev.TsuDisk` hoặc liên kết tải) và mã thoát 6; `phien-ban`, `tro-giup`, `dang-xuat`, `xuat-du-lieu` vẫn chạy.
+  Chưa đăng nhập thì không kiểm, không kết nối mạng. Mạng lỗi không bao giờ chặn lệnh.
+
 ## [26.11.2601] - 26/11/2026
 
 - Không làm phiền: bỏ thông báo "tài khoản dùng trên nhiều thiết bị, nâng cấp Pro để đồng bộ"; TsuDisk không bao giờ

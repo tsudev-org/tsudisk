@@ -71,7 +71,7 @@ public class ProOfflineGuardTests
         Assert.True(guard < body.IndexOf("ForRunAsync", StringComparison.Ordinal), "kiem IsSignedIn TRUOC ForRunAsync");
         Assert.True(body.IndexOf("if (!IsInteractive(cli)) return;", StringComparison.Ordinal) is >= 0 and var i && i < guard);
         foreach (var flag in new[] { "\"json\"", "\"dong-y\"", "\"xac-nhan\"", "IsInputRedirected", "IsOutputRedirected" })
-            Assert.Contains(flag, pro[..pro.IndexOf("private static HttpClient", StringComparison.Ordinal)], StringComparison.Ordinal);
+            Assert.Contains(flag, pro[..pro.IndexOf("internal static HttpClient", StringComparison.Ordinal)], StringComparison.Ordinal);
         // Ca 17 (AUTH 14.4.5, N5): duong chay moi lenh KHONG in goi y dang nhap, khong loi moi Pro/thong bao 7.3.
         var run = body[..body.IndexOf("/// <summary><c>tsudisk dang-nhap", StringComparison.Ordinal)];
         Assert.DoesNotContain("dang-nhap", run, StringComparison.Ordinal);

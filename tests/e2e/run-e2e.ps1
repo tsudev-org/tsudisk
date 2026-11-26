@@ -326,6 +326,35 @@ try {
     Write-Host "  OEM id sau khi xoa: '$oem'"
     Assert-True ($oem -eq 'NTFS    ') 'xoa khong ghi de boot sector cua o (du lieu con tren dia)'
 
+    Write-Host "`n=== Ca 15: xuat-du-lieu ra o ao (ADR-0012 muc 11) - zip co manifest.json, SHA-256 khop ==="
+    $exportLetter = (Get-Partition -DiskNumber $disk.Number | Where-Object { $_.DriveLetter } | Select-Object -First 1).DriveLetter
+    Assert-True ($null -ne $exportLetter) 'co o ao de nhan tep xuat'
+    $exportDir = "${exportLetter}:\xuat"
+    $r = Invoke-TsuDisk @('xuat-du-lieu', $exportDir, '--thu-muc-nhat-ky', $Logs, '--json')
+    Assert-True ($r.Code -eq 0) 'xuat-du-lieu thanh cong (exit 0)'
+    $zip = Get-ChildItem $exportDir -Filter 'tsudisk-xuat-du-lieu-*.zip' -ErrorAction SilentlyContinue | Select-Object -First 1
+    Assert-True ($null -ne $zip) "co tep zip tren o ao ${exportLetter}:"
+    if ($zip) {
+        $unzip = Join-Path $WorkDir 'xuat-giai-nen'
+        Expand-Archive -Path $zip.FullName -DestinationPath $unzip -Force
+        $manifestPath = Join-Path $unzip 'manifest.json'
+        Assert-True (Test-Path $manifestPath) 'zip co manifest.json'
+        $m = Get-Content $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        Assert-True ($m.format -eq 'tsudisk-export/1') 'manifest dung dinh dang tsudisk-export/1'
+        $logFiles = @($m.files | Where-Object { $_.path -like 'nhat-ky/*' })
+        Assert-True ($logFiles.Count -gt 0) "manifest liet ke nhat ky ($($logFiles.Count) tep)"
+        Assert-True (@($m.files | Where-Object { $_.path -like '*journal.json' }).Count -gt 0) 'co journal.json trong ban xuat'
+        $bad = @($m.files | Where-Object { (Get-FileHash (Join-Path $unzip $_.path) -Algorithm SHA256).Hash.ToLower() -ne $_.sha256 })
+        Assert-True ($bad.Count -eq 0) "SHA-256 cua moi tep khop manifest ($($m.files.Count) tep, sai $($bad.Count))"
+        $srcBad = @($logFiles | Where-Object {
+            $src = Join-Path $Logs ($_.path.Substring('nhat-ky/'.Length) -replace '/', '\')
+            -not (Test-Path $src) -or (Get-FileHash $src -Algorithm SHA256).Hash.ToLower() -ne $_.sha256 })
+        Assert-True ($srcBad.Count -eq 0) 'SHA-256 khop tep goc trong thu muc nhat ky'
+        Assert-True (@($m.files | Where-Object { $_.path -match '\.dpapi$' }).Count -eq 0) 'khong xuat bi mat thiet bi (*.dpapi)'
+    }
+    $r = Invoke-TsuDisk @('xuat-du-lieu')
+    Assert-True ($r.Code -eq 2) 'thieu thu muc dich -> sai cu phap (exit 2)'
+
     Write-Host "`n=== Ca 7: doc nhat ky ==="
     $first = (Get-ChildItem $Logs -Recurse -Filter journal.json | Sort-Object FullName | Select-Object -First 1).FullName
     $r = Invoke-TsuDisk @('nhat-ky', $first)

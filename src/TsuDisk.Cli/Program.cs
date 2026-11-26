@@ -14,6 +14,8 @@ CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("vi-VN");
 try
 {
     var cli = CliArgs.Parse(args);
+    if (CliGate.Check(cli) is { } locked)   // ADR-0012: cong phien ban TRUOC moi lenh (chi khi da dang nhap)
+        return locked;
     ProHook.Run(cli);   // ADR-0007: chua dang nhap => khong mang, khong tep, khong in; chi nhac gia han 7.6
     return cli.Command switch
     {
@@ -37,6 +39,7 @@ try
         "kiem-tra-gpt" => Commands.VerifyGpt(cli),
         "kiem-tra-mbr2gpt" => Commands.CheckMbr2Gpt(cli),
         "sao-luu" => Commands.Backup(cli),
+        "xuat-du-lieu" => Commands.Export(cli),
         "dang-nhap" or "dang-xuat" or "tai-khoan" => ProHook.AccountCommand(cli),
         "phien-ban" => Commands.Version(),
         _ => Commands.Help(),
@@ -61,6 +64,7 @@ internal static class ExitCodes
     public const int NeedsAdmin = 3;
     public const int RolledBack = 4;
     public const int NeedsAttention = 5;
+    public const int UpdateRequired = 6;   // ADR-0012 muc 9: co ban moi tren kenh cua minh
 }
 
 internal static partial class Commands
@@ -344,6 +348,7 @@ internal static partial class Commands
               tsudisk kiem-tra-gpt [--dia N] [--json]     Kiểm tra toàn vẹn bảng GPT trên đĩa (CRC, header dự phòng) - quản trị
               tsudisk kiem-tra-mbr2gpt [--dia N] [--json] Chuyển đĩa MBR sang GPT được không (mbr2gpt /validate, chỉ đọc) - quản trị
               tsudisk sao-luu [--dia N] [--thu-muc-nhat-ky DIR]  Sao lưu sector GPT thô + bố cục + SHA-256 - quản trị
+              tsudisk xuat-du-lieu <thư mục> [--thu-muc-nhat-ky DIR] [--json]  Xuất nhật ký, bản sao lưu GPT, cài đặt ra một tệp .zip kèm SHA-256
               tsudisk tai-khoan                           Tài khoản TsuDEV và gói Pro (không bắt buộc; chưa đăng nhập thì không gọi mạng)
               tsudisk dang-nhap | dang-xuat               Đăng nhập bằng trình duyệt (tsudev.com) / đăng xuất và xóa dữ liệu tài khoản trên máy
               tsudisk phien-ban | tro-giup
@@ -356,8 +361,8 @@ internal static partial class Commands
               --chi-o-ao                 Chỉ cho phép thao tác trên ổ ảo VHD/VHDX (kiểm thử)
               --thu-muc-nhat-ky DIR      Nơi lưu nhật ký và bản sao lưu (mặc định %ProgramData%\TsuDisk\nhat-ky)
 
-            Bí danh tiếng Anh: list, analyze, plan, extend, plan-winre, grow-winre, plan-rename, rename, plan-shrink, shrink, plan-delete, delete, plan-create, create, journal, health, verify-gpt, check-mbr2gpt, backup, account, login, logout, version, help; --dry-run, --yes, --disk, --virtual-only, --log-dir, --letter, --label, --extent, --size-mb, --fs, --shrink-mb, --confirm.
-            Mã thoát: 0 xong, 1 từ chối/lỗi, 2 sai cú pháp, 3 thiếu quyền quản trị, 4 thất bại đã hoàn tác, 5 cần xử lý.
+            Bí danh tiếng Anh: list, analyze, plan, extend, plan-winre, grow-winre, plan-rename, rename, plan-shrink, shrink, plan-delete, delete, plan-create, create, journal, health, verify-gpt, check-mbr2gpt, backup, export, account, login, logout, version, help; --dry-run, --yes, --disk, --virtual-only, --log-dir, --letter, --label, --extent, --size-mb, --fs, --shrink-mb, --confirm.
+            Mã thoát: 0 xong, 1 từ chối/lỗi, 2 sai cú pháp, 3 thiếu quyền quản trị, 4 thất bại đã hoàn tác, 5 cần xử lý, 6 cần cập nhật (chỉ khi đã đăng nhập).
             """);
         return ExitCodes.Ok;
     }

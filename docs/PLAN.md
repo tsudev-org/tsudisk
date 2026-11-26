@@ -7,7 +7,7 @@
 > Quyết định chủ dự án 26/11/2026: chỉ kiểm khi đã đăng nhập; CLI bị khoá thì chặn mọi lệnh trừ
 > `phien-ban`/`tro-giup`/`dang-xuat`/`xuat-du-lieu`.
 
-**Trạng thái kế hoạch**: ĐÃ DUYỆT 26/11/2026. Phase INT2 xong; kế tiếp: Phase INT3.
+**Trạng thái kế hoạch**: ĐÃ DUYỆT 26/11/2026. Phase INT3 xong; kế tiếp: Phase INT4.
 
 ## Phase INT1 - Lập kế hoạch + ADR cổng phiên bản
 
@@ -50,13 +50,19 @@ với JWKS production (bộ dữ liệu trong repo). CI xanh. PR đã gộp.
 
 ## Phase INT3 - CLI: khoá lệnh + `xuat-du-lieu`
 
-- [ ] `Program`: sau khi parse, nếu đã đăng nhập và lệnh không thuộc nhóm được phép thì gọi `VersionGate` (bản kê +
+- [x] `Program`: sau khi parse, nếu đã đăng nhập và lệnh không thuộc nhóm được phép thì gọi `VersionGate` (bản kê +
       đệm). Khoá thì in nguyên văn vi (APP_INTEGRITY 2.2) + lệnh cập nhật theo kênh, thoát `ExitCodes.UpdateRequired = 6`.
       `--json` thì in đối tượng lỗi.
-- [ ] Lệnh `xuat-du-lieu <thư mục>` (Core `DataExport`), thêm vào `tro-giup`, README, `CHANGELOG`.
-- [ ] Chưa đăng nhập: KHÔNG có lượt gọi mạng nào. Test bằng `IVersionSource` giả đếm số lượt gọi = 0.
-- [ ] PRIVACY.md: một dòng về GET bản kê khi đã đăng nhập. Website tự lấy nội dung lúc build.
-- [ ] E2E VHDX: thêm ca chạy `xuat-du-lieu` trên ổ ảo, kiểm zip có `manifest.json` và SHA-256 khớp.
+- [x] Lệnh `xuat-du-lieu <thư mục>` (Core `DataExport`), thêm vào `tro-giup`, README, `CHANGELOG`.
+- [x] Chưa đăng nhập: KHÔNG có lượt gọi mạng nào. Test bằng `IVersionSource` giả đếm số lượt gọi = 0.
+- [x] PRIVACY.md: một dòng về GET bản kê khi đã đăng nhập. Website tự lấy nội dung lúc build.
+- [x] E2E VHDX: thêm ca chạy `xuat-du-lieu` trên ổ ảo, kiểm zip có `manifest.json` và SHA-256 khớp.
+
+**Kết quả 26/11/2026**: Core `Integrity/CommandGate` (mặc định CHẶN, chỉ 4 lệnh được phép; chưa đăng nhập thì không
+tạo cổng) + CLI `CliGate` chạy trước `ProHook.Run` và trước khi chọn lệnh, kể cả `--json`/`--dong-y`. `CliArgs` từ chối
+lệnh chưa đăng ký với `CommandGate.KnownCommands`; test đối chiếu văn bản `CliArgs.cs`/`Program.cs`. Test 477 -> 543.
+E2E ca 15 (`xuat-du-lieu` lên ổ ảo, manifest + SHA-256 khớp zip và tệp gốc). Còn lại cho INT4: `426` từ `ProHttp` chưa
+được `ProAccount` đẩy lên CLI/GUI (ADR-0012 mục 8).
 
 **Nghiệm thu**: test CLI/Core xanh. Không có cách nào để một lệnh ghi đĩa chạy khi trạng thái là `UpdateRequired` (test
 bảng mọi lệnh). E2E xanh trên CI. PR đã gộp.
