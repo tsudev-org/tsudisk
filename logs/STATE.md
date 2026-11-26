@@ -9,7 +9,7 @@
 ## Hàng đợi task (làm từ trên xuống)
 
 - [ ] winget-pkgs#489979 (26.11.2601) chờ moderator. (PAT winget cũ đã xoá - sự cố 26/11 ĐÓNG.)
-- [ ] Phase INT5 (nâng `latest` theo kênh) theo `docs/PLAN.md`, rồi INT7, QR4-UI1, UI2-B - mỗi ngữ cảnh một Phase. INT6 (DPoP) bị chặn tới khi tsudev chốt hợp đồng DPoP desktop.
+- [ ] Phase INT5 (nâng `latest` theo kênh): mã + workflow xong (PR), secret đã nạp; còn gộp PR rồi dispatch `Kenh phat hanh` 26.11.2601 để nghiệm thu. Sau đó INT7, QR4-UI1, UI2-B - mỗi ngữ cảnh một Phase. INT6 (DPoP) bị chặn tới khi tsudev chốt hợp đồng DPoP desktop.
 - [ ] 👤 Dọn đĩa: phiếu `logs/handover/20261126-DD1_phoi-hop-don-dia.md` mục 3 (co VHDX, bản build tsudisk).
       ⛔ Infatica đang chạy - phiên tsuguard theo dõi.
 - [ ] QR4 + UI1 (phiếu 20261124-QR1): đăng nhập QR, tương phản biểu tượng, cổng mã chết/ngân sách tốc độ.

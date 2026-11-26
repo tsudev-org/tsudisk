@@ -1,0 +1,64 @@
+name: Kenh phat hanh
+
+# ADR-0012 muc 12: nang `latest` theo kenh tren ban ke phien ban tsudev.com, CHI khi kenh da co ban de tai.
+#   github: trang Release (bu cho job nang-latest cua release.yml neu luot do loi).
+#   winget: chi khi manifests/t/tsudev/TsuDisk/<ban> da gop vao microsoft/winget-pkgs.
+#   scoop : chi khi bucket/tsudisk.json o tsudev-org/scoop-bucket co version = ban moi.
+# Da nang roi thi may chu tra 409 version_not_newer (coi la xong) - chay lai bao nhieu lan cung an toan.
+on:
+  schedule:
+    # Moi 6 gio (phut 17 de tranh gio cao diem cua GitHub Actions).
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Ban chinh thuc YY.M.DDNN (bo trong = Release moi nhat)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kenh-phat-hanh
+  cancel-in-progress: false
+
+jobs:
+  nang:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: packages
+    strategy:
+      fail-fast: false
+      matrix:
+        channel: [github, scoop, winget]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Chon phien ban
+        id: ver
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          v="${INPUT_VERSION:-}"
+          if [[ -z "$v" ]]; then
+            tag=$(gh release view -R "$GITHUB_REPOSITORY" --json tagName --jq .tagName)
+            v="${tag#v}"
+          fi
+          if [[ ! "$v" =~ ^[0-9]{2}\.[1-9][0-9]?\.[0-3][0-9][0-9]{2}$ ]]; then
+            echo "::error::Phien ban '$v' khong phai ban chinh thuc YY.M.DDNN"
+            exit 1
+          fi
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+      - name: Nang latest kenh ${{ matrix.channel }}
+        env:
+          TSU_VERSIONS_TOKEN: ${{ secrets.TSU_VERSIONS_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          CHANNEL: ${{ matrix.channel }}
+          VERSION: ${{ steps.ver.outputs.version }}
+        run: |
+          set -euo pipefail
+          node packaging/tools/raise-latest.mjs --channel "$CHANNEL" --version "$VERSION" | tee -a "$GITHUB_STEP_SUMMARY"
