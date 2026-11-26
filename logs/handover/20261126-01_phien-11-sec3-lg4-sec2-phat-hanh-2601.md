@@ -1,7 +1,7 @@
 # PHIẾU BÀN GIAO - phiên 11 (26/11/2026): SEC3, LG4, SYN1/PRO3, SEC2, UI2-A, phát hành 26.11.2601
 
 - **Mã phiếu**: 20261126-01 (thay 20261124-01 - phiếu đó ĐÓNG) - **Từ**: agent-tsudisk - **Đến**: phiên kế + 👤
-- **Trạng thái**: MỞ (mục 2, 3)
+- **Trạng thái**: ĐÓNG (26/11/2026, phiên 12 - còn lại chuyển sang 20261126-02)
 
 ## 1. Đã xong
 - #79 NuGet lock file + `--locked-mode` (SEC3). CodeQL #3, #4 dismiss `won't fix` có bằng chứng.
