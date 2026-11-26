@@ -135,8 +135,8 @@ của máy này: có".
 
 Tiến độ (27/11/2026, phiên 17): rà soát cổng trước phát hành không thấy lỗi chặn (lỗi mạng/503/chữ ký sai/đệm hết hạn
 ⇒ `Unknown`, không chặn; kênh scoop/winget nhận đúng). PR #95 phát hành 26.11.2701 + `DebugType=none`.
-⚠ Bản kê production `versions.json` trả 503 từ 27/11 (nghi mất `VERSIONS_SIGNING_KEY` trên Render) - phiếu tsudev
-`20261127-VS1`, đã nhắn phiên tsudev. Thử thật (mục 2) chờ phiếu này.
+Bản kê production từng trả 503 (27/11, backend Render ngủ + đệm Worker chỉ trong isolate; KHÔNG mất khoá) - phiếu tsudev
+`20261127-VS1`; đã 200 lại ~04:15. Phía app giữ "mở khi lỗi".
 
 **Nghiệm thu**: APP_INTEGRITY mục 8 đánh dấu đủ cho tsudisk (desktop OPEN: cổng + test, không SDK bên thứ ba, gia cố
 5.2 .NET: `DebugType=none` cho bản phát hành - KHÔNG trim/AOT theo AGENTS B.5, ghi lệch chuẩn).
