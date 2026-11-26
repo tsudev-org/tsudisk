@@ -3,7 +3,7 @@
        Phien ban app theo .standards/docs/VERSIONING.md muc 2: YY.M.DDNN
        (26.11.1601 = ban thu 01 ngay 16/11/2026). Khong khai Version trong tung .csproj. -->
   <PropertyGroup>
-    <VersionPrefix>26.11.2601</VersionPrefix>
+    <VersionPrefix>26.11.2701</VersionPrefix>
     <Company>TsuDEV</Company>
     <Authors>TsuDEV</Authors>
     <Product>TsuDisk</Product>
@@ -24,6 +24,8 @@
     <!-- Build duoc project net10.0-windows tren may dev Linux va CI ubuntu. -->
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <Deterministic>true</Deterministic>
+    <!-- Gia co ban phat hanh (APP_INTEGRITY 5.2, .NET): khong sinh/khong nhung ky hieu go loi. -->
+    <DebugType Condition="'$(Configuration)' == 'Release'">none</DebugType>
     <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
     <!-- Ghim phu thuoc NuGet bang packages.lock.json (Scorecard PinnedDependencies, SEC3):
          CI chi khoi phuc dung ban + hash da khoa; doi phu thuoc thi chay dotnet restore voi tuy chon force-evaluate. -->

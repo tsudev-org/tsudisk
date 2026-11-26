@@ -2,7 +2,7 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
-## [Chưa phát hành]
+## [26.11.2701] - 27/11/2026
 
 - Khi đã đăng nhập: TsuDisk tạo một khoá riêng của thiết bị (trong TPM nếu máy có, khoá không xuất được) và ký mỗi
   lượt lấy quyền lợi (DPoP, RFC 9449), để quyền lợi trả về gắn với đúng máy này. `dang-xuat` xoá khoá.
@@ -16,6 +16,7 @@ Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/V
   bản mới thì hiện màn hình "Cần cập nhật ứng dụng" toàn màn, chỉ có hai nút: **Cập nhật ngay** (mở trang tải, hoặc
   sao chép lệnh `scoop`/`winget`, rồi đóng TsuDisk để cập nhật) và **Xuất dữ liệu** (chọn thư mục, tạo tệp `.zip` như
   lệnh `xuat-du-lieu`). Đang ghi đĩa thì chờ thao tác xong mới hiện, không bao giờ ngắt giữa chừng.
+- Bản phát hành không còn nhúng ký hiệu gỡ lỗi trong hai tệp exe.
 - Máy chủ tsudev.com từ chối bản cũ (`426`) cũng khoá CLI và giao diện như khi có bản mới (tự hết sau 24 giờ hoặc khi
   đã cập nhật).
 
