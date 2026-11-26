@@ -10,7 +10,7 @@
 
 - [ ] winget-pkgs#489979 (26.11.2601) chờ moderator. (PAT winget cũ đã xoá - sự cố 26/11 ĐÓNG.)
 - [ ] Phase INT7 kế tiếp (mỗi ngữ cảnh một Phase), rồi QR4-UI1, UI2-B. INT6 (DPoP) bị chặn tới khi tsudev chốt hợp
-      đồng DPoP desktop. Còn: xoá `TSU_VERSIONS_TOKEN` cũ khỏi env `packages` (chờ chủ dự án đồng ý).
+      đồng DPoP desktop.
 - [ ] 👤 Dọn đĩa: phiếu `logs/handover/20261126-DD1_phoi-hop-don-dia.md` mục 3 (co VHDX, bản build tsudisk).
       ⛔ Infatica đang chạy - phiên tsuguard theo dõi.
 - [ ] QR4 + UI1 (phiếu 20261124-QR1): đăng nhập QR, tương phản biểu tượng, cổng mã chết/ngân sách tốc độ.

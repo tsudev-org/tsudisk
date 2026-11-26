@@ -107,7 +107,7 @@ GET bản kê thấy `products.tsudisk.channels.github.latest = 26.11.2601`, và
       `TSU_VERSIONS_TOKEN`, nhánh `main` + tag `v*`) - PR #90 đã gộp; 👤 đã nạp secret (biến nguồn `VERSIONS_RAISE_TOKEN`).
 - [x] Nghiệm thu 27/11: run 45864874082 xanh; bản kê `channels.github.latest = 26.11.2601`,
       `channels.scoop.latest = 26.11.2601`; winget bỏ qua đúng (winget-pkgs#489979 chưa gộp).
-- [ ] Sau nghiệm thu: xoá `TSU_VERSIONS_TOKEN` khỏi env `packages` (hỏi chủ dự án trước).
+- [x] Đã xoá `TSU_VERSIONS_TOKEN` khỏi env `packages` (chủ dự án đồng ý 27/11); chỉ còn ở env `versions`.
 
 ## Phase INT6 - DPoP cho máy khách desktop
 
