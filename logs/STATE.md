@@ -7,7 +7,7 @@
 
 ## Hàng đợi task (làm từ trên xuống)
 
-- [ ] 👤 **Thu hồi PAT winget** (lộ trong phiên 11, xem Sự cố bảo mật) -> tạo token mới -> nộp winget 26.11.2601.
+- [ ] 👤 Xác nhận đã xoá PAT winget CŨ (sự cố 26/11); winget-pkgs#489979 (26.11.2601) chờ moderator.
 - [ ] INT1: cổng phiên bản đọc `versions.json` đã ký (Ed25519 - BCL .NET 10 chưa thấy có sẵn, cần ADR chọn thư viện),
       modal khoá GUI + thông báo CLI, bước nâng `latest` trong release.yml (secret `TSU_VERSIONS_TOKEN`). Mã sản phẩm
       `tsudisk`, kênh github/scoop/winget. Cũng là chỗ thêm DPoP (PRODUCT_POLICY 7.4). Cần Opus (mật mã).
@@ -36,7 +36,7 @@
   Bộ quy ước v8.0.0; LG4 (gỡ `ProNotice`), SYN1/PRO3 (nội dung Pro mới), `X-Tsu-App`, SEC2 `/security/`, UI2 A (CLS
   0,076 -> 0, lề điện thoại) - #80, test 391. Website deploy-2026.11.26.1 (SSL Labs A+, Observatory A+ 150). Phát hành
   **26.11.2601** (#81): VirusTotal 0/74 hai exe, SHA256SUMS + attestation đã kiểm; job winget lỗi 422 (thiếu scope
-  `workflow`), script đã sửa. Scoop chưa cập nhật. Còn 77 nhánh cũ trên remote (lệnh xoá bị chặn quyền, chờ chủ dự án).
+  `workflow`), script đã sửa; sau khi thay token đã nộp winget-pkgs#489979 và cập nhật Scoop (scoop-bucket#34). Còn 77 nhánh cũ trên remote (lệnh xoá bị chặn quyền, chờ chủ dự án).
 
 - 24/11/2026 (phiên 10) - Không có PR Dependabot. GUI mở rộng ổ (#74, ADR-0011, `ExtendForm`, test 377 -> 392, E2E GUI
   58/58 G1-G10 trên CI). Phát hành **26.11.2401** (#75; đổi từ 2304 vì sang ngày 24/11): release.yml mọi job xanh,
@@ -132,8 +132,9 @@
 
 - 26/11/2026 - **Lộ PAT winget** (classic, `public_repo`, tài khoản `nguyentrangtinhsu`): agent chạy
   `cut -d= -f1 ~/.config/tsudev/winget.env` để xem tên biến, nhưng tệp chứa token trần nên cả giá trị hiện trong phiên
-  Claude (transcript cục bộ + phiên mô hình). Không vào git, không công khai; D1. Agent ngừng dùng token. **MỞ** - 👤
-  thu hồi tại github.com/settings/tokens, tạo token mới, nạp bằng `tsu-nhan-bi-mat`, xem security log. Phòng ngừa: tệp
+  Claude (transcript cục bộ + phiên mô hình). Không vào git, không công khai; D1. Agent ngừng dùng token. Chủ dự án
+  tạo token mới, nạp qua `tsu-nhan-bi-mat` 18:14 26/11 (`~/.config/tsudev/winget.env` + secret `WINGET_TOKEN`; kiểm:
+  scope `public_repo`, hết hạn 24/02/2027). **CÒN CHỜ** chủ dự án xác nhận đã xoá token cũ + xem security log. Phòng ngừa: tệp
   trong `~/.config/tsudev/` coi như chỉ chứa bí mật - KHÔNG `cat/cut/head/grep` in nội dung; chỉ `< tệp` vào lệnh nhận.
 - 18/11/2026 - **Lộ PAT winget** (classic, `public_repo`, tài khoản `nguyentrangtinhsu`): khi nạp `WINGET_TOKEN`, token
   được dán vào terminal và hiện đầy đủ trong ảnh chụp gửi vào phiên Claude, đồng thời có thể đã vào `~/.bash_history`.

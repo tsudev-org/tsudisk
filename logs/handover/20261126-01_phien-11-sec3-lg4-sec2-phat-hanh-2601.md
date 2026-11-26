@@ -42,3 +42,10 @@
 ## 5. Bẫy
 - Lock file: phải xoá `obj` khi thử locked-mode (LES-20261126-1310-f349).
 - `~/.config/tsudev/*.env` có tệp chứa token trần: không in dưới mọi hình thức.
+
+## 6. Cập nhật 18:30 26/11/2026
+- Token winget mới đã nạp (mục 2.1 xong, trừ việc 👤 xác nhận xoá token cũ + security log). Cách nạp đúng định dạng
+  token trần: `tsu-nhan-bi-mat --tiento ghp_ --stdout > winget.env.moi` rồi `mv` (KHÔNG dùng `--luu`: ghi `SECRET=...`).
+- winget 26.11.2601: https://github.com/microsoft/winget-pkgs/pull/489979 (mục 3.1 xong; bản vá 422 chạy đúng).
+- Scoop: scoop-bucket#34 MERGED (mục 3.2 phần Scoop xong; nhớ chạy `python3 tools/catalog.py` trong cùng PR).
+- Còn: đo lại Scorecard, INT1, QR4/UI1, UI2-B.
