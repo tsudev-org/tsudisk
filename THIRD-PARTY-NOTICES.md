@@ -8,6 +8,7 @@ TsuDisk không sao chép mã nguồn của dự án nào khác. Các thành ph�
 | --- | --- | --- |
 | .NET Runtime 10 | MIT | <https://github.com/dotnet/runtime> |
 | System.Management | MIT | <https://github.com/dotnet/runtime> |
+| BouncyCastle.Cryptography (chỉ dùng hàm kiểm chữ ký Ed25519 của bản kê phiên bản, ADR-0012) | MIT | <https://github.com/bcgit/bc-csharp> |
 
 ## Chỉ dùng khi phát triển (không phát hành)
 

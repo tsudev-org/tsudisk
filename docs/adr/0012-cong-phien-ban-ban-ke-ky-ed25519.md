@@ -1,6 +1,6 @@
 # ADR-0012: Cổng phiên bản - đọc bản kê `versions.json` ký Ed25519, khoá GUI/CLI, nâng `latest` theo kênh, DPoP
 
-- **Trạng thái**: Đề xuất - 26/11/2026 (phiên 12, INT1). Chờ chủ dự án duyệt `docs/PLAN.md` rồi mới viết mã.
+- **Trạng thái**: Chấp nhận - 26/11/2026 (chủ dự án duyệt PLAN.md + ADR trong phiên 12).
 - **Quyết định chủ dự án đã chốt trong phiên 12**: (Q1) chỉ kiểm bản kê **khi đã đăng nhập**; (Q2) CLI bị khoá thì
   **chặn mọi lệnh trừ** `phien-ban`, `tro-giup`, `dang-xuat`, `xuat-du-lieu`.
 - **Liên quan**: `.standards/docs/APP_INTEGRITY.md` (v1.0.0) mục 1-2, 3 (desktop), 6, 8; `AUTH_AND_ACCOUNT.md` 14.1;

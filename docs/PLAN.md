@@ -7,7 +7,7 @@
 > Quyết định chủ dự án 26/11/2026: chỉ kiểm khi đã đăng nhập; CLI bị khoá thì chặn mọi lệnh trừ
 > `phien-ban`/`tro-giup`/`dang-xuat`/`xuat-du-lieu`.
 
-**Trạng thái kế hoạch**: CHỜ CHỦ DỰ ÁN DUYỆT. Chưa Phase INT2+ nào được bắt đầu.
+**Trạng thái kế hoạch**: ĐÃ DUYỆT 26/11/2026. Phase INT2 xong; kế tiếp: Phase INT3.
 
 ## Phase INT1 - Lập kế hoạch + ADR cổng phiên bản
 
@@ -20,20 +20,20 @@
 
 ## Phase INT2 - Core: kiểm bản kê + quyết định khoá (không giao diện)
 
-- [ ] Thêm `BouncyCastle.Cryptography` (ghim phiên bản) vào `TsuDisk.Core`, cập nhật `packages.lock.json`, NOTICE và
+- [x] Thêm `BouncyCastle.Cryptography` (ghim phiên bản) vào `TsuDisk.Core`, cập nhật `packages.lock.json`, NOTICE và
       THIRD-PARTY-NOTICES. CI `--locked-mode` xanh.
-- [ ] `src/TsuDisk.Core/Integrity/`:
+- [x] `src/TsuDisk.Core/Integrity/`:
       - `VersionKeys` (khoá ghim theo `kid`).
       - `DetachedJws` (tách và kiểm `.sig`).
       - `VersionManifest` (parse sau khi chữ ký đạt, giới hạn kích thước).
       - `AppVersion` (so `YY.M.DDNN` + bản thử).
       - `VersionManifestCache` (ghi nguyên tử, đọc lại thì kiểm lại).
       - `VersionGate` (đầu vào: bản kê, kênh, phiên bản, giờ; đầu ra: `Ok` | `UpdateRequired(latest, url)` | `Unknown`).
-- [ ] `IVersionSource` + bản `HttpVersionSource`: https `tsudev.com` cố định, không theo chuyển hướng, 5 giây, giới hạn
+- [x] `IVersionSource` + bản `HttpVersionSource`: https `tsudev.com` cố định, không theo chuyển hướng, 5 giây, giới hạn
       byte. `ProHttp` nhận `426 update_required` và trả về `UpdateRequired`.
-- [ ] Hàm `DataExport` trong Core: zip nhật ký + bản sao lưu GPT + cài đặt + `manifest.json` (SHA-256), KHÔNG lấy token
+- [x] Hàm `DataExport` trong Core: zip nhật ký + bản sao lưu GPT + cài đặt + `manifest.json` (SHA-256), KHÔNG lấy token
       hay khoá. Có test đường dẫn: chặn zip-slip, chặn liên kết tượng trưng ra ngoài.
-- [ ] Test (APP_INTEGRITY 6) gồm các ca:
+- [x] Test (APP_INTEGRITY 6) gồm các ca:
       - Bộ dữ liệu thật: byte `versions.json` + `.sig` production, chụp lại 26/11.
       - Chữ ký sai, đổi 1 byte, `alg` khác, `kid` lạ, `.sig` 2 hoặc 4 phần.
       - Bản kê hết hạn, `expires-issued > 7 ngày`, `issued_at` cũ hơn bản đệm.
@@ -41,6 +41,9 @@
       - Bản thử nhỏ hơn bản chính; bản tự dựng không khoá.
       - Lỗi mạng + đệm còn hạn thì dùng đệm; lỗi mạng + không đệm thì không chặn.
       - `426` thì khoá.
+
+**Kết quả 26/11/2026**: test 391 -> 477 (+86); bao phủ `Integrity/` 91,7% dòng; khoá ghim khớp JWKS production
+(bộ dữ liệu `tests/TsuDisk.Core.Tests/Fixtures/versions/`); build Release toàn solution sạch.
 
 **Nghiệm thu**: test Core đều xanh (tăng tối thiểu 30 ca); bao phủ `Integrity/` ≥ 90% dòng. Có test đối chiếu khoá ghim
 với JWKS production (bộ dữ liệu trong repo). CI xanh. PR đã gộp.

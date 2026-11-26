@@ -8,6 +8,11 @@
         "resolved": "10.0.15",
         "contentHash": "u0WnRcZgBZYHlVFpbe/3Adpmb9rmNJ8/fmEwqc/xjB7fFppq+gfaLJd3Sdaw+J02zV0eP/T9dneQ3Dv5jWw6bw=="
       },
+      "BouncyCastle.Cryptography": {
+        "type": "Transitive",
+        "resolved": "2.7.0",
+        "contentHash": "U+12df8UEWHgBi04YVf/Lgi2dy3SItlIYvHjjEVa/BngCQIzDCDRBk50DDByCfDvSbe5pRNFr3b7UrVK2kMcLw=="
+      },
       "System.CodeDom": {
         "type": "Transitive",
         "resolved": "11.0.0",
@@ -22,13 +27,16 @@
         }
       },
       "tsudisk.core": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "BouncyCastle.Cryptography": "[2.7.0, )"
+        }
       },
       "tsudisk.windows": {
         "type": "Project",
         "dependencies": {
           "System.Management": "[11.0.0, )",
-          "TsuDisk.Core": "[26.11.2401, )"
+          "TsuDisk.Core": "[26.11.2601, )"
         }
       }
     },
