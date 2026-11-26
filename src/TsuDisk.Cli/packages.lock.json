@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0-windows10.0.17763": {
+      "Microsoft.NET.ILLink.Tasks": {
+        "type": "Direct",
+        "requested": "[10.0.15, )",
+        "resolved": "10.0.15",
+        "contentHash": "u0WnRcZgBZYHlVFpbe/3Adpmb9rmNJ8/fmEwqc/xjB7fFppq+gfaLJd3Sdaw+J02zV0eP/T9dneQ3Dv5jWw6bw=="
+      },
+      "System.CodeDom": {
+        "type": "Transitive",
+        "resolved": "11.0.0",
+        "contentHash": "jhvI5UbF+HuOQ5k8lyNQN+pM6fn7OSWmVK99qK+EvepjY6Ec+lg3039rvgpvXw+cT135xtzfoPpLbqppois5XA=="
+      },
+      "System.Management": {
+        "type": "Transitive",
+        "resolved": "11.0.0",
+        "contentHash": "8x+8Jt/ASauIThRh7yT+kwiR7xmWbPMtTJ3p36EalBuOQZsq6NCqVejO3tlXaYQGb337zOATzrBqAzLgLa86Cg==",
+        "dependencies": {
+          "System.CodeDom": "11.0.0"
+        }
+      },
+      "tsudisk.core": {
+        "type": "Project"
+      },
+      "tsudisk.windows": {
+        "type": "Project",
+        "dependencies": {
+          "System.Management": "[11.0.0, )",
+          "TsuDisk.Core": "[26.11.2401, )"
+        }
+      }
+    },
+    "net10.0-windows10.0.17763/win-x64": {
+      "System.Management": {
+        "type": "Transitive",
+        "resolved": "11.0.0",
+        "contentHash": "8x+8Jt/ASauIThRh7yT+kwiR7xmWbPMtTJ3p36EalBuOQZsq6NCqVejO3tlXaYQGb337zOATzrBqAzLgLa86Cg==",
+        "dependencies": {
+          "System.CodeDom": "11.0.0"
+        }
+      }
+    }
+  }
+}
