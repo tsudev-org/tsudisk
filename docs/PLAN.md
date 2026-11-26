@@ -91,11 +91,12 @@ Test 543 -> 572. E2E GUI G1-G11 xanh trên CI (PR #88). Cập nhật ngay = hàn
 
 - [ ] Nạp secret `TSU_VERSIONS_TOKEN` (Environment `packages`) từ `~/.config/tsudev/keys/tsu-versions-2026.env` qua
       `set -a; . <tệp>` + `gh secret set` (không in). Nếu hook chặn thì 👤 nạp bằng `tsu-nhan-bi-mat`.
-- [ ] `release.yml`: job `nang-latest` sau `cong-bo` (chỉ bản chính thức). Thử lại khi gặp 409 `download_unverified`;
+      (26/11: lệnh `gh secret set` bị bộ phân loại quyền chặn - chờ 👤 nạp.)
+- [x] `release.yml`: job `nang-latest` sau `cong-bo` (chỉ bản chính thức). Thử lại khi gặp 409 `download_unverified`;
       lỗi thì mở Issue.
-- [ ] `.github/workflows/kenh-phat-hanh.yml`: chạy theo lịch 6 giờ + dispatch; nâng `winget`/`scoop` chỉ khi kênh đã có
+- [x] `.github/workflows/kenh-phat-hanh.yml`: chạy theo lịch 6 giờ + dispatch; nâng `winget`/`scoop` chỉ khi kênh đã có
       bản (ADR-0012 mục 12). Action ghim SHA, quyền tối thiểu, `persist-credentials: false`.
-- [ ] `packaging/tools/raise-latest.mjs` dùng chung cho hai workflow, có test `node --test`: URL đúng, coi 409
+- [x] `packaging/tools/raise-latest.mjs` dùng chung cho hai workflow, có test `node --test`: URL đúng, coi 409
       `version_not_newer` là xong, không in token.
 
 **Nghiệm thu**: actionlint/zizmor (nếu có trong `security.yml`) sạch. Chạy `workflow_dispatch` thật với bản 26.11.2601:

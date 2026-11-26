@@ -125,6 +125,9 @@ jobs:
           printf '%064d  tsudisk_26.11.1801_windows-x64-portable.exe\n' 0 > /tmp/sums.txt
           node packaging/tools/winget-manifest.mjs --version 26.11.1801 --sums /tmp/sums.txt --out /tmp/wg
           grep -q 'InstallerType: portable' /tmp/wg/manifests/t/tsudev/TsuDisk/26.11.1801/tsudev.TsuDisk.installer.yaml
+      - name: Test cong cu dong goi (raise-latest, ADR-0012 muc 12)
+        working-directory: .
+        run: node --test packaging/tools/*.test.mjs
       - name: Test Worker chuan hoa URL (open redirect, 405, 414, vong lap)
         run: npm run test:worker
       - name: Tai san thuong hieu khop anh goc (brand-assets --check)

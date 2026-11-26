@@ -8,6 +8,7 @@ name: Phat hanh
 #     build (GitHub Artifact Attestation) cho exe + SBOM, tao GitHub Release o dang NHAP. DISTRIBUTION_TRUST.md muc 2.
 #   virustotal: workflow dung chung tsudev-org/.github quet exe, ghi link bao cao vao Release notes (muc 3).
 #   cong-bo: 0 engine gan co (hoac chua co VT_API_KEY) => xuat ban Release. Bi gan co / loi => giu nhap + mo Issue.
+#   nang-latest: (chi ban chinh thuc) nang `latest` kenh github tren ban ke tsudev.com (ADR-0012 muc 12), loi => Issue.
 #   winget: (khong chay cho the thu) nop manifest vao microsoft/winget-pkgs bang packaging/tools/winget-submit.mjs,
 #     token WINGET_TOKEN nam trong Environment `packages` (chi the v*). Chua co token => bo qua.
 # The thu `vYY.M.DDNN-beta.N` / `-rc.N` (VERSIONING.md 2.2): VersionPrefix = phan truoc dau '-', Release la Pre-release,
@@ -255,3 +256,46 @@ jobs:
           gh release download "$TAG" -R "$GITHUB_REPOSITORY" -p "tsudisk_${VERSION}_winget-manifest.zip" -D wm
           (cd wm && unzip -q ./*.zip)
           node packaging/tools/winget-submit.mjs --root wm --version "$VERSION" | tee -a "$GITHUB_STEP_SUMMARY"
+
+  nang-latest:
+    # ADR-0012 muc 12: nang `latest` kenh github tren ban ke tsudev.com sau khi Release da xuat ban (chi ban chinh thuc).
+    # May chu GET that trang Release; 409 download_unverified thi thu lai 3 lan cach 2 phut. Loi thi mo Issue, KHONG
+    # lam do viec xuat ban (buoc nang continue-on-error). kenh-phat-hanh.yml chay lai moi 6 gio nen tu bu khi loi.
+    needs: [build, cong-bo]
+    if: needs.build.outputs.prerelease != 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: packages
+    permissions:
+      contents: read
+      issues: write
+    env:
+      VERSION: ${{ needs.build.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Nang latest kenh github
+        id: nang
+        continue-on-error: true
+        env:
+          TSU_VERSIONS_TOKEN: ${{ secrets.TSU_VERSIONS_TOKEN }}
+        run: |
+          set -euo pipefail
+          node packaging/tools/raise-latest.mjs --channel github --version "$VERSION" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Mo Issue - chua nang duoc latest
+        if: steps.nang.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          cat > body.md <<EOF
+          Release \`v$VERSION\` đã xuất bản nhưng chưa nâng được \`latest\` kênh \`github\` trên bản kê phiên bản tsudev.com
+          (ADR-0012 mục 12).
+
+          - Lượt chạy: $RUN
+          - Thiếu/sai \`TSU_VERSIONS_TOKEN\` (Environment \`packages\`): nạp lại rồi chạy workflow \`Kenh phat hanh\`.
+          - \`409 download_unverified\`: kiểm trang Release còn mở được; \`Kenh phat hanh\` tự thử lại mỗi 6 giờ.
+          EOF
+          gh issue create -R "$GITHUB_REPOSITORY" --title "Chưa nâng latest kênh github cho v$VERSION" --body-file body.md
