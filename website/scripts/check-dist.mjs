@@ -67,6 +67,16 @@ for (const [ten, duong] of lienKet) {
   const dich = join(dist, decodeURI(duong));
   if (!existsSync(dich) && !existsSync(join(dich, 'index.html'))) loi.push(`${ten}: liên kết nội bộ gãy: ${duong}`);
 }
+// security.txt (RFC 9116, phiếu SEC2 E4): có Contact security@tsudev.com, Canonical đúng tên miền, Policy trỏ /security/,
+// Expires còn ít nhất 30 ngày và không quá 1 năm kể từ lúc build (hết hạn thì dừng deploy để đổi ngày).
+const sec = readFileSync(join(dist, '.well-known/security.txt'), 'utf8');
+if (!/^Contact: mailto:security@tsudev\.com$/m.test(sec)) loi.push('security.txt: thiếu Contact: mailto:security@tsudev.com');
+if (!/^Canonical: https:\/\/disk\.tsudev\.com\/\.well-known\/security\.txt$/m.test(sec)) loi.push('security.txt: Canonical sai');
+if (!/^Policy: https:\/\/disk\.tsudev\.com\/security\/$/m.test(sec)) loi.push('security.txt: Policy phải trỏ /security/');
+const het = Date.parse(sec.match(/^Expires: (\S+)$/m)?.[1] ?? '');
+const ngay = (het - Date.now()) / 86_400_000;
+if (!(ngay >= 30 && ngay <= 366)) loi.push(`security.txt: Expires phải còn 30-366 ngày (hiện ${Math.round(ngay)})`);
+if (!existsSync(join(dist, 'security/index.html'))) loi.push('thiếu trang /security/');
 for (const l of loi) console.error('[check-dist] LỖI', l);
 console.log(`[check-dist] ${loi.length} lỗi`);
 process.exit(loi.length ? 1 : 0);

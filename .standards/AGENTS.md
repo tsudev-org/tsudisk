@@ -44,6 +44,7 @@ chuyên đề. Bản đồ đầy đủ: [`docs/00-INDEX.md`](docs/00-INDEX.md).
 | Hạ tầng 0 đồng | [`docs/FREE_TIER_STACK.md`](docs/FREE_TIER_STACK.md) |
 | Chọn ngôn ngữ, framework | [`docs/LANGUAGE_SELECTION.md`](docs/LANGUAGE_SELECTION.md) |
 | **Đăng nhập, đăng ký, xác minh tài khoản** | [`docs/AUTH_AND_ACCOUNT.md`](docs/AUTH_AND_ACCOUNT.md) |
+| **Đăng nhập bằng mã QR (chéo thiết bị)** | [`docs/CROSS_DEVICE_LOGIN.md`](docs/CROSS_DEVICE_LOGIN.md) |
 | Giao diện, token, component | [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) |
 | Bảng bản ghi, bộ chọn số bản ghi | [`docs/DATA_TABLE.md`](docs/DATA_TABLE.md) |
 | Logo, favicon, icon ứng dụng | [`docs/BRAND_ASSETS.md`](docs/BRAND_ASSETS.md) |
@@ -56,7 +57,11 @@ chuyên đề. Bản đồ đầy đủ: [`docs/00-INDEX.md`](docs/00-INDEX.md).
 | Phiên bản, thẻ git, tên tệp, CHANGELOG | [`docs/VERSIONING.md`](docs/VERSIONING.md) |
 | Cài đặt bằng lệnh (winget, Scoop, APT/RPM, Homebrew) | [`docs/PACKAGING.md`](docs/PACKAGING.md) |
 | **Cài không bị chặn**: cửa hàng, ký mã, chống báo nhầm | [`docs/DISTRIBUTION_TRUST.md`](docs/DISTRIBUTION_TRUST.md) |
-| **Chính sách sản phẩm**: ngôn ngữ/giao diện theo hệ thống, KHÔNG quảng cáo, Pro + Ủng hộ, huy hiệu, iOS, website có hình/video, **lưu cục bộ - đồng bộ/sao lưu đám mây là Pro** | [`docs/PRODUCT_POLICY.md`](docs/PRODUCT_POLICY.md) |
+| **Apple (iOS, iPadOS, macOS)**: CI/CD từ Ubuntu, ký, TestFlight, bí mật `APPLE_*` | [`docs/APPLE_CICD.md`](docs/APPLE_CICD.md) |
+| **Chính sách sản phẩm**: ngôn ngữ/giao diện theo hệ thống, KHÔNG quảng cáo, Pro + Ủng hộ, huy hiệu, iOS, website có hình/video, **dữ liệu chỉ ở thiết bị - không đồng bộ đám mây** | [`docs/PRODUCT_POLICY.md`](docs/PRODUCT_POLICY.md) |
+| **Toàn vẹn ứng dụng**: máy chủ tự quyết, **bắt buộc cập nhật bản mới nhất (modal khoá)**, chứng thực app, làm rối mã PRIVATE | [`docs/APP_INTEGRITY.md`](docs/APP_INTEGRITY.md) |
+| **Trạm điều hành + cổng xác thực tập trung**: `console.` sau Cloudflare Access, `id.` cho đăng nhập, website công khai CHỈ ĐỌC, website sản phẩm không có trang quản trị riêng | [`docs/CONTROL_PLANE.md`](docs/CONTROL_PLANE.md) |
+| **Đồng bộ giữa thiết bị** qua Wi-Fi nội bộ/Bluetooth/QR (Tsu Link), không internet | [`docs/LOCAL_SYNC.md`](docs/LOCAL_SYNC.md) |
 | **Nộp duyệt** cửa hàng/antivirus: đề xuất phiên agent tự điền biểu mẫu | [`docs/STORE_SUBMISSION.md`](docs/STORE_SUBMISSION.md) |
 | **Kho tri thức agent (AKB)** ngoài repo: lỗi, mẹo, quyết định dùng chung mọi dự án - `akb start` / `akb search` | [`docs/KNOWLEDGE_BASE.md`](docs/KNOWLEDGE_BASE.md) |
 | Đồng bộ quy ước xuống repo con | [`docs/SYNC.md`](docs/SYNC.md) |
@@ -221,6 +226,11 @@ git grep -lP '\x{2014}' -- . | grep -v '^migrations/'
 - Mọi sản phẩm có tài khoản phải đủ ba lối vào (Google, GitHub, tài khoản tsudev)
   và cơ chế Xác minh tài khoản. Chi tiết:
   [`docs/AUTH_AND_ACCOUNT.md`](docs/AUTH_AND_ACCOUNT.md).
+- Mọi sản phẩm **không quảng cáo, không thông báo làm phiền**: `MUST NOT` tự hiện modal,
+  thông báo, biểu ngữ hay chấm đỏ mời đăng nhập (TsuDEV/Google/GitHub/Apple), mời Pro,
+  xin Ủng hộ hay xin đánh giá. Đăng nhập chỉ mở khi người dùng bấm (Cài đặt › Tài khoản
+  hoặc chức năng cần tài khoản). Chi tiết: [`docs/AUTH_AND_ACCOUNT.md`](docs/AUTH_AND_ACCOUNT.md)
+  mục 14.4, [`docs/PRODUCT_POLICY.md`](docs/PRODUCT_POLICY.md) mục 3.8.
 - Mọi sản phẩm phải đủ bộ logo/favicon/icon và siêu dữ liệu nối về `tsudev.com`.
   Chi tiết: [`docs/BRAND_ASSETS.md`](docs/BRAND_ASSETS.md) mục 12 và
   [`docs/ECOSYSTEM_IDENTITY.md`](docs/ECOSYSTEM_IDENTITY.md).

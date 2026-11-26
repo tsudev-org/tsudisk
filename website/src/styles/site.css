@@ -184,6 +184,8 @@ kbd { border: 1px solid var(--border-strong); border-bottom-width: 2px; border-r
 .bang th, .bang td { padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
 .bang th { background: var(--bg-subtle); font-weight: 600; }
 .bang tr:last-child td { border-bottom: 0; }
+.bang tbody th { background: transparent; }
+.bang__ghi-chu { margin: 0.3rem 0 0; font-weight: 400; font-size: 0.85rem; color: var(--text-secondary); }
 .giay-phep { white-space: pre-wrap; font-size: 0.85rem; }
 
 /* Chân trang: cùng nền trang; hàng cuối "© TsuDEV" + bộ chọn giao diện */

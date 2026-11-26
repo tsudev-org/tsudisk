@@ -24,15 +24,16 @@ public class ProOfflineGuardTests
         Assert.Equal(RefreshStatus.NotSignedIn, (await a.RefreshAsync(CancellationToken.None)).Status);
         Assert.Null(await a.LogoutAsync(CancellationToken.None));
 
-        // Duong cua lan quet tuong tac: ProNoticePrompt voi nguon tu ForRunAsync.
+        // Duong cua lan chay tuong tac (ca 17, AUTH 14.4.5): chua dang nhap => khong in gi, khong mang, khong tep.
         var output = new StringWriter();
-        var choice = new ProNoticePrompt(await a.ForRunAsync(true, CancellationToken.None),
-                                         new LocalStateStore(rig.Dir.Path), ProTestKit.ClientId, output,
-                                         () => throw new InvalidOperationException("khong duoc cho phim"),
-                                         _ => throw new InvalidOperationException("khong duoc mo URL"))
-            .Run(rig.Now, interactive: true, "C:\\bao-cao");
-        Assert.Equal(ProNoticeChoice.NotShown, choice);
+        var choice = new ProRenewalPrompt(await a.ForRunAsync(true, CancellationToken.None),
+                                          new LocalStateStore(rig.Dir.Path), ProTestKit.ClientId, output,
+                                          () => throw new InvalidOperationException("khong duoc cho phim"),
+                                          _ => throw new InvalidOperationException("khong duoc mo URL"))
+            .Run(rig.Now, interactive: true);
+        Assert.Equal(ProRenewalChoice.NotShown, choice);
         Assert.Equal("", output.ToString());
+        Assert.False(new LocalStateStore(rig.Dir.Path).RemoveLegacyKeys());
 
         Assert.Equal(0, guard.Calls);
         Assert.False(Directory.Exists(rig.Dir.Path));
@@ -71,11 +72,15 @@ public class ProOfflineGuardTests
         Assert.True(body.IndexOf("if (!IsInteractive(cli)) return;", StringComparison.Ordinal) is >= 0 and var i && i < guard);
         foreach (var flag in new[] { "\"json\"", "\"dong-y\"", "\"xac-nhan\"", "IsInputRedirected", "IsOutputRedirected" })
             Assert.Contains(flag, pro[..pro.IndexOf("private static HttpClient", StringComparison.Ordinal)], StringComparison.Ordinal);
+        // Ca 17 (AUTH 14.4.5, N5): duong chay moi lenh KHONG in goi y dang nhap, khong loi moi Pro/thong bao 7.3.
+        var run = body[..body.IndexOf("/// <summary><c>tsudisk dang-nhap", StringComparison.Ordinal)];
+        Assert.DoesNotContain("dang-nhap", run, StringComparison.Ordinal);
+        Assert.DoesNotContain("ProNotice", pro, StringComparison.Ordinal);
         // Nhac Pro CHI IN, khong cho phim (khong chan lenh dia).
         Assert.DoesNotContain("Console.ReadLine", pro, StringComparison.Ordinal);
 
         var main = File.ReadAllText(Path.Combine(root, "src", "TsuDisk.Cli", "Program.cs"));
-        Assert.Contains("ProHook.Run(cli, Commands.DefaultLogRoot);", main, StringComparison.Ordinal);
+        Assert.Contains("ProHook.Run(cli);", main, StringComparison.Ordinal);
     }
 
     private static string RepoRoot()

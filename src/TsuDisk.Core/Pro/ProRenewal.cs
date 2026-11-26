@@ -23,7 +23,8 @@ public sealed record ProRenewalDecision(ProRenewalKind Kind, ProRenewalReason Re
 }
 
 /// <summary>
-/// Nhac gia han + bao het ky TsuDEV Pro - PRODUCT_POLICY v1.2.0 muc 7.6 (bo quy uoc v4.0.0), phieu 20261120-PRO2.
+/// Nhac gia han + bao het ky TsuDEV Pro - PRODUCT_POLICY muc 7.6 (noi dung v2.0.0, bo quy uoc v7.0.0+: bo Q3 dong bo),
+/// phieu 20261120-PRO2, 20261125-SYN1. La ngoai le co chu dich cua muc 3.8 (chi nguoi da mua Pro).
 ///
 /// Nguon thoi han: <c>pro_until</c> cua JWS quyen loi CON HAN; khong co ⇒ khong hien gi.
 /// <list type="bullet">
@@ -45,9 +46,6 @@ public static class ProRenewal
 
     public static readonly TimeSpan Window = TimeSpan.FromDays(7);
     public static readonly TimeSpan ResumeGap = TimeSpan.FromMinutes(30);
-
-    /// <summary>Sau het ky, ban sao dam may con tai ve duoc 90 ngay (muc 7.2).</summary>
-    public static readonly TimeSpan CloudGrace = TimeSpan.FromDays(90);
 
     public static ProRenewalDecision Decide(Entitlement? entitlement, long? seenProUntil, long? notifiedUntil,
                                             DateTimeOffset now, bool interactive, TimeSpan? resumedAfter = null)
@@ -85,24 +83,14 @@ public static class ProRenewal
     public static string ReminderTitle => Loc.T("Gia hạn TsuDEV Pro", "Renew TsuDEV Pro");
 
     public static string ReminderBody(int days, string date) => Loc.T(
-        $"Gói TsuDEV Pro của bạn hết hạn sau {days} ngày (ngày {date}). Gia hạn để tiếp tục đồng bộ và sao lưu đám mây. Nếu không gia hạn, ứng dụng sẽ trở về bản miễn phí: dữ liệu trên thiết bị vẫn giữ nguyên nhưng không còn đồng bộ lên đám mây.",
-        $"Your TsuDEV Pro expires in {days} days (on {date}). Renew to keep cloud sync and backup. If you don't renew, the app returns to the free version: data on this device stays intact but no longer syncs to the cloud.");
+        $"Gói TsuDEV Pro của bạn hết hạn sau {days} ngày (ngày {date}). Gia hạn để giữ huy hiệu và giao diện Pro. Nếu không gia hạn, tài khoản sẽ trở về bản miễn phí; mọi tính năng và dữ liệu trên thiết bị vẫn giữ nguyên.",
+        $"Your TsuDEV Pro expires in {days} days (on {date}). Renew to keep the Pro badge and Pro themes. If you don't renew, your account returns to the free version; all features and data on your devices stay intact.");
 
     public static string ExpiredTitle => Loc.T("TsuDEV Pro đã hết hạn", "TsuDEV Pro has expired");
 
-    /// <summary>
-    /// TsuDisk CHUA co dong bo dam may (cho thu vien .NET TsuSync, ADR-0007) ⇒ bo cau cuoi "Ban sao tren dam may..." dung nhu chuan cho
-    /// phep ("San pham khong co dong bo dam may bo cau cuoi"). Co dong bo thi truyen <paramref name="cloudDeleteDate"/>.
-    /// </summary>
-    public static string ExpiredBody(string? cloudDeleteDate = null)
-    {
-        var body = Loc.T(
-            "Ứng dụng đã trở về bản miễn phí và ngừng đồng bộ lên đám mây. Dữ liệu trên thiết bị vẫn giữ nguyên.",
-            "The app is back on the free version and has stopped syncing to the cloud. Data on this device stays intact.");
-        if (cloudDeleteDate is null) return body;
-        return body + Loc.T($" Bản sao trên đám mây còn tải về được tới ngày {cloudDeleteDate}.",
-                            $" Your cloud copy can be downloaded until {cloudDeleteDate}.");
-    }
+    public static string ExpiredBody => Loc.T(
+        "Tài khoản đã trở về bản miễn phí: huy hiệu và giao diện Pro đã tắt. Mọi tính năng và dữ liệu trên thiết bị vẫn giữ nguyên.",
+        "Your account is back on the free version: the Pro badge and Pro themes are off. All features and data on your devices stay intact.");
 
     public static string RenewButton => Loc.T("Gia hạn", "Renew");
     public static string LaterButton => Loc.T("Để sau", "Later");
@@ -113,8 +101,25 @@ public static class ProRenewal
     public static string Price => Loc.T("490.000 ₫", "490,000 ₫");
 
     public static string PurchaseTerms => Loc.T(
-        $"TsuDEV Pro {Price} cho 1 năm, KHÔNG tự gia hạn. Gia hạn sớm được cộng thêm 1 năm vào thời hạn còn lại. Hết hạn mà chưa gia hạn, ứng dụng trở về bản miễn phí và ngừng đồng bộ lên đám mây; dữ liệu trên thiết bị vẫn giữ nguyên, bản sao trên đám mây còn tải về được 90 ngày rồi bị xoá.",
-        $"TsuDEV Pro {Price} for 1 year, does NOT renew automatically. Renewing early adds 1 year to your remaining time. If it expires without renewal, the app returns to the free version and stops syncing to the cloud; data on your device stays intact, and your cloud copy can be downloaded for 90 days before it is deleted.");
+        $"TsuDEV Pro {Price} cho 1 năm, KHÔNG tự gia hạn. Gia hạn sớm được cộng thêm 1 năm vào thời hạn còn lại. Hết hạn mà chưa gia hạn, tài khoản trở về bản miễn phí: huy hiệu và giao diện Pro tắt; mọi tính năng và dữ liệu trên thiết bị vẫn giữ nguyên.",
+        $"TsuDEV Pro {Price} for 1 year, does NOT renew automatically. Renewing early adds 1 year to your remaining time. If it expires without renewal, your account returns to the free version: the Pro badge and Pro themes are turned off; all features and data on your devices stay intact.");
+
+    // ---- Muc 3.7.3: man mua (desktop mo tsudev.com/pro; o xac nhan nam tren trang mua cua tsudev.com) ----
+
+    /// <summary>Cau dinh vi nguyen van muc 3.7.3 diem 1 (tsudisk la du an OPEN - repo public).</summary>
+    public static string Positioning => Loc.T(
+        "Ứng dụng TsuDEV miễn phí; dự án gắn nhãn OPEN công khai mã nguồn trên GitHub. TsuDEV Pro không bắt buộc: bạn chọn Pro để ủng hộ tác giả duy trì và phát triển dự án, đổi lại tài khoản nhận thêm các quyền lợi dưới đây.",
+        "TsuDEV apps are free; projects labelled OPEN publish their source code on GitHub. TsuDEV Pro is optional: choose Pro to support the author in maintaining and developing the project, and your account gets the extra benefits below.");
+
+    /// <summary>
+    /// Quyen loi DANG CHAY THAT trong TsuDisk (muc 3.7.3 diem 2): chi Q1 huy hieu (lenh tai-khoan in huy hieu theo JWS).
+    /// Q2 giao dien Pro chua lam trong TsuDisk ⇒ MUST NOT hien.
+    /// </summary>
+    public static IReadOnlyList<string> ActiveBenefits => [Loc.T("Huy hiệu Pro cạnh tên tài khoản ở mọi ứng dụng và website TsuDEV",
+                                                                 "Pro badge next to your account name in every TsuDEV app and website")];
+
+    public const string PaymentPolicyUrl = "https://tsudev.com/chinh-sach-thanh-toan";
+    public const string TermsUrl = "https://tsudev.com/terms";
 }
 
 public enum ProRenewalChoice { NotShown, Renew, Later }
@@ -155,7 +160,7 @@ public sealed class ProRenewalPrompt(
         else
         {
             output.WriteLine($"=== {ProRenewal.ExpiredTitle} ===");
-            output.WriteLine(ProRenewal.ExpiredBody());
+            output.WriteLine(ProRenewal.ExpiredBody);
             output.WriteLine();
             if (readLine is not null) output.WriteLine($"  [1] {ProRenewal.RenewButton}    [2] {ProRenewal.CloseButton}");
             state.SetLong(ProRenewal.NotifiedUntilKey, d.ProUntil);

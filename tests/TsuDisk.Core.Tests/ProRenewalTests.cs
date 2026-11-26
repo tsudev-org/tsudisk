@@ -173,15 +173,13 @@ public class ProRenewalTests
     {
         using var _ = Loc.Use(AppLanguage.Vi);
         Assert.Equal("Gia hạn TsuDEV Pro", ProRenewal.ReminderTitle);
-        Assert.Equal("Gói TsuDEV Pro của bạn hết hạn sau 3 ngày (ngày 23/11/2026). Gia hạn để tiếp tục đồng bộ và sao lưu đám mây. Nếu không gia hạn, ứng dụng sẽ trở về bản miễn phí: dữ liệu trên thiết bị vẫn giữ nguyên nhưng không còn đồng bộ lên đám mây.",
+        Assert.Equal("Gói TsuDEV Pro của bạn hết hạn sau 3 ngày (ngày 23/11/2026). Gia hạn để giữ huy hiệu và giao diện Pro. Nếu không gia hạn, tài khoản sẽ trở về bản miễn phí; mọi tính năng và dữ liệu trên thiết bị vẫn giữ nguyên.",
                      ProRenewal.ReminderBody(3, "23/11/2026"));
         Assert.Equal("TsuDEV Pro đã hết hạn", ProRenewal.ExpiredTitle);
-        Assert.Equal("Ứng dụng đã trở về bản miễn phí và ngừng đồng bộ lên đám mây. Dữ liệu trên thiết bị vẫn giữ nguyên.",
-                     ProRenewal.ExpiredBody());
-        Assert.EndsWith(" Bản sao trên đám mây còn tải về được tới ngày 18/02/2027.", ProRenewal.ExpiredBody("18/02/2027"),
-                        StringComparison.Ordinal);
+        Assert.Equal("Tài khoản đã trở về bản miễn phí: huy hiệu và giao diện Pro đã tắt. Mọi tính năng và dữ liệu trên thiết bị vẫn giữ nguyên.",
+                     ProRenewal.ExpiredBody);
         Assert.Equal(("Gia hạn", "Để sau", "Đóng"), (ProRenewal.RenewButton, ProRenewal.LaterButton, ProRenewal.CloseButton));
-        Assert.Equal("TsuDEV Pro 490.000 ₫ cho 1 năm, KHÔNG tự gia hạn. Gia hạn sớm được cộng thêm 1 năm vào thời hạn còn lại. Hết hạn mà chưa gia hạn, ứng dụng trở về bản miễn phí và ngừng đồng bộ lên đám mây; dữ liệu trên thiết bị vẫn giữ nguyên, bản sao trên đám mây còn tải về được 90 ngày rồi bị xoá.",
+        Assert.Equal("TsuDEV Pro 490.000 ₫ cho 1 năm, KHÔNG tự gia hạn. Gia hạn sớm được cộng thêm 1 năm vào thời hạn còn lại. Hết hạn mà chưa gia hạn, tài khoản trở về bản miễn phí: huy hiệu và giao diện Pro tắt; mọi tính năng và dữ liệu trên thiết bị vẫn giữ nguyên.",
                      ProRenewal.PurchaseTerms);
     }
 
@@ -190,14 +188,35 @@ public class ProRenewalTests
     {
         using var _ = Loc.Use(AppLanguage.En);
         Assert.Equal("Renew TsuDEV Pro", ProRenewal.ReminderTitle);
-        Assert.Equal("Your TsuDEV Pro expires in 3 days (on November 23, 2026). Renew to keep cloud sync and backup. If you don't renew, the app returns to the free version: data on this device stays intact but no longer syncs to the cloud.",
+        Assert.Equal("Your TsuDEV Pro expires in 3 days (on November 23, 2026). Renew to keep the Pro badge and Pro themes. If you don't renew, your account returns to the free version; all features and data on your devices stay intact.",
                      ProRenewal.ReminderBody(3, "November 23, 2026"));
         Assert.Equal("TsuDEV Pro has expired", ProRenewal.ExpiredTitle);
-        Assert.Equal("The app is back on the free version and has stopped syncing to the cloud. Data on this device stays intact.",
-                     ProRenewal.ExpiredBody());
+        Assert.Equal("Your account is back on the free version: the Pro badge and Pro themes are off. All features and data on your devices stay intact.",
+                     ProRenewal.ExpiredBody);
         Assert.Equal(("Renew", "Later", "Close"), (ProRenewal.RenewButton, ProRenewal.LaterButton, ProRenewal.CloseButton));
-        Assert.Equal("TsuDEV Pro 490,000 ₫ for 1 year, does NOT renew automatically. Renewing early adds 1 year to your remaining time. If it expires without renewal, the app returns to the free version and stops syncing to the cloud; data on your device stays intact, and your cloud copy can be downloaded for 90 days before it is deleted.",
+        Assert.Equal("TsuDEV Pro 490,000 ₫ for 1 year, does NOT renew automatically. Renewing early adds 1 year to your remaining time. If it expires without renewal, your account returns to the free version: the Pro badge and Pro themes are turned off; all features and data on your devices stay intact.",
                      ProRenewal.PurchaseTerms);
+    }
+
+    [Theory]
+    [InlineData(AppLanguage.Vi)]
+    [InlineData(AppLanguage.En)]
+    public void Nhac_7_6_va_cau_dinh_vi_3_7_3_khop_nguyen_van_ban_quy_uoc(AppLanguage lang)
+    {
+        var policy = File.ReadAllText(Path.Combine(RepoRoot(), ".standards", "docs", "PRODUCT_POLICY.md"))
+            .Replace("\r\n", "\n", StringComparison.Ordinal).Replace("\n     ", " ", StringComparison.Ordinal);
+        using var _ = Loc.Use(lang);
+        var (n, date) = lang == AppLanguage.Vi ? ("{n}", "{ngày}") : ("{n}", "{date}");
+        Assert.Contains(ProRenewal.ReminderBody(0, date).Replace(" 0 ", $" {n} ", StringComparison.Ordinal), policy, StringComparison.Ordinal);
+        Assert.Contains(ProRenewal.ExpiredBody, policy, StringComparison.Ordinal);
+        Assert.Contains(ProRenewal.Positioning, policy, StringComparison.Ordinal);
+        // SYN1: khong con chu "dam may"/"cloud" trong noi dung Pro.
+        foreach (var t in new[] { ProRenewal.ReminderBody(3, date), ProRenewal.ExpiredBody, ProRenewal.PurchaseTerms, ProRenewal.Positioning })
+        {
+            Assert.DoesNotContain("đám mây", t, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("cloud", t, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("đồng bộ", t, StringComparison.OrdinalIgnoreCase);
+        }
     }
 
     [Fact]

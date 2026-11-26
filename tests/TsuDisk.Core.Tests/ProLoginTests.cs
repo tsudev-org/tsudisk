@@ -299,7 +299,7 @@ public class ProLoginTests
     {
         using var rig = new ProRig();
         await rig.LoginAsync();
-        new LocalStateStore(rig.Dir.Path).SetTimestamp(ProNotice.LastShownKey, rig.Now);
+        new LocalStateStore(rig.Dir.Path).SetTimestamp(ProRenewal.NotifiedUntilKey, rig.Now);
         var rt = rig.Store.ReadRefreshToken();
         var revoked = await rig.Account.LogoutAsync(CancellationToken.None);
         Assert.True(revoked);

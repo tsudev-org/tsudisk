@@ -11,9 +11,14 @@ nhất, không cần cài .NET.
 
 Một sản phẩm của [TsuDEV](https://tsudev.com). Trang sản phẩm: <https://disk.tsudev.com>
 
+**Miễn phí, mã nguồn mở (Apache 2.0), không quảng cáo; TsuDEV Pro là tuỳ chọn để ủng hộ tác giả.** Mọi chức năng của
+TsuDisk dùng được không cần tài khoản, không cần trả phí. Dữ liệu chỉ ở máy của bạn: TsuDisk không đồng bộ hay gửi
+thông tin đĩa, nhật ký, bản sao lưu lên internet.
+
 **Hạng sản phẩm: C - Ngoại tuyến** (theo `.standards/docs/AUTH_AND_ACCOUNT.md` mục 1): chạy trọn vẹn không cần
 Internet, không tài khoản, không gửi dữ liệu đi đâu. Đăng nhập tài khoản TsuDEV (`tsudisk dang-nhap`) là tùy chọn, chỉ
-để nhận quyền lợi TsuDEV Pro; chưa đăng nhập thì TsuDisk không kết nối mạng lần nào.
+khi bạn tự gõ lệnh (TsuDisk không bao giờ nhắc đăng nhập), để nhận huy hiệu TsuDEV Pro/Ủng hộ; chưa đăng nhập thì
+TsuDisk không kết nối mạng lần nào.
 
 ## Vì sao có TsuDisk
 
