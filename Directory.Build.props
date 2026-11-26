@@ -25,5 +25,11 @@
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <Deterministic>true</Deterministic>
     <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+    <!-- Ghim phu thuoc NuGet bang packages.lock.json (Scorecard PinnedDependencies, SEC3):
+         CI chi khoi phuc dung ban + hash da khoa; doi phu thuoc thi chay dotnet restore voi tuy chon force-evaluate. -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <!-- Moi lan khoi phuc (ca giai phap khong RID lan publish -r win-x64) phai ra CUNG lock file, neu khong NU1004. -->
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <RestoreLockedMode Condition="'$(CI)' == 'true'">true</RestoreLockedMode>
   </PropertyGroup>
 </Project>

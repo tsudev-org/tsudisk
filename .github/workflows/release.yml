@@ -106,8 +106,8 @@ jobs:
           path: dist
       - name: Khoi phuc goi NuGet (de SBOM doc project.assets.json)
         run: |
-          dotnet restore src/TsuDisk.Cli -r win-x64
-          dotnet restore src/TsuDisk.Gui -r win-x64 -p:EnableWindowsTargeting=true
+          dotnet restore src/TsuDisk.Cli -r win-x64 --locked-mode
+          dotnet restore src/TsuDisk.Gui -r win-x64 -p:EnableWindowsTargeting=true --locked-mode
       - name: SBOM (SPDX) cua ma nguon va goi phu thuoc
         uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
         with:

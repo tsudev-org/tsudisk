@@ -81,6 +81,6 @@ jobs:
           global-json-file: global.json
       - name: dotnet list package --vulnerable
         run: |
-          dotnet restore TsuDisk.slnx
+          dotnet restore TsuDisk.slnx --locked-mode
           dotnet list TsuDisk.slnx package --vulnerable --include-transitive 2>&1 | tee vuln.txt
           if grep -q -E 'High|Critical' vuln.txt; then echo "Co goi lo hong muc Cao/Nghiem trong"; exit 1; fi
