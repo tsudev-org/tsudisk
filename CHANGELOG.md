@@ -2,7 +2,7 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
-## [Chưa phát hành]
+## [26.11.2601] - 26/11/2026
 
 - Không làm phiền: bỏ thông báo "tài khoản dùng trên nhiều thiết bị, nâng cấp Pro để đồng bộ"; TsuDisk không bao giờ
   tự nhắc đăng nhập hay mời mua Pro. Chỉ người đã mua Pro mới thấy nhắc gia hạn khi còn 7 ngày.
