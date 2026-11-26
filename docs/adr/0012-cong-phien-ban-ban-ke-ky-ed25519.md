@@ -101,6 +101,17 @@ TsuDisk là hạng C, và PRIVACY.md cam kết chưa đăng nhập thì không k
 - Rủi ro lớn nhất: nâng `latest` khi chưa có bản để tải, làm người dùng bị khoá mà không có lối ra. Giảm bằng ba lớp:
   máy chủ GET thật `url`; workflow chỉ nâng sau khi kênh đã có bản; GUI/CLI luôn còn **Xuất dữ liệu**.
 
+## Ghi chú triển khai (Phase INT4, 26/11/2026)
+
+- **Cập nhật ngay** trên GUI làm hành động theo kênh rồi **đóng TsuDisk** (giống In-App Update `IMMEDIATE`): GitHub mở
+  `url`; Scoop/winget tự sao chép lệnh vào bộ nhớ tạm và hộp thoại hiện nguyên lệnh (thay cho "nút sao chép" riêng, để
+  modal giữ đúng hai nút). Lý do: Scoop/winget và bản tải tay đều cần tệp exe đang chạy được giải phóng; modal không
+  đóng được nên đây là lối ra duy nhất ngoài Task Manager.
+- Mục 8 (`426`): `ProAccount.UpdateRequired` ghi dấu `versions/server-lock.json` (`ServerLockStore`, gắn đúng phiên bản
+  đang chạy, hết hạn sau 24 giờ); `VersionGate` của CLI và GUI đọc dấu này trước khi tải bản kê.
+- Ảnh chụp/E2E dùng `--du-lieu-mau --xem-khoa-mau` (chỉ HIỆN modal với phiên bản mẫu); không có cờ hay biến môi trường
+  nào bỏ qua cổng.
+
 ## Việc còn chờ
 
 - 👤 Duyệt ADR này và `docs/PLAN.md`.

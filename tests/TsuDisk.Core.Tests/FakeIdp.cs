@@ -38,6 +38,8 @@ internal sealed class FakeIdp : HttpMessageHandler
     public int Devices { get; set; } = 2;
     public bool Offline { get; set; }
     public bool BadEntitlementSignature { get; set; }
+    /// <summary>Gia lap may chu tu choi ban cu: <c>/api/me/entitlements</c> tra <c>426 update_required</c> (ADR-0012 muc 8).</summary>
+    public bool UpgradeRequired { get; set; }
     public bool SessionRevoked { get; private set; }
 
     public string Sub { get; set; } = "u-1";
@@ -143,6 +145,9 @@ internal sealed class FakeIdp : HttpMessageHandler
                 return Json(HttpStatusCode.Unauthorized, """{"error":"invalid_token"}""");
         if (req.Headers.TryGetValues(ProContract.InstallationHeader, out var v)) InstallationHeaders.AddRange(v);
         if (req.Headers.TryGetValues(ProContract.AppHeader, out var app)) AppHeaders.AddRange(app);
+        if (UpgradeRequired)
+            return Json((HttpStatusCode)426,
+                """{"error":"update_required","latest":"26.11.2701","url":"https://github.com/tsudev-org/tsudisk/releases/tag/v26.11.2701"}""");
         var now = DateTimeOffset.UtcNow;
         var claims = ProTestKit.Claims(devices: Devices, iat: now.AddMinutes(-1));
         claims["sub"] = Sub;
@@ -203,6 +208,8 @@ internal sealed class ProRig : IDisposable
     public InstallationIdStore Installs { get; }
     public DateTimeOffset Now { get; set; } = DateTimeOffset.UtcNow;
     public ProAccount Account { get; }
+    /// <summary>Moi lan <see cref="ProAccount.UpdateRequired"/> duoc goi (may chu tra 426).</summary>
+    public List<UpdateRequiredResponse> Upgrades { get; } = new();
 
     public ProRig(HttpMessageHandler? handler = null, string? appHeader = null)
     {
@@ -211,7 +218,11 @@ internal sealed class ProRig : IDisposable
         Store = new ProAccountStore(Dir.Path, new FakeProtector());
         Installs = new InstallationIdStore(Dir.Path);
         Account = new ProAccount(Store, Installs, new ProHttp(Http, FakeIdp.Endpoints, ProTestKit.ClientId, appHeader),
-                                 FakeIdp.Endpoints, ProTestKit.ClientId, () => Now) { LockWait = TimeSpan.FromMilliseconds(200) };
+                                 FakeIdp.Endpoints, ProTestKit.ClientId, () => Now)
+        {
+            LockWait = TimeSpan.FromMilliseconds(200),
+            UpdateRequired = Upgrades.Add,
+        };
     }
 
     /// <summary>"Trinh duyet" gia: IdP cap ma roi GET that toi cong loopback (kiem ca TcpListener).</summary>

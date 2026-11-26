@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using TsuDisk.Core.Integrity;
 using TsuDisk.Core.Presentation;
 
 namespace TsuDisk.Gui;
@@ -16,6 +17,8 @@ namespace TsuDisk.Gui;
 /// anh website/PR va kiem tren CI Windows. Che do chup KHONG doc/ghi tep cai dat.
 /// Cho E2E lai giao dien tren o ao (tests/e2e/run-e2e-gui.ps1): <c>--chi-o-ao</c> chi liet ke VA chi ghi o VHD/VHDX,
 /// <c>--dia N</c> chon san dia N, <c>--thu-muc-nhat-ky &lt;thu-muc&gt;</c> noi ghi nhat ky lan chay.
+/// <c>--du-lieu-mau --xem-khoa-mau</c> mo san modal khoa voi phien ban MAU (chi hien thi, ca E2E G11); co nay KHONG bo
+/// qua cong - cong phien ban (ADR-0012) chay o moi lan mo that, khong co co/bien moi truong nao tat duoc.
 /// </summary>
 internal sealed partial class App : Application
 {
@@ -53,6 +56,13 @@ internal sealed partial class App : Application
         if (shotDir is null)
         {
             window.Show();
+            if (sample && args.Contains("--xem-khoa-mau"))
+            {
+                await model.LoadAsync().ConfigureAwait(true);
+                GuiGate.Show(window, GuiGate.SampleDecision(), UpdateAction.For("github", UpdateAction.ReleasesPage), Value("--thu-muc-nhat-ky"));
+                return;
+            }
+            new GuiGate(window, model, Value("--thu-muc-nhat-ky")).Start();
             await model.LoadAsync().ConfigureAwait(true);
             return;
         }
@@ -102,6 +112,49 @@ internal sealed partial class App : Application
                 encoder.Save(file);
                 await Console.Out.WriteLineAsync(path).ConfigureAwait(true);
             }
+        }
+        await CaptureLockAsync(window, directory).ConfigureAwait(true);
+    }
+
+    /// <summary>Modal khoa vi/en x Sang/Toi voi quyet dinh MAU (khong di qua cong, khong mang) - ADR-0012 muc 10.</summary>
+    private static async Task CaptureLockAsync(Window owner, string directory)
+    {
+        var modal = new UpdateRequiredWindow(GuiGate.SampleDecision(), UpdateAction.For("github", UpdateAction.ReleasesPage), null)
+        {
+            Owner = owner,
+            ShowInTaskbar = false,
+        };
+        modal.PrepareForCapture(1280, 800);
+        modal.Show();
+        try
+        {
+            foreach (var language in UiLanguage.Supported)
+            {
+                Loc.Instance.SetLanguage(language);
+                foreach (var mode in new[] { Core.Presentation.ThemeMode.Light, Core.Presentation.ThemeMode.Dark })
+                {
+                    ThemeManager.Apply(ThemeChoice.System, mode);
+                    await modal.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+                    modal.UpdateLayout();
+                    var root = (FrameworkElement)modal.Content;
+                    var dpi = VisualTreeHelper.GetDpi(modal);
+                    var bitmap = new RenderTargetBitmap((int)Math.Ceiling(root.ActualWidth * dpi.DpiScaleX),
+                        (int)Math.Ceiling(root.ActualHeight * dpi.DpiScaleY), dpi.PixelsPerInchX, dpi.PixelsPerInchY, PixelFormats.Pbgra32);
+                    bitmap.Render(root);
+                    var encoder = new PngBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                    var path = Path.Combine(directory, $"tsudisk-gui-khoa_{language}_{(mode == Core.Presentation.ThemeMode.Dark ? "toi" : "sang")}.png");
+                    using var file = File.Create(path);
+                    encoder.Save(file);
+                    await Console.Out.WriteLineAsync(path).ConfigureAwait(true);
+                }
+            }
+        }
+        finally
+        {
+            UpdateRequiredWindow.AllowClose = true;
+            modal.Close();
+            UpdateRequiredWindow.AllowClose = false;
         }
     }
 }

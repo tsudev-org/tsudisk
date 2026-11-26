@@ -10,6 +10,12 @@ Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/V
   mới trên kênh cài đặt của bạn, lệnh dừng với hướng dẫn cập nhật (`scoop update tsudisk`, `winget upgrade
   tsudev.TsuDisk` hoặc liên kết tải) và mã thoát 6; `phien-ban`, `tro-giup`, `dang-xuat`, `xuat-du-lieu` vẫn chạy.
   Chưa đăng nhập thì không kiểm, không kết nối mạng. Mạng lỗi không bao giờ chặn lệnh.
+- Giao diện (`tsudisk-gui`): khi đã đăng nhập, kiểm bản kê lúc mở, mỗi 6 giờ và khi quay lại sau ít nhất 30 phút. Có
+  bản mới thì hiện màn hình "Cần cập nhật ứng dụng" toàn màn, chỉ có hai nút: **Cập nhật ngay** (mở trang tải, hoặc
+  sao chép lệnh `scoop`/`winget`, rồi đóng TsuDisk để cập nhật) và **Xuất dữ liệu** (chọn thư mục, tạo tệp `.zip` như
+  lệnh `xuat-du-lieu`). Đang ghi đĩa thì chờ thao tác xong mới hiện, không bao giờ ngắt giữa chừng.
+- Máy chủ tsudev.com từ chối bản cũ (`426`) cũng khoá CLI và giao diện như khi có bản mới (tự hết sau 24 giờ hoặc khi
+  đã cập nhật).
 
 ## [26.11.2601] - 26/11/2026
 

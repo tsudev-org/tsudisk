@@ -17,6 +17,8 @@ try
     if (CliGate.Check(cli) is { } locked)   // ADR-0012: cong phien ban TRUOC moi lenh (chi khi da dang nhap)
         return locked;
     ProHook.Run(cli);   // ADR-0007: chua dang nhap => khong mang, khong tep, khong in; chi nhac gia han 7.6
+    if (CliGate.CheckServerLock(cli) is { } refused)   // ADR-0012 muc 8: luot lam moi vua nhan 426 => khoa ngay
+        return refused;
     return cli.Command switch
     {
         "danh-sach" => Commands.List(cli),

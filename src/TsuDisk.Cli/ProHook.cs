@@ -37,7 +37,11 @@ internal static class ProHook
                         ProContract.AppHeaderValue(Commands.ToolVersion, ProContract.DetectChannel(Environment.ProcessPath))),
             ProEndpoints.Production,
             ProContract.ClientId,
-            () => DateTimeOffset.UtcNow);
+            () => DateTimeOffset.UtcNow)
+        {
+            // ADR-0012 muc 8: 426 o bat ky luot lay quyen loi nao ⇒ ghi dau de cong CLI + GUI cung khoa.
+            UpdateRequired = r => CliGate.ServerLock.TrySave(r, Commands.ToolVersion, DateTimeOffset.UtcNow),
+        };
     }
 
     /// <summary>

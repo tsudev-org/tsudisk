@@ -1,0 +1,34 @@
+<Window x:Class="TsuDisk.Gui.UpdateRequiredWindow" x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None" ResizeMode="NoResize" WindowState="Maximized" ShowInTaskbar="False"
+        Background="{DynamicResource bg-base}" Foreground="{DynamicResource text-primary}"
+        FontFamily="{DynamicResource font-body}" FontSize="15" UseLayoutRounding="True"
+        AutomationProperties.AutomationId="UpdateRequiredWindow"
+        KeyboardNavigation.TabNavigation="Cycle" KeyboardNavigation.ControlTabNavigation="Cycle"
+        KeyboardNavigation.DirectionalNavigation="Cycle">
+  <!-- Modal khoa (ADR-0012 muc 10, APP_INTEGRITY 2.2): toan man, KHONG dong duoc (khong co nut X, Esc/Alt+F4 bi chan o
+       code), focus xoay vong trong cua so, DUNG hai nut. Chu lay nguyen van tu Core UpdateRequiredText (test doi chieu). -->
+  <Grid x:Name="Root" Background="{DynamicResource bg-base}">
+    <Border x:Name="Card" Width="640" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="32"
+            Padding="32" Background="{DynamicResource bg-surface}" BorderBrush="{DynamicResource border-strong}"
+            BorderThickness="1" CornerRadius="{DynamicResource radius-md}">
+      <StackPanel>
+        <Image Source="pack://application:,,,/Resources/icon-64.png" Width="48" Height="48" HorizontalAlignment="Left" Focusable="False" />
+        <TextBlock x:Name="Heading" Margin="0,16,0,0" FontFamily="{DynamicResource font-display}" FontSize="24"
+                   FontWeight="Bold" TextWrapping="Wrap" AutomationProperties.HeadingLevel="Level1"
+                   AutomationProperties.AutomationId="UpdateRequiredTitle" />
+        <TextBlock x:Name="Body" Margin="0,12,0,0" TextWrapping="Wrap" LineHeight="23"
+                   AutomationProperties.AutomationId="UpdateRequiredBody" />
+        <TextBlock x:Name="Status" Margin="0,12,0,0" TextWrapping="Wrap" Foreground="{DynamicResource text-secondary}"
+                   Visibility="Collapsed" AutomationProperties.AutomationId="UpdateRequiredStatus"
+                   AutomationProperties.LiveSetting="Polite" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,24,0,0">
+          <Button x:Name="ExportButton" Click="OnExport" Margin="0,0,8,0" AutomationProperties.AutomationId="ExportDataButton" />
+          <Button x:Name="UpdateButton" Style="{StaticResource Primary}" Click="OnUpdate"
+                  AutomationProperties.AutomationId="UpdateNowButton" />
+        </StackPanel>
+      </StackPanel>
+    </Border>
+  </Grid>
+</Window>

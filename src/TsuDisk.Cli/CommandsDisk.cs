@@ -186,12 +186,7 @@ internal static partial class Commands
         if (cli.Positionals.Count != 1)
             throw new UsageException("Cần đúng một thư mục đích, ví dụ: tsudisk xuat-du-lieu D:\\sao-luu");
         var destination = Path.GetFullPath(cli.Positionals[0]);
-        var logRoot = Path.GetFullPath(cli.Value("thu-muc-nhat-ky") ?? DefaultLogRoot);
-        var sources = new List<ExportSource>
-        {
-            new("nhat-ky", logRoot),   // gom ca ban sao luu GPT (sao-luu, mo-rong... ghi vao day)
-            new("cai-dat", GuiSettingsPath),
-        };
+        var sources = DataExport.StandardSources(cli.Value("thu-muc-nhat-ky"));   // nhat ky gom ca ban sao luu GPT
         ExportResult result;
         try
         {
@@ -224,10 +219,6 @@ internal static partial class Commands
         }
         return ExitCodes.Ok;
     }
-
-    /// <summary>Trung voi <c>TsuDisk.Gui.SettingsStore</c> (<c>%LOCALAPPDATA%\TsuDisk\giao-dien.json</c>).</summary>
-    private static string GuiSettingsPath => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TsuDisk", "giao-dien.json");
 
     private static string LevelText(HealthLevel level) => level switch
     {
