@@ -27,7 +27,7 @@ jobs:
   nang:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-    environment: packages
+    environment: versions
     strategy:
       fail-fast: false
       matrix:

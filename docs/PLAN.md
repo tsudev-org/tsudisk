@@ -102,6 +102,12 @@ Test 543 -> 572. E2E GUI G1-G11 xanh trên CI (PR #88). Cập nhật ngay = hàn
 **Nghiệm thu**: actionlint/zizmor (nếu có trong `security.yml`) sạch. Chạy `workflow_dispatch` thật với bản 26.11.2601:
 GET bản kê thấy `products.tsudisk.channels.github.latest = 26.11.2601`, và `scoop` nếu bucket đã có. PR đã gộp.
 
+- [x] PR #89 gộp (kèm gia cố CodeQL `js/file-access-to-http`: kiểm khuôn `package.json`, chỉ gửi url `https://github.com`).
+- [ ] Lần dispatch đầu lỗi: Environment `packages` chỉ cho tag `v*`. Chủ dự án chọn env mới `versions` (chỉ
+      `TSU_VERSIONS_TOKEN`, nhánh `main` + tag `v*`) - env đã tạo, workflow đổi trong PR `fix/int5-env-versions`.
+      👤 nạp `TSU_VERSIONS_TOKEN` vào env `versions` (lệnh trong STATE), rồi gộp PR + dispatch lại để nghiệm thu.
+- [ ] Sau nghiệm thu: xoá `TSU_VERSIONS_TOKEN` khỏi env `packages` (hỏi chủ dự án trước).
+
 ## Phase INT6 - DPoP cho máy khách desktop
 
 - [ ] Phiếu trao đổi với repo tsudev: chốt hợp đồng DPoP desktop gồm `token_endpoint`, `cnf.jkt` trong JWS quyền lợi,

@@ -265,7 +265,7 @@ jobs:
     if: needs.build.outputs.prerelease != 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
-    environment: packages
+    environment: versions
     permissions:
       contents: read
       issues: write

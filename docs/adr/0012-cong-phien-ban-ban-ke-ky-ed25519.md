@@ -73,8 +73,9 @@ TsuDisk là hạng C, và PRIVACY.md cam kết chưa đăng nhập thì không k
     `manifest.json` liệt kê tệp + SHA-256. Hàm KHÔNG xuất refresh token hay khoá DPoP: đó là bí mật của thiết bị, không
     phải dữ liệu người dùng.
 12. **Nâng `latest` theo kênh** (APP_INTEGRITY 2.1, "chốt chặn"):
-    - `release.yml`: thêm job `nang-latest` sau `cong-bo`, chỉ cho bản chính thức, chạy trong Environment `packages`,
-      secret `TSU_VERSIONS_TOKEN`. Job POST kênh `github` với `url` = `.../releases/tag/v$VERSION`. Lỗi `409
+    - `release.yml`: thêm job `nang-latest` sau `cong-bo`, chỉ cho bản chính thức, chạy trong Environment `versions`,
+      secret `TSU_VERSIONS_TOKEN`. (Bổ sung 26/11/2026: `versions` chỉ giữ `TSU_VERSIONS_TOKEN`, cho nhánh `main` + tag
+      `v*` vì `kenh-phat-hanh.yml` chạy từ `main`; `WINGET_TOKEN` vẫn ở `packages` chỉ cho tag `v*` - không nới phạm vi.) Job POST kênh `github` với `url` = `.../releases/tag/v$VERSION`. Lỗi `409
       download_unverified` thì thử lại tối đa 3 lần, cách nhau 2 phút; job lỗi thì mở Issue, KHÔNG làm đỏ việc xuất bản.
     - Workflow mới `kenh-phat-hanh.yml` (chạy theo lịch mỗi 6 giờ + `workflow_dispatch`, quyền `contents: read`):
       - Kênh `winget`: chỉ nâng khi thư mục `manifests/t/tsudev/TsuDisk/<bản>` đã có trên `microsoft/winget-pkgs` (đã
