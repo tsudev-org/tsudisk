@@ -20,8 +20,7 @@
 - [ ] winget-pkgs #486490 (26.11.2202), #487170 (26.11.2301), #487205 (26.11.2302): chờ moderator; #487246 (26.11.2303),
       #487347 (26.11.2401): URL-Validation-Error 503 LicenseUrl github.com - cần tác giả (`nguyentrangtinhsu`) bình luận
       xin chạy lại; bản sau dùng `disk.tsudev.com/ban-quyen/` (#76). Merge => khối "Cài bằng lệnh" (PACKAGING 8.1).
-- [ ] Pro: đăng nhập thật bằng tài khoản TsuDEV trên Windows (cần chủ dự án bấm trong trình duyệt) - THREAT_MODEL mục 4.
-      Đồng bộ: chờ .NET `TsuSync` (PRO-D3, repo tsusync) + chủ dự án duyệt phạm vi (ADR-0007 "Việc còn chờ").
+- [ ] Pro - đồng bộ: chờ .NET `TsuSync` (PRO-D3, repo tsusync) + chủ dự án duyệt phạm vi (ADR-0007 "Việc còn chờ").
 - [ ] GUI tiếp (cần chủ dự án duyệt từng bước): thu nhỏ, xoá phân vùng theo rủi ro - mỗi cái ADR bổ sung +
       `AllowedOperations` + ca E2E GUI; màn Pro/Ủng hộ + hộp thoại nhắc gia hạn.
 - [ ] Chuyển MBR -> GPT: ADR-0006 Đề xuất - chờ duyệt + kiểm Hyper-V Gen 1 -> Gen 2.

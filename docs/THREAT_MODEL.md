@@ -56,4 +56,4 @@ Ranh giới: (A) tiến trình `tsudisk.exe` (có thể chạy quản trị) ↔
 - [x] Mọi kết nối mới liệt kê trong `PRIVACY.md`, nêu rõ chỉ sau khi đăng nhập
 - [x] Test hạng C + IdP giả, không test nào gọi `tsudev.com` (285 test)
 - [x] `tai-khoan` khi chưa đăng nhập chạy thật trên Windows 11 (22/11/2026): không gọi mạng, không tạo tệp
-- [ ] Đăng nhập thật với tài khoản TsuDEV trên Windows (cần chủ dự án bấm đăng nhập trong trình duyệt) - phiên sau
+- [x] Đăng nhập thật với tài khoản TsuDEV trên Windows (27/11/2026, chủ dự án chạy): quyền lợi gắn khoá DPoP của máy
