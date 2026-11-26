@@ -295,7 +295,7 @@ jobs:
           (ADR-0012 mục 12).
 
           - Lượt chạy: $RUN
-          - Thiếu/sai \`TSU_VERSIONS_TOKEN\` (Environment \`packages\`): nạp lại rồi chạy workflow \`Kenh phat hanh\`.
+          - Thiếu/sai \`TSU_VERSIONS_TOKEN\` (Environment \`versions\`, nguồn \`VERSIONS_RAISE_TOKEN\`): nạp lại rồi chạy workflow \`Kenh phat hanh\`.
           - \`409 download_unverified\`: kiểm trang Release còn mở được; \`Kenh phat hanh\` tự thử lại mỗi 6 giờ.
           EOF
           gh issue create -R "$GITHUB_REPOSITORY" --title "Chưa nâng latest kênh github cho v$VERSION" --body-file body.md
