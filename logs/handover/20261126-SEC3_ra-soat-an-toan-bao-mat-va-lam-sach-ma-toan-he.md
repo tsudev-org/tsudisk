@@ -130,3 +130,5 @@ Tiết kiệm: grep rồi đọc đúng đoạn; gộp cổng một lần cuối
 Cuối phiên: điền mục 4 của phiếu, cập nhật STATE/bàn giao của repo, akb close + akb sync, báo điều phối qua
 SendMessage. Trả lời tôi bằng tiếng Việt, ngắn gọn.
 ```
+
+- 26/11/2026 - agent-tsudisk (phiên 11): kết quả ở logs/handover/20261126-01 mục 4 (#79, #80, #81; bản 26.11.2601).

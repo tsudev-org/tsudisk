@@ -28,7 +28,7 @@ if (names.length < 3) fail(`khong thay manifest trong ${join(root, rel)}`);
 const files = names.map((n) => ({ path: `${rel}/${n}`, body: readFileSync(join(root, rel, n), 'utf8') }));
 for (const f of files) if (!f.body.includes(`\nPackageVersion: ${version}\n`)) fail(`${f.path} lech phien ban ${version}`);
 
-async function gh(method, path, body, okMissing = false) {
+async function gh(method, path, body, okMissing = false, okWorkflowScope = false) {
   const r = await fetch(`https://api.github.com/${path}`, {
     method,
     headers: {
@@ -39,6 +39,7 @@ async function gh(method, path, body, okMissing = false) {
   });
   if (okMissing && r.status === 404) return null;
   const text = await r.text();
+  if (okWorkflowScope && r.status === 422 && text.includes('without `workflow` scope')) return null;
   if (!r.ok) fail(`${method} ${path} -> ${r.status} ${text.slice(0, 300)}`);
   return text ? JSON.parse(text) : {};
 }
@@ -62,7 +63,11 @@ if (!(await gh('GET', `repos/${fork}`, undefined, true))) {
   await gh('POST', `repos/${UP}/forks`, { default_branch_only: true });
   for (let i = 0; i < 30 && !(await gh('GET', `repos/${fork}/branches/master`, undefined, true)); i++) await sleep(10_000);
 }
-await gh('POST', `repos/${fork}/merge-upstream`, { branch: 'master' });
+// Dong bo fork voi upstream bi 422 khi upstream doi tep .github/workflows ma token khong co scope `workflow`. Khong cap
+// them quyen: dung nhanh tu master HIEN CO cua fork - PR chi them tep manifest nen van sach du master fork cu.
+if ((await gh('POST', `repos/${fork}/merge-upstream`, { branch: 'master' }, false, true)) === null) {
+  console.log('[winget-submit] khong dong bo duoc fork (token khong co scope workflow) - dung master hien co cua fork');
+}
 const base = (await gh('GET', `repos/${fork}/git/ref/heads/master`)).object.sha;
 
 // Mot commit chua du cac tep manifest: blob -> tree -> commit -> nhanh.

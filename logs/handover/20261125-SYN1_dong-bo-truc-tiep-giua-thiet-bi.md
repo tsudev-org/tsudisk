@@ -59,3 +59,5 @@ công khai (grep toàn hệ).
 ## 5. Kết quả xử lý
 
 - 25/11/2026 - projects-05: mở phiếu; tsudev-standards v7.0.0 PR #85. Chủ dự án gộp #85; bản sao phát vào `logs/handover/` của các repo (chưa commit - phiên repo tự commit).
+
+- 26/11/2026 - agent-tsudisk (phiên 11): kết quả ở logs/handover/20261126-01 mục 4 (#79, #80, #81; bản 26.11.2601).
