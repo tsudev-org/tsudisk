@@ -9,11 +9,9 @@
 ## Hàng đợi task (làm từ trên xuống)
 
 - [ ] winget-pkgs#489979 (26.11.2601) chờ moderator. (PAT winget cũ đã xoá - sự cố 26/11 ĐÓNG.)
-- [ ] 👤 Nghiệm thu INT6: đăng nhập thật trên Windows bằng bản dựng từ `main` (`tsudisk dang-nhap`, rồi
-      `tsudisk tai-khoan` phải hiện "Gắn với khóa thiết bị của máy này: có"), sau đó `tsudisk dang-xuat`.
+- [ ] Đồng bộ tsudev-standards v9.0.0 (tin từ phiên `mot-cong-dang-nhap-cp3`, 27/11): chạy `sync-standards.sh` HAI lượt,
+      `.standards/scripts/check-central-login.sh`, lập phiếu RA_SOAT_DANG_NHAP (CHANGELOG 9.0.0 của bộ quy ước).
 - [ ] Phase INT7 kế tiếp (mỗi ngữ cảnh một Phase), rồi QR4-UI1, UI2-B.
-- [ ] Chờ tsudev trả lời phiếu `20261127-DP1` (trong repo tsudev, mục 3): thời điểm DPoP bắt buộc cho desktop,
-      `DPoP-Nonce`, DPoP ở `/oidc/token`.
 - [ ] 👤 Dọn đĩa: phiếu `logs/handover/20261126-DD1_phoi-hop-don-dia.md` mục 3 (co VHDX, bản build tsudisk).
       ⛔ Infatica đang chạy - phiên tsuguard theo dõi.
 - [ ] QR4 + UI1 (phiếu 20261124-QR1): đăng nhập QR, tương phản biểu tượng, cổng mã chết/ngân sách tốc độ.
@@ -22,8 +20,7 @@
 - [ ] winget-pkgs #486490 (26.11.2202), #487170 (26.11.2301), #487205 (26.11.2302): chờ moderator; #487246 (26.11.2303),
       #487347 (26.11.2401): URL-Validation-Error 503 LicenseUrl github.com - cần tác giả (`nguyentrangtinhsu`) bình luận
       xin chạy lại; bản sau dùng `disk.tsudev.com/ban-quyen/` (#76). Merge => khối "Cài bằng lệnh" (PACKAGING 8.1).
-- [ ] Pro: đăng nhập thật bằng tài khoản TsuDEV trên Windows (cần chủ dự án bấm trong trình duyệt) - THREAT_MODEL mục 4.
-      Đồng bộ: chờ .NET `TsuSync` (PRO-D3, repo tsusync) + chủ dự án duyệt phạm vi (ADR-0007 "Việc còn chờ").
+- [ ] Pro - đồng bộ: chờ .NET `TsuSync` (PRO-D3, repo tsusync) + chủ dự án duyệt phạm vi (ADR-0007 "Việc còn chờ").
 - [ ] GUI tiếp (cần chủ dự án duyệt từng bước): thu nhỏ, xoá phân vùng theo rủi ro - mỗi cái ADR bổ sung +
       `AllowedOperations` + ca E2E GUI; màn Pro/Ủng hộ + hộp thoại nhắc gia hạn.
 - [ ] Chuyển MBR -> GPT: ADR-0006 Đề xuất - chờ duyệt + kiểm Hyper-V Gen 1 -> Gen 2.
@@ -39,7 +36,8 @@
 
 - 27/11/2026 (phiên 16) - Phase INT6 (#93): DPoP desktop theo tsudev ADR-0004 mục 6 - `Core/Pro/Dpop.cs`,
   `Windows/DpopKeyStore.cs` (CNG, TPM trước), JWS phải có `cnf.jkt` đúng khoá, thử lại một lần (nonce/lệch giờ). Test
-  572 -> 588; thử khoá CNG trên Windows thật (TPM). Còn nghiệm thu đăng nhập thật (👤).
+  572 -> 588; thử khoá CNG trên Windows thật (TPM). Nghiệm thu đăng nhập
+  thật ĐẠT 27/11 (chủ dự án chạy, JWS gắn khoá máy).
 
 - 27/11/2026 (phiên 15) - Phase INT5 XONG: #89 (raise-latest + job `nang-latest` + `kenh-phat-hanh.yml`, gia cố CodeQL
   `js/file-access-to-http`), #90 (env `versions`: chỉ `TSU_VERSIONS_TOKEN`, main + tag `v*`; `WINGET_TOKEN` vẫn chỉ tag).

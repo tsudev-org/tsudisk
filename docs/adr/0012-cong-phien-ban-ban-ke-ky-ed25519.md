@@ -132,6 +132,8 @@ máy chủ đã nhận DPoP tuỳ chọn và gắn `cnf.jkt`, nên gửi sớm k
 ## Việc còn chờ
 
 - 👤 Duyệt ADR này và `docs/PLAN.md`.
-- tsudev.com trả lời phiếu `20261127-DP1`: thời điểm DPoP bắt buộc cho desktop, `DPoP-Nonce`, DPoP ở `/oidc/token`.
-- 👤 Đăng nhập thật trên Windows: kiểm JWS có `cnf.jkt` khớp khoá.
+- ~~tsudev.com trả lời phiếu `20261127-DP1`~~ Đã trả lời 27/11/2026: DPoP bắt buộc cho desktop chưa có lịch (sẽ báo
+  trước ít nhất một bản phát hành; thiếu/sai ⇒ `401 invalid_dpop_proof`); không định bật `DPoP-Nonce`; **không** gửi DPoP
+  ở `/oidc/token` (máy chủ sẽ cấp token gắn khoá mà `/api/me/entitlements` chỉ nhận `Bearer`); không cần đăng ký `jkt`.
+- ~~Đăng nhập thật trên Windows~~ Đạt 27/11/2026: JWS thật có `cnf.jkt` khớp khoá của máy.
 - 👤 Chọn ngày "khoá ngay" toàn hệ (INT1-f phía tsudev).
