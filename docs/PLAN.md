@@ -89,9 +89,9 @@ Test 543 -> 572. E2E GUI G1-G11 xanh trên CI (PR #88). Cập nhật ngay = hàn
 
 ## Phase INT5 - Phát hành: nâng `latest` theo kênh
 
-- [ ] Nạp secret `TSU_VERSIONS_TOKEN` (Environment `packages`) từ `~/.config/tsudev/keys/tsu-versions-2026.env` qua
+- [x] Nạp secret `TSU_VERSIONS_TOKEN` (Environment `packages`) từ `~/.config/tsudev/keys/tsu-versions-2026.env` qua
       `set -a; . <tệp>` + `gh secret set` (không in). Nếu hook chặn thì 👤 nạp bằng `tsu-nhan-bi-mat`.
-      (26/11: lệnh `gh secret set` bị bộ phân loại quyền chặn - chờ 👤 nạp.)
+      (26/11: agent bị bộ phân loại quyền chặn; 👤 đã nạp bằng `set -a` + `gh secret set` qua stdin.)
 - [x] `release.yml`: job `nang-latest` sau `cong-bo` (chỉ bản chính thức). Thử lại khi gặp 409 `download_unverified`;
       lỗi thì mở Issue.
 - [x] `.github/workflows/kenh-phat-hanh.yml`: chạy theo lịch 6 giờ + dispatch; nâng `winget`/`scoop` chỉ khi kênh đã có
