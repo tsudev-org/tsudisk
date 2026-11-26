@@ -4,6 +4,7 @@ using TsuDisk.Core.Conversion;
 using TsuDisk.Core.Execution;
 using TsuDisk.Core.Gpt;
 using TsuDisk.Core.Health;
+using TsuDisk.Core.Integrity;
 using TsuDisk.Core.Model;
 using TsuDisk.Core.Serialization;
 using TsuDisk.Windows;
@@ -175,6 +176,58 @@ internal static partial class Commands
         Console.WriteLine("Giữ thư mục này ở nơi an toàn (ổ khác/USB). Khôi phục là thao tác chuyên gia - xem hướng dẫn trên disk.tsudev.com.");
         return ok ? ExitCodes.Ok : ExitCodes.Failed;
     }
+
+    /// <summary>
+    /// <c>xuat-du-lieu &lt;thu muc&gt;</c> (ADR-0012 muc 11, APP_INTEGRITY I6): van chay khi app bi khoa. Chi doc nguon, ghi
+    /// mot tep .zip moi (khong ghi de). KHONG dua thu muc trang thai Pro (refresh token) vao nguon.
+    /// </summary>
+    public static int Export(CliArgs cli)
+    {
+        if (cli.Positionals.Count != 1)
+            throw new UsageException("Cần đúng một thư mục đích, ví dụ: tsudisk xuat-du-lieu D:\\sao-luu");
+        var destination = Path.GetFullPath(cli.Positionals[0]);
+        var logRoot = Path.GetFullPath(cli.Value("thu-muc-nhat-ky") ?? DefaultLogRoot);
+        var sources = new List<ExportSource>
+        {
+            new("nhat-ky", logRoot),   // gom ca ban sao luu GPT (sao-luu, mo-rong... ghi vao day)
+            new("cai-dat", GuiSettingsPath),
+        };
+        ExportResult result;
+        try
+        {
+            result = DataExport.Export(sources, destination, ToolVersion, DateTimeOffset.Now);
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+        {
+            throw new DiskOperationException($"Không ghi được tệp xuất vào {destination}: {e.Message}");
+        }
+
+        if (cli.Has("json"))
+        {
+            var files = new System.Text.Json.Nodes.JsonArray();
+            foreach (var f in result.Files)
+                files.Add((System.Text.Json.Nodes.JsonNode)new System.Text.Json.Nodes.JsonObject { ["path"] = f.Path, ["size"] = f.Size, ["sha256"] = f.Sha256 });
+            var skipped = new System.Text.Json.Nodes.JsonArray();
+            foreach (var k in result.Skipped) skipped.Add((System.Text.Json.Nodes.JsonNode?)System.Text.Json.Nodes.JsonValue.Create(k));
+            Console.WriteLine(new System.Text.Json.Nodes.JsonObject { ["archive"] = result.ArchivePath, ["files"] = files, ["skipped"] = skipped }
+                .ToJsonString(new System.Text.Json.JsonSerializerOptions { WriteIndented = true, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping }));
+            return ExitCodes.Ok;
+        }
+        Console.WriteLine($"Đã xuất {result.Files.Count} tệp ({Units.Format(result.Files.Sum(f => f.Size))}) vào: {result.ArchivePath}");
+        Console.WriteLine($"Danh sách tệp và SHA-256 nằm trong {DataExport.ManifestEntry} của tệp .zip.");
+        if (result.Skipped.Count > 0)
+        {
+            Console.WriteLine($"Bỏ qua {result.Skipped.Count} mục (đang bị khoá, không có quyền đọc, liên kết, hoặc bí mật thiết bị):");
+            foreach (var k in result.Skipped.Take(20)) Console.WriteLine("  - " + k);
+            if (!SystemTools.IsAdministrator())
+                Console.WriteLine("Nhật ký trong %ProgramData% có thể cần quyền quản trị để đọc - chạy lại bằng Terminal (Admin) nếu thiếu tệp.");
+        }
+        return ExitCodes.Ok;
+    }
+
+    /// <summary>Trung voi <c>TsuDisk.Gui.SettingsStore</c> (<c>%LOCALAPPDATA%\TsuDisk\giao-dien.json</c>).</summary>
+    private static string GuiSettingsPath => Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TsuDisk", "giao-dien.json");
 
     private static string LevelText(HealthLevel level) => level switch
     {

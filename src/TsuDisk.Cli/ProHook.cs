@@ -18,7 +18,7 @@ internal static class ProHook
         && !Console.IsInputRedirected && !Console.IsOutputRedirected
         && cli.Command is not ("phien-ban" or "tro-giup" or "dang-nhap" or "dang-xuat" or "tai-khoan");
 
-    private static HttpClient NewHttpClient(TimeSpan timeout)
+    internal static HttpClient NewHttpClient(TimeSpan timeout)
     {
 #pragma warning disable CA2000 // HttpClient so huu handler (disposeHandler mac dinh = true)
         var http = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = timeout };
@@ -27,7 +27,7 @@ internal static class ProHook
         return http;
     }
 
-    private static ProAccount CreateAccount(HttpClient http)
+    internal static ProAccount CreateAccount(HttpClient http)
     {
         var dir = ProContract.DefaultStateDirectory();
         return new ProAccount(

@@ -67,6 +67,7 @@ tsudisk suc-khoe                  # Sức khỏe ổ: trạng thái, nhiệt đ�
 tsudisk kiem-tra-gpt              # Kiểm tra toàn vẹn bảng GPT trên đĩa (Admin)
 tsudisk kiem-tra-mbr2gpt          # Đĩa Windows MBR chuyển sang GPT được không (mbr2gpt /validate, chỉ đọc, Admin)
 tsudisk sao-luu                   # Sao lưu sector GPT thô + bố cục + SHA-256 (Admin)
+tsudisk xuat-du-lieu D:\sao-luu   # Xuất nhật ký, bản sao lưu GPT, cài đặt ra một tệp .zip kèm manifest SHA-256
 tsudisk tai-khoan                 # Tài khoản TsuDEV và gói Pro (tùy chọn); dang-nhap / dang-xuat
 ```
 
@@ -89,7 +90,7 @@ Tùy chọn của `ke-hoach` / `mo-rong` / `doi-ten` / `thu-nho` / `tao-phan-vun
 | `--thu-muc-nhat-ky DIR` | Nơi lưu nhật ký, mặc định `%ProgramData%\TsuDisk\nhat-ky` |
 | `--json` | In kế hoạch hoặc bố cục dạng JSON để tích hợp |
 
-Bí danh tiếng Anh: `list`, `analyze`, `plan`, `extend`, `plan-winre`, `grow-winre`, `plan-rename`, `rename`, `plan-shrink`, `shrink`, `plan-create`, `create`, `journal`, `health`, `verify-gpt`, `backup`, `--dry-run`, `--yes`, `--disk`, `--virtual-only`, `--letter`, `--label`, `--extent`, `--size-mb`, `--fs`, `--shrink-mb`.
+Bí danh tiếng Anh: `list`, `analyze`, `plan`, `extend`, `plan-winre`, `grow-winre`, `plan-rename`, `rename`, `plan-shrink`, `shrink`, `plan-create`, `create`, `journal`, `health`, `verify-gpt`, `backup`, `export`, `--dry-run`, `--yes`, `--disk`, `--virtual-only`, `--letter`, `--label`, `--extent`, `--size-mb`, `--fs`, `--shrink-mb`.
 
 ### Mã thoát
 
@@ -101,6 +102,7 @@ Bí danh tiếng Anh: `list`, `analyze`, `plan`, `extend`, `plan-winre`, `grow-w
 | `3` | Thiếu quyền quản trị |
 | `4` | Thất bại giữa chừng, **đã hoàn tác** về trạng thái an toàn |
 | `5` | Thất bại và hoàn tác không trọn vẹn - làm theo gợi ý của `tsudisk nhat-ky` |
+| `6` | Cần cập nhật: đã có bản mới trên kênh cài đặt của bạn (chỉ khi đã đăng nhập; `phien-ban`, `tro-giup`, `dang-xuat`, `xuat-du-lieu` vẫn chạy) |
 
 ## Cơ chế an toàn
 

@@ -1,4 +1,5 @@
 using System.Globalization;
+using TsuDisk.Core.Integrity;
 
 namespace TsuDisk.Cli;
 
@@ -30,6 +31,7 @@ internal sealed class CliArgs
         ["kiem-tra-gpt"] = "kiem-tra-gpt", ["verify-gpt"] = "kiem-tra-gpt",
         ["kiem-tra-mbr2gpt"] = "kiem-tra-mbr2gpt", ["check-mbr2gpt"] = "kiem-tra-mbr2gpt",
         ["sao-luu"] = "sao-luu", ["backup"] = "sao-luu",
+        ["xuat-du-lieu"] = "xuat-du-lieu", ["export"] = "xuat-du-lieu",
         ["dang-nhap"] = "dang-nhap", ["login"] = "dang-nhap",
         ["dang-xuat"] = "dang-xuat", ["logout"] = "dang-xuat",
         ["tai-khoan"] = "tai-khoan", ["account"] = "tai-khoan",
@@ -77,6 +79,8 @@ internal sealed class CliArgs
             return new CliArgs();
         if (!CommandAliases.TryGetValue(args[0], out var command))
             throw new UsageException($"Lệnh không hợp lệ: {args[0]}. Chạy `tsudisk tro-giup`.");
+        if (!CommandGate.KnownCommands.Contains(command))   // lenh moi PHAI dang ky o Core de cong phien ban biet (ADR-0012)
+            throw new InvalidOperationException("Lệnh chưa đăng ký với cổng phiên bản: " + command);
 
         var result = new CliArgs { Command = command };
         for (var i = 1; i < args.Length; i++)

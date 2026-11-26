@@ -3,13 +3,13 @@
 > Agent đọc file này ở đầu mỗi phiên và cập nhật ở cuối mỗi phiên.
 > Quy trình: `.standards/docs/AGENT_PROTOCOL.md`.
 
-> **Phiên kế tiếp**: đọc `logs/handover/20261126-02_phien-12-int1-plan-adr-0012.md`, `docs/PLAN.md`
+> **Phiên kế tiếp**: đọc `logs/handover/20261126-03_phien-13-int3-cli-cong-phien-ban.md`, `docs/PLAN.md`
 > và `logs/handover/20261126-DD1_phoi-hop-don-dia.md`.
 
 ## Hàng đợi task (làm từ trên xuống)
 
 - [ ] winget-pkgs#489979 (26.11.2601) chờ moderator. (PAT winget cũ đã xoá - sự cố 26/11 ĐÓNG.)
-- [ ] Phase INT3 (CLI khoá lệnh + `xuat-du-lieu`) theo `docs/PLAN.md`, rồi INT4 -> INT7, QR4-UI1, UI2-B - mỗi ngữ cảnh
+- [ ] Phase INT4 (GUI modal khoá + Xuất dữ liệu; đẩy `426` từ `ProAccount` lên CLI/GUI) theo `docs/PLAN.md`, rồi INT5 -> INT7, QR4-UI1, UI2-B - mỗi ngữ cảnh
       một Phase. INT6 (DPoP) bị chặn tới khi tsudev chốt hợp đồng DPoP desktop.
 - [ ] 👤 Dọn đĩa: phiếu `logs/handover/20261126-DD1_phoi-hop-don-dia.md` mục 3 (co VHDX, bản build tsudisk).
       ⛔ Infatica đang chạy - phiên tsuguard theo dõi.
@@ -33,6 +33,10 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 26/11/2026 (phiên 13) - Phase INT3: cổng phiên bản CLI (`Core/Integrity/CommandGate` mặc định chặn, chỉ
+  `phien-ban`/`tro-giup`/`dang-xuat`/`xuat-du-lieu`; chưa đăng nhập = 0 lượt mạng; `CliGate` trước mọi lệnh, mã thoát 6,
+  `--json`), lệnh `xuat-du-lieu`, PRIVACY/README/CHANGELOG ("Chưa phát hành"), E2E ca 15. Test 477 -> 543.
 
 - 26/11/2026 (phiên 12) - Phase INT2: Core `Integrity/` (kiểm bản kê JWS EdDSA tách nội dung bằng BouncyCastle 2.7.0,
   khoá ghim `tsu-versions-2026`, đệm + chống phát lại, chốt chặn theo kênh, `426` từ `ProHttp`, `DataExport` zip +
