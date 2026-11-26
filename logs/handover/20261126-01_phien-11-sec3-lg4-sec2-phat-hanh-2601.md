@@ -22,7 +22,7 @@
 
 ## 3. Việc tiếp theo của agent (hàng đợi STATE)
 1. Sau khi có token mới: nộp winget 26.11.2601 - tải `*_winget-manifest.zip` của release, giải nén, chạy
-   `WINGET_TOKEN=$(< ~/.config/tsudev/winget.env) node packaging/tools/winget-submit.mjs --root <thư mục> --version 26.11.2601`
+   `( set -a; . ~/.config/tsudev/winget.env; set +a; node packaging/tools/winget-submit.mjs --root <thư mục> --version <bản> )`
    (chạy từ main - bản ở thẻ chưa có sửa 422 nên KHÔNG chạy lại job cũ).
 2. Scoop bucket `tsudisk` -> 26.11.2601 (tay như #33). Đo lại Scorecard sau lượt chấm mới, cập nhật trust.json.
 3. INT1 (cổng phiên bản, cần Opus + ADR), QR4/UI1, UI2-B.
@@ -49,3 +49,11 @@
 - winget 26.11.2601: https://github.com/microsoft/winget-pkgs/pull/489979 (mục 3.1 xong; bản vá 422 chạy đúng).
 - Scoop: scoop-bucket#34 MERGED (mục 3.2 phần Scoop xong; nhớ chạy `python3 tools/catalog.py` trong cùng PR).
 - Còn: đo lại Scorecard, INT1, QR4/UI1, UI2-B.
+
+## 7. `winget.env` đổi dạng (chủ dự án đồng ý, 26/11/2026)
+- Tệp nay là `WINGET_TOKEN=...` (quyền 600; thay cho cách nạp token trần ở mục 6). Đã kiểm đăng nhập được.
+- Dùng: `( set -a; . ~/.config/tsudev/winget.env; set +a; <lệnh> )`. Xem tên khoá:
+  `python3 ~/.claude/hooks/noleak-inspect.py <tệp>`.
+- Xoay token: `tsu-nhan-bi-mat --tiento ghp_ --bien WINGET_TOKEN --luu ~/.config/tsudev/winget.env`; nạp secret GitHub
+  bằng một lượt copy riêng: `tsu-nhan-bi-mat --tiento ghp_ --stdout | gh secret set WINGET_TOKEN -R tsudev-org/tsudisk --env packages`.
+- Hook `noleak-guard` chặn cả `printf` biến bí mật và đôi khi chặn nhầm lệnh có chữ "token": dùng công cụ Read/Edit.
