@@ -29,16 +29,16 @@ const mucLuc = [
   </ul>
 
   <h2 id="bang-chung">Bằng chứng</h2>
-  <div class="bang">
+  <div class="bang bang--bang-chung">
     <table>
       <thead><tr><th scope="col">Bằng chứng</th><th scope="col">Kết quả</th><th scope="col">Ngày đo</th><th scope="col">Kiểm chứng</th></tr></thead>
       <tbody>
         {BANG_CHUNG.map((b) => (
           <tr>
             <th scope="row">{b.ten}{b.ghi_chu && <p class="bang__ghi-chu">{b.ghi_chu}</p>}</th>
-            <td>{b.ket_qua}</td>
-            <td>{ngayVn(b.ngay_do)}</td>
-            <td><a href={b.lien_ket} {...ngoai} aria-label={`Kiểm chứng ${b.ten} (mở trang bên thứ ba)`}>Kiểm chứng ↗</a></td>
+            <td data-nhan="Kết quả">{b.ket_qua}</td>
+            <td data-nhan="Ngày đo">{ngayVn(b.ngay_do)}</td>
+            <td data-nhan="Nguồn"><a href={b.lien_ket} {...ngoai} aria-label={`Kiểm chứng ${b.ten} (mở trang bên thứ ba)`}>Kiểm chứng ↗</a></td>
           </tr>
         ))}
       </tbody>
