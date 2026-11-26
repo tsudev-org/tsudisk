@@ -123,6 +123,9 @@ GET bản kê thấy `products.tsudisk.channels.github.latest = 26.11.2601`, và
 **Nghiệm thu**: test proof khớp RFC 9449 (vector tự kiểm bằng khoá thử). Đăng nhập thật trên Windows qua (👤 bấm trình
 duyệt). JWS quyền lợi có `cnf.jkt` khớp khoá. PR đã gộp.
 
+✅ Nghiệm thu 27/11/2026: PR #93 gộp; chủ dự án đăng nhập thật trên Windows, `tai-khoan` hiện "Gắn với khóa thiết bị
+của máy này: có".
+
 ## Phase INT7 - Phát hành bản có cổng + thử thật
 
 - [ ] Phát hành bản mới (CHANGELOG, VirusTotal, SHA256SUMS + attestation, website deploy, Scoop, winget).
