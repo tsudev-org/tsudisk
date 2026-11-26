@@ -28,11 +28,12 @@ chỉ chạy khi đã đăng nhập.
 
 ## Khi bạn đăng nhập (tùy chọn)
 
-`tsudisk dang-nhap` mở trình duyệt tới tsudev.com để bạn đăng nhập tài khoản TsuDEV, nhằm nhận quyền lợi TsuDEV Pro.
+`tsudisk dang-nhap` mở trình duyệt tới tsudev.com để bạn đăng nhập tài khoản TsuDEV, nhằm nhận quyền lợi TsuDEV Pro
+(huy hiệu). TsuDisk không bao giờ tự nhắc đăng nhập; chỉ khi bạn gõ lệnh này.
 Sau đó TsuDisk chỉ trao đổi với tsudev.com:
 
 - Mã đăng nhập (lưu trên máy, mã hóa bằng Windows DPAPI theo tài khoản Windows của bạn) và **mã cài đặt** ngẫu nhiên
-  (không suy ra từ phần cứng) để tsudev.com đếm số thiết bị của tài khoản.
+  (không suy ra từ phần cứng) để tsudev.com đếm số thiết bị của tài khoản nhằm chống lạm dụng (không dùng để mời mua).
 - Nhận về thông tin quyền lợi đã ký (gói Pro, hạn dùng, huy hiệu, số thiết bị) - làm mới tối đa mỗi ngày một lần.
 
 TsuDisk **không** gửi thông tin đĩa, phân vùng, nhật ký hay tệp nào của bạn lên mạng, kể cả khi đã đăng nhập. Dữ liệu

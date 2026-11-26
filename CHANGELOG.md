@@ -2,6 +2,18 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
+## [Chưa phát hành]
+
+- Không làm phiền: bỏ thông báo "tài khoản dùng trên nhiều thiết bị, nâng cấp Pro để đồng bộ"; TsuDisk không bao giờ
+  tự nhắc đăng nhập hay mời mua Pro. Chỉ người đã mua Pro mới thấy nhắc gia hạn khi còn 7 ngày.
+- Nội dung TsuDEV Pro theo chính sách mới: Pro là gói tự nguyện để ủng hộ tác giả, quyền lợi là huy hiệu; không còn
+  đồng bộ đám mây, dữ liệu chỉ ở máy của bạn. `tsudisk tai-khoan` hiện thêm "Vì sao nên đăng nhập?".
+- Khi đã đăng nhập, mỗi lượt gọi tsudev.com gửi kèm phiên bản và kênh cài đặt (`X-Tsu-App`) để máy chủ báo khi bản
+  đang dùng đã cũ.
+- Website: trang Bảo mật và tin cậy (`/security/`) với điểm SSL Labs, Mozilla Observatory, OpenSSF Scorecard,
+  Best Practices, VirusTotal kèm liên kết tự kiểm; `security.txt` có địa chỉ security@tsudev.com.
+- Bản dựng: ghim phiên bản gói NuGet bằng lock file.
+
 ## [26.11.2401] - 24/11/2026
 
 - Giao diện cửa sổ: mở rộng ổ dữ liệu NTFS/ReFS bằng vùng trống liền kề ngay trong ứng dụng (chọn ổ, "Lập kế hoạch mở

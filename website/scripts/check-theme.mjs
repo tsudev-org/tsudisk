@@ -4,14 +4,20 @@
 // chặn không làm hỏng trang; radiogroup (ARIA, phím mũi tên) ở chân trang; không lỗi CSP/console.
 // Chạy sau `npm run build`: `npm run check:theme`.
 import { chromium } from 'playwright';
+import { readFileSync } from 'node:fs';
 import { moMayChu } from './may-chu-tinh.mjs';
 
 const { base, dong } = await moMayChu();
 const browser = await chromium.launch();
 const loi = [];
 const ky = (dk, mo) => { if (!dk) loi.push(mo); };
-const NEN = { light: '#fafafa', dark: '#0a0a0a' };
-const NEN_RGB = { light: 'rgb(250, 250, 250)', dark: 'rgb(10, 10, 10)' };
+// --bg-base lấy thẳng từ token chung (khối Sáng đứng trước khối Tối trong tokens.css): bộ quy ước đổi màu nền thì
+// public/theme.js phải đổi theo, cổng này bắt chỗ lệch (lần đầu: v8.0.0 đổi #FAFAFA -> #EEF1F5).
+const nenToken = [...readFileSync(new URL('../../.standards/tokens/tokens.css', import.meta.url), 'utf8')
+  .matchAll(/--bg-base:\s*(#[0-9A-Fa-f]{6})/g)].map((m) => m[1].toLowerCase());
+const NEN = { light: nenToken[0], dark: nenToken[1] };
+const rgb = (h) => `rgb(${[1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)).join(', ')})`;
+const NEN_RGB = { light: rgb(NEN.light), dark: rgb(NEN.dark) };
 const NUT = (c) => `#giao-dien [data-chon-giao-dien="${c}"]`;
 
 async function trang(context, theoDoi = true) {

@@ -1,6 +1,8 @@
 # ADR-0007: TsuDEV Pro trong TsuDisk - lưu cục bộ, nhắc gia hạn, chưa có đồng bộ
 
-- **Trạng thái**: Chấp nhận - 22/11/2026 (mục 1-6 đã làm; đồng bộ chờ - mục "Việc còn chờ")
+- **Trạng thái**: Chấp nhận - 22/11/2026 (mục 1-6 đã làm). **Sửa đổi 26/11/2026**: bỏ hẳn đồng bộ đám mây/Pro Q3
+  (phiếu 20261125-SYN1, `PRODUCT_POLICY` v2.0.0 mục 7), gỡ thông báo 7.3, không nhắc đăng nhập (20261126-LG4,
+  `AUTH_AND_ACCOUNT` 14.4, `PRODUCT_POLICY` 3.8 - bộ quy ước v8.0.0).
 - **Liên quan**: phiếu `logs/handover/20261119-PRO1_*`, `20261120-PRO2_*`; bộ quy ước `PRODUCT_POLICY.md` v1.2.0 mục
   3.3, 7.1-7.6, 8; `AUTH_AND_ACCOUNT.md` mục 14.3. Mẫu cài đặt: tsuswico ADR-0002 (cùng nền .NET, cùng hợp đồng).
 
@@ -25,8 +27,10 @@ không socket, không kiểm cập nhật, không đo đếm. Tiến trình con 
      `exp - iat` ≤ 7 ngày. Không thêm thư viện JWT (mỗi thư viện mở thêm đường `alg=none`/HS256/`jku`).
    - `ProRenewal` (mục 7.6): nhắc khi còn ≤ 7 ngày, mỗi lần mở; báo hết kỳ một lần cho mỗi `pro_until`
      (khoá `tsu.pro_expired.notified_until`), chỉ khi máy này từng thấy kỳ đó còn hạn (`tsu.pro.seen_until`).
-     TsuDisk chưa có đồng bộ ⇒ bỏ câu "Bản sao trên đám mây..." đúng như chuẩn cho phép.
-   - `ProNotice` (mục 7.3): thông báo nhiều thiết bị, chu kỳ 30 ngày (`tsu.pro_notice.last_shown`).
+     Nội dung theo PRODUCT_POLICY v2.0.0 (bỏ Q3 đồng bộ): "giữ huy hiệu và giao diện Pro".
+   - ~~`ProNotice` (mục 7.3)~~: **gỡ 26/11/2026** (bộ quy ước v7.0.0 bỏ mục 7.3; v8.0.0 mục 3.8 cấm lời mời Pro tự hiện).
+     `LocalStateStore.RemoveLegacyKeys` xoá `tsu.pro_notice.last_shown` (và `tsu.signin_reminder.*` của LG3) ở lần
+     chạy tương tác đầu tiên khi đã đăng nhập; chưa đăng nhập thì không chạm tệp nào.
    - Nội dung vi/en chép nguyên văn; test đối chiếu thẳng với `.standards/docs/PRODUCT_POLICY.md`.
 3. **CLI chỉ in, không chờ phím.** Lệnh đĩa không được bị chặn bởi một lời nhắc; CLI in tiêu đề, thân và liên kết
    `https://tsudev.com/pro?app=tsudisk`, rồi chạy lệnh ngay. Không in khi `--json`, `--dong-y`, `--xac-nhan`, khi vào/ra
@@ -45,9 +49,12 @@ không socket, không kiểm cập nhật, không đo đếm. Tiến trình con 
 
 ## Việc còn chờ (không làm khi chưa đủ điều kiện)
 
-- **Tính năng Pro riêng** (đồng bộ cấu hình/kế hoạch/nhật ký giữa các máy qua TsuDEV Sync): chờ thư viện .NET
-  `TsuSync` (PRO-D3) và chủ dự án duyệt phạm vi. Khi có: gửi JWS `iat` ≤ 24 giờ, `401 stale` ⇒ lấy JWS mới thử lại một
-  lần, `402 pro_required` ⇒ màn Pro, `429/507/5xx` ⇒ "Chưa đồng bộ"; hết kỳ ⇒ tắt đẩy, vẫn cho tải bản sao 90 ngày.
+- ~~Đồng bộ qua TsuDEV Sync~~: **BỎ 26/11/2026** (SYN1 - dữ liệu chỉ ở thiết bị; `tsusync` lưu trữ). TsuDisk không có
+  dữ liệu người dùng cần mang sang máy khác (nhật ký và bản sao lưu GPT là tệp thường, tự chép được), nên không cần Tsu
+  Link hay `.tsubak`. Quyền lợi Pro trong TsuDisk: chỉ Q1 huy hiệu (lệnh `tai-khoan`); Q2 giao diện Pro chờ GUI có màn
+  Tài khoản + bộ chủ đề `tokens/pro-themes.json`.
+- **Gửi `X-Tsu-App` + DPoP** khi gọi `/api/me/entitlements` (`PRODUCT_POLICY` 7.4 v2.0.0, `APP_INTEGRITY` 2.1): làm cùng
+  cổng phiên bản INT1 khi tsudev.com phát hành bản kê `versions.json` và bật bắt buộc header.
 
 ## Hệ quả
 

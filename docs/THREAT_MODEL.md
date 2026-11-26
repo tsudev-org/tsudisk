@@ -35,7 +35,7 @@ Ranh giới: (A) tiến trình `tsudisk.exe` (có thể chạy quản trị) ↔
 | T9 | **Liệt kê / đánh dấu thiết bị** (I): dùng mã cài đặt để theo dấu máy | Mã ngẫu nhiên 128 bit, KHÔNG từ MAC/serial/mã sản phẩm dù app đọc được; chỉ sinh khi đăng nhập; chỉ gửi trong `X-Tsu-Installation` tới `/api/me/entitlements`; máy chủ lưu HMAC, JWS chỉ trả số đếm; `dang-xuat` xoá mã | `InstallationIdTests`, `Dang_nhap_thanh_cong_*` (header đúng mã) |
 | T10 | **Rò mã cài đặt / token qua nhật ký** (I) | TsuDisk không ghi gì về tài khoản vào nhật ký đĩa. URL ủy quyền in ra màn hình chỉ chứa `state`/`nonce`/challenge (không bí mật sau khi dùng) | Rà mã `ProHook.cs` |
 | T11 | **Gọi mạng ngầm khi chưa đăng nhập** (I, vi phạm hạng C) | Mọi đường trừ `dang-nhap` kiểm `HasSession` trước khi chạm `ProHttp`; đọc không tạo tệp; `--json`/`--dong-y`/`--xac-nhan`/vào-ra chuyển hướng không bao giờ gọi tsudev.com | `ProOfflineGuardTests` (bộ xử lý HTTP ném lỗi + rà nguồn `ProHook.cs`) |
-| T12 | **Làm hỏng lệnh đĩa / kịch bản tự động** (D): tsudev.com chậm/sập, tệp hỏng, DPAPI lỗi | Nhắc Pro chạy ở ĐẦU lệnh, trước mọi bước ghi: timeout 5 s, mọi ngoại lệ nuốt, lệnh chạy tiếp; không đổi mã thoát; CHỈ IN, không bao giờ chờ phím | `Ngoai_tuyen_*`, `ProNoticeTests` |
+| T12 | **Làm hỏng lệnh đĩa / kịch bản tự động** (D): tsudev.com chậm/sập, tệp hỏng, DPAPI lỗi | Nhắc Pro chạy ở ĐẦU lệnh, trước mọi bước ghi: timeout 5 s, mọi ngoại lệ nuốt, lệnh chạy tiếp; không đổi mã thoát; CHỈ IN, không bao giờ chờ phím | `Ngoai_tuyen_*`, `ProRenewalTests` |
 | T13 | **Lùi đồng hồ máy để kéo dài Pro đệm** (T) | Chỉ ảnh hưởng ẩn/hiện trong app trên máy đó; JWS vẫn bị giới hạn bởi chữ ký + máy chủ gate 402 cho mọi thứ có giá trị | Chấp nhận |
 
 ## 3. Rủi ro còn lại (chấp nhận, ghi rõ)

@@ -24,8 +24,16 @@ public sealed record EntitlementFetch(string? Jws, HttpStatusCode Status, string
 /// Loi mang (<see cref="HttpRequestException"/>, het gio) de NEM ra ngoai - ben goi quyet dinh "coi nhu
 /// mien phi". Loi giao thuc (4xx/5xx co than JSON) tra ve trong ket qua.
 /// </summary>
-public sealed class ProHttp(HttpClient http, ProEndpoints endpoints, string clientId)
+public sealed class ProHttp(HttpClient http, ProEndpoints endpoints, string clientId, string? appHeader = null)
 {
+    /// <summary>Gan <see cref="ProContract.AppHeader"/> (neu co) vao moi luot goi tsudev.com.</summary>
+    private HttpRequestMessage Request(HttpMethod method, Uri uri, HttpContent? body = null)
+    {
+        var req = new HttpRequestMessage(method, uri) { Content = body };
+        if (appHeader is not null) req.Headers.TryAddWithoutValidation(ProContract.AppHeader, appHeader);
+        return req;
+    }
+
     public Task<TokenResult> ExchangeCodeAsync(string code, string verifier, string redirectUri, CancellationToken cancel)
         => TokenAsync(new Dictionary<string, string>
         {
@@ -53,13 +61,15 @@ public sealed class ProHttp(HttpClient http, ProEndpoints endpoints, string clie
             ["token_type_hint"] = "refresh_token",
             ["client_id"] = clientId,
         });
-        using var res = await http.PostAsync(endpoints.Revocation, body, cancel).ConfigureAwait(false);
+        using var req = Request(HttpMethod.Post, endpoints.Revocation, body);
+        using var res = await http.SendAsync(req, cancel).ConfigureAwait(false);
         return res.IsSuccessStatusCode;
     }
 
     public async Task<string> GetJwksAsync(CancellationToken cancel)
     {
-        using var res = await http.GetAsync(endpoints.Jwks, cancel).ConfigureAwait(false);
+        using var req = Request(HttpMethod.Get, endpoints.Jwks);
+        using var res = await http.SendAsync(req, cancel).ConfigureAwait(false);
         res.EnsureSuccessStatusCode();
         return await res.Content.ReadAsStringAsync(cancel).ConfigureAwait(false);
     }
@@ -67,7 +77,7 @@ public sealed class ProHttp(HttpClient http, ProEndpoints endpoints, string clie
     /// <summary><c>GET /api/me/entitlements</c> kem Bearer + <c>X-Tsu-Installation</c> (AUTH_AND_ACCOUNT 14.3).</summary>
     public async Task<EntitlementFetch> GetEntitlementAsync(string accessToken, string installationId, CancellationToken cancel)
     {
-        using var req = new HttpRequestMessage(HttpMethod.Get, endpoints.Entitlements);
+        using var req = Request(HttpMethod.Get, endpoints.Entitlements);
         req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         req.Headers.TryAddWithoutValidation(ProContract.InstallationHeader, installationId);
         using var res = await http.SendAsync(req, cancel).ConfigureAwait(false);
@@ -80,7 +90,8 @@ public sealed class ProHttp(HttpClient http, ProEndpoints endpoints, string clie
     private async Task<TokenResult> TokenAsync(Dictionary<string, string> form, CancellationToken cancel)
     {
         using var body = new FormUrlEncodedContent(form);
-        using var res = await http.PostAsync(endpoints.Token, body, cancel).ConfigureAwait(false);
+        using var req = Request(HttpMethod.Post, endpoints.Token, body);
+        using var res = await http.SendAsync(req, cancel).ConfigureAwait(false);
         var json = TryParse(await res.Content.ReadAsStringAsync(cancel).ConfigureAwait(false));
         if (!res.IsSuccessStatusCode)
             return new TokenResult(null, Str(json, "error") ?? "http_" + ((int)res.StatusCode).ToString(System.Globalization.CultureInfo.InvariantCulture), res.StatusCode);

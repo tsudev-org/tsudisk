@@ -29,6 +29,7 @@ internal sealed class FakeIdp : HttpMessageHandler
 
     public List<HttpRequestMessage> Requests { get; } = new();
     public List<string> InstallationHeaders { get; } = new();
+    public List<string> AppHeaders { get; } = new();
     public List<string> Revoked { get; } = new();
 
     // Nut van de dung ca loi.
@@ -141,6 +142,7 @@ internal sealed class FakeIdp : HttpMessageHandler
             if (req.Headers.Authorization?.Scheme != "Bearer" || bearer is null || !_liveTokens.Contains(bearer))
                 return Json(HttpStatusCode.Unauthorized, """{"error":"invalid_token"}""");
         if (req.Headers.TryGetValues(ProContract.InstallationHeader, out var v)) InstallationHeaders.AddRange(v);
+        if (req.Headers.TryGetValues(ProContract.AppHeader, out var app)) AppHeaders.AddRange(app);
         var now = DateTimeOffset.UtcNow;
         var claims = ProTestKit.Claims(devices: Devices, iat: now.AddMinutes(-1));
         claims["sub"] = Sub;
@@ -202,13 +204,13 @@ internal sealed class ProRig : IDisposable
     public DateTimeOffset Now { get; set; } = DateTimeOffset.UtcNow;
     public ProAccount Account { get; }
 
-    public ProRig(HttpMessageHandler? handler = null)
+    public ProRig(HttpMessageHandler? handler = null, string? appHeader = null)
     {
         Idp = new FakeIdp(Kit);
         Http = new HttpClient(handler ?? Idp);
         Store = new ProAccountStore(Dir.Path, new FakeProtector());
         Installs = new InstallationIdStore(Dir.Path);
-        Account = new ProAccount(Store, Installs, new ProHttp(Http, FakeIdp.Endpoints, ProTestKit.ClientId),
+        Account = new ProAccount(Store, Installs, new ProHttp(Http, FakeIdp.Endpoints, ProTestKit.ClientId, appHeader),
                                  FakeIdp.Endpoints, ProTestKit.ClientId, () => Now) { LockWait = TimeSpan.FromMilliseconds(200) };
     }
 

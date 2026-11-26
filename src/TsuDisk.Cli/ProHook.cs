@@ -33,17 +33,19 @@ internal static class ProHook
         return new ProAccount(
             new ProAccountStore(dir, new DpapiTokenProtector()),
             new InstallationIdStore(dir),
-            new ProHttp(http, ProEndpoints.Production, ProContract.ClientId),
+            new ProHttp(http, ProEndpoints.Production, ProContract.ClientId,
+                        ProContract.AppHeaderValue(Commands.ToolVersion, ProContract.DetectChannel(Environment.ProcessPath))),
             ProEndpoints.Production,
             ProContract.ClientId,
             () => DateTimeOffset.UtcNow);
     }
 
     /// <summary>
-    /// Nhac gia han / bao het ky (PRODUCT_POLICY 7.6), roi thong bao nhieu thiet bi (7.3) o dau lenh tuong tac. CHI IN,
-    /// khong cho phim, khong doi ma thoat. Moi su co (mang, tep, DPAPI) bi nuot: Pro KHONG BAO GIO lam hong lenh dia.
+    /// Nhac gia han / bao het ky (PRODUCT_POLICY 7.6 - chi nguoi da mua Pro, ngoai le co chu dich cua muc 3.8) o dau
+    /// lenh tuong tac. CHI IN, khong cho phim, khong doi ma thoat. Thong bao "nhieu thiet bi" (7.3) da BO tu bo quy uoc
+    /// v7.0.0; chua dang nhap thi khong in gi (AUTH 14.4: khong nhac dang nhap). Moi su co (mang, tep, DPAPI) bi nuot: Pro KHONG BAO GIO lam hong lenh dia.
     /// </summary>
-    public static void Run(CliArgs cli, string backupFolder)
+    public static void Run(CliArgs cli)
     {
         if (!IsInteractive(cli)) return;
         try
@@ -54,12 +56,9 @@ internal static class ProHook
             var source = account.ForRunAsync(interactive: true, CancellationToken.None).GetAwaiter().GetResult();
             var dir = ProContract.DefaultStateDirectory();
             var now = DateTimeOffset.UtcNow;
-            var renewal = new ProRenewalPrompt(source, new LocalStateStore(dir), ProContract.ClientId, Console.Out,
-                                               readLine: null, _ => { }).Run(now, true);
-            // Da nhac gia han thi thoi thong bao 7.3 o lan chay nay - mot thong bao la du.
-            if (renewal != ProRenewalChoice.NotShown) return;
-            new ProNoticePrompt(source, new LocalStateStore(dir), ProContract.ClientId, Console.Out,
-                                readLine: null, _ => { }).Run(now, true, backupFolder);
+            var state = new LocalStateStore(dir);
+            state.RemoveLegacyKeys();
+            new ProRenewalPrompt(source, state, ProContract.ClientId, Console.Out, readLine: null, _ => { }).Run(now, true);
         }
 #pragma warning disable CA1031 // thong bao Pro la phu - khong bao gio chan lenh dia
         catch (Exception)
@@ -153,19 +152,23 @@ internal static class ProHook
     {
         if (!account.IsSignedIn)
         {
-            Console.WriteLine("Chưa đăng nhập tài khoản TsuDEV.");
+            Console.WriteLine("Tài khoản TsuDEV: Chưa đăng nhập");
             Console.WriteLine("Bản miễn phí dùng đủ mọi chức năng, không gửi dữ liệu nào lên mạng. Đăng nhập (không bắt buộc): tsudisk dang-nhap");
+            Console.WriteLine("Vì sao nên đăng nhập? " + WhySignInUrl);
             return ExitCodes.Ok;
         }
         var r = account.RefreshAsync(cancel).GetAwaiter().GetResult();
         if (r.Status == RefreshStatus.SessionExpired)
         {
-            Console.WriteLine("Phiên đăng nhập đã hết hạn hoặc bị thu hồi. Đăng nhập lại: tsudisk dang-nhap");
+            Console.WriteLine("Tài khoản TsuDEV: Phiên đã hết hạn - Đăng nhập lại: tsudisk dang-nhap");
             return ExitCodes.Ok;
         }
         PrintAccount(account.Account, r.Entitlement, r.Status);
         return ExitCodes.Ok;
     }
+
+    /// <summary>AUTH_AND_ACCOUNT 14.4.2 diem 1: giai thich vi sao nen dang nhap tai cho nguoi dung tu tim toi.</summary>
+    internal const string WhySignInUrl = "https://tsudev.com/privacy#dang-nhap";
 
     private static string Date(DateTimeOffset d) => d.ToLocalTime().ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
     private static string DateTime(DateTimeOffset d) => d.ToLocalTime().ToString("HH:mm dd/MM/yyyy", CultureInfo.InvariantCulture);
@@ -190,10 +193,15 @@ internal static class ProHook
         Console.WriteLine("Thông tin quyền lợi lưu trên máy đến: " + DateTime(ent.ExpiresAt));
         if (!isPro)
         {
-            // PRODUCT_POLICY 7.5: dieu khoan nguyen van dung TRUOC lien ket mua.
+            // PRODUCT_POLICY 3.7.3: cau dinh vi -> quyen loi dang chay that -> dieu khoan 7.5 + chinh sach thanh toan ->
+            // lien ket mua (o xac nhan khong chon san nam tren trang mua cua tsudev.com - chi tsudev.com nhan tien).
             Console.WriteLine();
+            Console.WriteLine(ProRenewal.Positioning);
+            foreach (var b in ProRenewal.ActiveBenefits) Console.WriteLine("  - " + b);
             Console.WriteLine(ProRenewal.PurchaseTerms);
-            Console.WriteLine("Mua TsuDEV Pro: " + ProContract.ProUrl(ProContract.ClientId));
+            Console.WriteLine("Chính sách thanh toán, hoàn tiền và khiếu nại: " + ProRenewal.PaymentPolicyUrl);
+            Console.WriteLine("Điều khoản: " + ProRenewal.TermsUrl);
+            Console.WriteLine("Ủng hộ tác giả bằng TsuDEV Pro (không bắt buộc): " + ProContract.ProUrl(ProContract.ClientId));
         }
     }
 

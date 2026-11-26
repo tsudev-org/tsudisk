@@ -37,6 +37,35 @@ public static class ProContract
 
     public const string InstallationHeader = "X-Tsu-Installation";
 
+    /// <summary>APP_INTEGRITY 2.1: moi luot goi API tsudev.com gui <c>X-Tsu-App: &lt;ma-san-pham&gt;/&lt;phien ban&gt;/&lt;kenh&gt;</c>.</summary>
+    public const string AppHeader = "X-Tsu-App";
+
+    // Cung khuon voi cong cua tsudev.com (services/auth-service/src/appVersionGate.ts) - sai khuon thi may chu tra 400.
+    private static readonly System.Text.RegularExpressions.Regex AppHeaderShape = new(
+        @"^[a-z0-9][a-z0-9-]{1,39}/\d{1,4}\.\d{1,4}\.\d{1,6}(-[0-9A-Za-z.-]{1,32})?/[a-z][a-z0-9-]{1,23}$",
+        System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+
+    /// <summary>Gia tri <see cref="AppHeader"/>; phien ban/kenh sai khuon (vd. ban tu build "0") ⇒ null, KHONG gui.</summary>
+    public static string? AppHeaderValue(string version, string channel)
+    {
+        var v = $"{ClientId}/{version}/{channel}";
+        return v.Length <= 120 && AppHeaderShape.IsMatch(v) ? v : null;
+    }
+
+    /// <summary>
+    /// Kenh phat hanh suy tu noi dat exe (chot chan THEO KENH, APP_INTEGRITY 2.1): Scoop cai vao <c>...\scoop\apps\</c>,
+    /// winget (goi portable) vao <c>...\WinGet\Packages\</c> hoac lien ket <c>...\WinGet\Links\</c>; con lai la tai
+    /// tu GitHub Releases. Doan sai kenh chi lam may chu so voi <c>latest</c> cua kenh khac - khong lo du lieu.
+    /// </summary>
+    public static string DetectChannel(string? exePath)
+    {
+        var p = (exePath ?? "").Replace('/', '\\');
+        if (p.Contains(@"\scoop\apps\", StringComparison.OrdinalIgnoreCase)) return "scoop";
+        if (p.Contains(@"\WinGet\Packages\", StringComparison.OrdinalIgnoreCase)
+            || p.Contains(@"\WinGet\Links\", StringComparison.OrdinalIgnoreCase)) return "winget";
+        return "github";
+    }
+
     /// <summary>Thu muc du lieu cuc bo cua tai khoan (ADR-0007): <c>%LOCALAPPDATA%\tsudev\tsudisk\</c>.</summary>
     public static string DefaultStateDirectory() => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "tsudev", "tsudisk");

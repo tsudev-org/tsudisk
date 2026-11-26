@@ -62,7 +62,7 @@ internal sealed class ProTestKit : IDisposable
     public void Dispose() => Key.Dispose();
 }
 
-/// <summary>Nguon quyen loi gia cho test ProNotice (PRODUCT_POLICY 7.3 "nguon quyen loi gia").</summary>
+/// <summary>Nguon quyen loi gia cho test ProRenewal (PRODUCT_POLICY 7.6).</summary>
 internal sealed class FakeEntitlementSource(Entitlement? value) : IEntitlementSource
 {
     public Entitlement? Current(DateTimeOffset now) => value;

@@ -185,7 +185,7 @@ public class DesignTokenTests
         File.ReadAllText(DocumentationConsistencyTests.RepoPath([".standards", "tokens", .. parts]));
 
     [Theory]
-    [InlineData(ThemeMode.Light, "#08786C")]
+    [InlineData(ThemeMode.Light, "#04776B")]   // tokens v8.0.0
     [InlineData(ThemeMode.Dark, "#24B9A8")]
     public void ProductPrimary_OverridesBase(ThemeMode mode, string primary)
     {

@@ -1,0 +1,85 @@
+{
+  "$comment": "Nguồn dữ liệu của trang https://disk.tsudev.com/security/ (phiếu 20261125-SEC2). Chỉ ghi số đo THẬT, mỗi mục 'bang_chung' phải có liên kết tới trang kết quả do bên thứ ba lưu trữ + ngày đo (YYYY-MM-DD). Không có liên kết kiểm chứng => đưa vào 'chua_co' kèm lý do. website/src/lib/tin-cay.ts dừng build khi thiếu trường hoặc ngày đo quá 120 ngày.",
+  "cap_nhat": "2026-11-26",
+  "bang_chung": [
+    {
+      "ma": "E5",
+      "ten": "SSL Labs (Qualys)",
+      "ket_qua": "A+ trên cả 4 địa chỉ IPv4/IPv6",
+      "lien_ket": "https://www.ssllabs.com/ssltest/analyze.html?d=disk.tsudev.com&hideResults=on",
+      "ngay_do": "2026-11-26",
+      "ghi_chu": "Kiểm cấu hình TLS của disk.tsudev.com; bấm liên kết để chạy lại (không công khai lên bảng xếp hạng)."
+    },
+    {
+      "ma": "E6",
+      "ten": "Mozilla HTTP Observatory",
+      "ket_qua": "A+ (150 điểm, đạt 12/12 bài kiểm tra)",
+      "lien_ket": "https://developer.mozilla.org/en-US/observatory/analyze?host=disk.tsudev.com",
+      "ngay_do": "2026-11-26",
+      "ghi_chu": "Kiểm header bảo mật: CSP chặn mọi nguồn ngoài, HSTS có preload, X-Content-Type-Options, Referrer-Policy, chống nhúng khung."
+    },
+    {
+      "ma": "E1",
+      "ten": "OpenSSF Best Practices",
+      "ket_qua": "Passing (100%)",
+      "lien_ket": "https://www.bestpractices.dev/projects/16949",
+      "ngay_do": "2026-11-26",
+      "ghi_chu": "Hồ sơ tự khai của dự án, mỗi tiêu chí kèm liên kết bằng chứng; bestpractices.dev kiểm một phần tự động."
+    },
+    {
+      "ma": "E2",
+      "ten": "OpenSSF Scorecard",
+      "ket_qua": "6.9/10",
+      "lien_ket": "https://scorecard.dev/viewer/?uri=github.com/tsudev-org/tsudisk",
+      "ngay_do": "2026-11-24",
+      "ghi_chu": "Chấm tự động thực hành bảo mật của repo. Điểm thấp: Code-Review 0 (một người bảo trì, không có người duyệt thứ hai), Maintained 0 (repo tạo chưa đủ 90 ngày), Fuzzing 0 (bộ fuzz bảng GPT chạy trong bộ test, chưa phải OSS-Fuzz/ClusterFuzzLite mà Scorecard nhận), Contributors 0, Branch-Protection 4, Pinned-Dependencies 7 (đã ghim gói NuGet bằng lock file ngày 26/11/2026, chờ lượt chấm sau)."
+    },
+    {
+      "ma": "E3",
+      "ten": "Bản phát hành 26.11.2401: SHA-256 ký Sigstore, chứng thực build, SBOM",
+      "ket_qua": "SHA256SUMS.txt ký Sigstore (không khóa riêng), chứng thực nguồn gốc build của GitHub Actions cho hai tệp exe và SBOM SPDX",
+      "lien_ket": "https://github.com/tsudev-org/tsudisk/releases/tag/v26.11.2401",
+      "ngay_do": "2026-11-24",
+      "ghi_chu": "Cách tự kiểm ở mục \"Tự kiểm bản tải về\" bên dưới."
+    },
+    {
+      "ma": "E3",
+      "ten": "VirusTotal - tsudisk.exe (dòng lệnh) 26.11.2401",
+      "ket_qua": "0/73 engine gắn cờ",
+      "lien_ket": "https://www.virustotal.com/gui/file/cdc37901839fb2aa85f94956ed5a9d498873a0c28639063dc14a5d9a96b214ff",
+      "ngay_do": "2026-11-24"
+    },
+    {
+      "ma": "E3",
+      "ten": "VirusTotal - tsudisk-gui.exe (giao diện cửa sổ) 26.11.2401",
+      "ket_qua": "0/73 engine gắn cờ",
+      "lien_ket": "https://www.virustotal.com/gui/file/cb6aa78babced8f50def9ef8fc71311f822bed93655b81f53075317198d535cc",
+      "ngay_do": "2026-11-24"
+    },
+    {
+      "ma": "E10",
+      "ten": "Báo lỗ hổng riêng tư trên GitHub",
+      "ket_qua": "Đang bật; có chính sách SECURITY.md",
+      "lien_ket": "https://github.com/tsudev-org/tsudisk/security",
+      "ngay_do": "2026-11-26"
+    }
+  ],
+  "chua_co": [
+    {
+      "ma": "E8",
+      "ten": "Chữ ký số Authenticode cho bản Windows",
+      "ly_do": "Chưa có: chưa nộp đơn SignPath Foundation (ký mã miễn phí cho dự án mã nguồn mở; dự án còn mới, chưa đủ điều kiện về thời gian hoạt động và người dùng) và chưa mua chứng thư thương mại. Thay vào đó mỗi bản có SHA-256 ký Sigstore, chứng thực build và kết quả VirusTotal; SmartScreen có thể cảnh báo ở lần chạy đầu."
+    },
+    {
+      "ma": "E7",
+      "ten": "HSTS preload",
+      "ly_do": "Website đã gửi header Strict-Transport-Security có preload; tên miền gốc tsudev.com đã nộp vào danh sách preload của trình duyệt ngày 25/11/2026 và đang chờ duyệt (việc chung của hệ TsuDEV).",
+      "lien_ket": "https://hstspreload.org/?domain=tsudev.com"
+    },
+    {
+      "ma": "E9",
+      "ten": "Tín nhiệm mạng / Thông báo Bộ Công Thương",
+      "ly_do": "Chưa có cho disk.tsudev.com. Website không bán hàng, không nhận thanh toán nên không thuộc diện thông báo Bộ Công Thương."
+    }
+  ]
+}

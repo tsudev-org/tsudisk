@@ -37,10 +37,32 @@ public sealed class LocalStateStore(string directory)
 
     public void SetLong(string key, long value) => Write(key, value);
 
+    /// <summary>
+    /// Khoa cuc bo cua co che da bo: thong bao "nhieu thiet bi" (PRODUCT_POLICY 7.3, bo tu v2.0.0) va nhac dang nhap
+    /// LG3 (AUTH_AND_ACCOUNT 14.4.2 diem 6). TsuDisk chua tung ghi khoa LG3, van xoa de dung hop dong chung.
+    /// </summary>
+    public static readonly IReadOnlyList<string> LegacyKeys =
+        ["tsu.pro_notice.last_shown", "tsu.signin_reminder.next_at", "tsu.signin_reminder.dismiss_count"];
+
+    /// <summary>Xoa <see cref="LegacyKeys"/>; tep khong co khoa nao thi KHONG ghi (khong tao tep/thu muc moi).</summary>
+    public bool RemoveLegacyKeys()
+    {
+        var root = Load();
+        var changed = false;
+        foreach (var k in LegacyKeys) changed |= root.Remove(k);
+        if (changed) Save(root);
+        return changed;
+    }
+
     private void Write(string key, JsonNode value)
     {
         var root = Load();
         root[key] = value;
+        Save(root);
+    }
+
+    private void Save(JsonObject root)
+    {
         Directory.CreateDirectory(directory);
         var tmp = FilePath + ".tmp";
         File.WriteAllText(tmp, root.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));

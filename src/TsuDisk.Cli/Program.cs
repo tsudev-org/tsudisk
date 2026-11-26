@@ -14,7 +14,7 @@ CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("vi-VN");
 try
 {
     var cli = CliArgs.Parse(args);
-    ProHook.Run(cli, Commands.DefaultLogRoot);   // ADR-0007: chua dang nhap => khong mang, khong tep; chi in, khong chan lenh
+    ProHook.Run(cli);   // ADR-0007: chua dang nhap => khong mang, khong tep, khong in; chi nhac gia han 7.6
     return cli.Command switch
     {
         "danh-sach" => Commands.List(cli),
