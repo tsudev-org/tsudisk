@@ -74,6 +74,7 @@ cd website && npm ci && npm run build                           # website
 | Lệch ở đâu | Vì sao | Kế hoạch |
 | --- | --- | --- |
 | `src/` không theo cây `components/features/...` | Giải pháp .NET chia theo project biên dịch | Giữ, đã ghi `docs/ARCHITECTURE.md` |
+| Không bật trimming/Native AOT (APP_INTEGRITY 5.2 .NET) | `System.Management` dùng reflection/COM (B.5) | Giữ; bản phát hành dùng `DebugType=none` |
 | Chưa ký số `tsudisk.exe` | Chờ SignPath Foundation (D5 của hệ sinh thái) | Thêm bước ký khi D5 duyệt |
 
 ### B.5. Việc riêng của repo cần biết trước khi sửa

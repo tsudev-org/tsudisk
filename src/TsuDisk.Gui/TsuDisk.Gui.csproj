@@ -19,7 +19,6 @@
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <PublishTrimmed>false</PublishTrimmed>
-    <DebugType>embedded</DebugType>
     <SatelliteResourceLanguages>vi</SatelliteResourceLanguages>
   </PropertyGroup>
   <ItemGroup>
