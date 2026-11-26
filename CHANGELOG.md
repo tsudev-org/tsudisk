@@ -4,6 +4,8 @@ Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/V
 
 ## [Chưa phát hành]
 
+- Khi đã đăng nhập: TsuDisk tạo một khoá riêng của thiết bị (trong TPM nếu máy có, khoá không xuất được) và ký mỗi
+  lượt lấy quyền lợi (DPoP, RFC 9449), để quyền lợi trả về gắn với đúng máy này. `dang-xuat` xoá khoá.
 - Lệnh mới `tsudisk xuat-du-lieu <thư mục>`: xuất nhật ký, bản sao lưu GPT và cài đặt giao diện ra một tệp `.zip` kèm
   `manifest.json` liệt kê SHA-256 từng tệp. Không bao giờ xuất mã đăng nhập hay khoá của thiết bị.
 - Khi đã đăng nhập: trước mỗi lệnh, TsuDisk kiểm bản kê phiên bản đã ký của tsudev.com (chữ ký Ed25519). Nếu đã có bản

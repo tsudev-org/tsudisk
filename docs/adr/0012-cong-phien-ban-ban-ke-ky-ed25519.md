@@ -113,8 +113,25 @@ TsuDisk là hạng C, và PRIVACY.md cam kết chưa đăng nhập thì không k
 - Ảnh chụp/E2E dùng `--du-lieu-mau --xem-khoa-mau` (chỉ HIỆN modal với phiên bản mẫu); không có cờ hay biến môi trường
   nào bỏ qua cổng.
 
+## Ghi chú triển khai (Phase INT6, 27/11/2026) - thay chi tiết của mục 13
+
+Làm theo hợp đồng ĐANG CHẠY ở tsudev.com (ADR-0004 mục 6 repo tsudev; phiếu trao đổi `20261127-DP1`), không chờ INT1-c:
+máy chủ đã nhận DPoP tuỳ chọn và gắn `cnf.jkt`, nên gửi sớm không phá gì và bản đã cài sẵn sàng khi DPoP thành bắt buộc.
+
+- Chỉ `GET /api/me/entitlements` mang `DPoP`. **Không** gửi ở `/oidc/token` (khác mục 13): máy chủ chưa gắn token với
+  khoá; gửi sớm có thể nhận token `DPoP`-bound mà `/api/me/entitlements` (đọc `Bearer`) chưa kiểm.
+- Đã gửi DPoP thì JWS PHẢI có `cnf.jkt` đúng thumbprint khoá; thiếu/khác ⇒ bỏ JWS, giữ bản đệm.
+- Thử lại đúng một lần: `use_dpop_nonce` kèm nonce mới; hoặc `invalid_dpop_proof` khi header `Date` cho thấy đồng hồ máy
+  lệch > 30 giây (ký lại theo giờ máy chủ).
+- Khoá CNG `tsudev.tsudisk.dpop.v1`, phạm vi người dùng, `ExportPolicy = None`, TPM trước, Software KSP sau. Tạo trong
+  lượt lấy quyền lợi đầu tiên sau đăng nhập; xoá khi `dang-xuat` và khi đổi tài khoản. Không tạo được khoá ở cả hai nơi
+  ⇒ gọi không DPoP (`PRODUCT_POLICY` 7.4: `SHOULD`).
+- Đã thử trên Windows thật (27/11/2026, khoá tên riêng, xoá sau khi thử): khoá nằm ở Platform Crypto Provider, chữ ký
+  P1363 64 byte kiểm được, mở lại đúng khoá, xuất khoá riêng bị từ chối.
+
 ## Việc còn chờ
 
 - 👤 Duyệt ADR này và `docs/PLAN.md`.
-- tsudev.com: hợp đồng DPoP cho desktop (phiếu trao đổi khi bắt đầu Phase INT6).
+- tsudev.com trả lời phiếu `20261127-DP1`: thời điểm DPoP bắt buộc cho desktop, `DPoP-Nonce`, DPoP ở `/oidc/token`.
+- 👤 Đăng nhập thật trên Windows: kiểm JWS có `cnf.jkt` khớp khoá.
 - 👤 Chọn ngày "khoá ngay" toàn hệ (INT1-f phía tsudev).

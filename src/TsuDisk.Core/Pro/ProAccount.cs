@@ -70,6 +70,12 @@ public sealed class ProAccount(
     /// </summary>
     public Action<UpdateRequiredResponse>? UpdateRequired { get; init; }
 
+    /// <summary>
+    /// Noi cat khoa DPoP (ADR-0012 muc 13). Null ⇒ goi khong kem DPoP. Khoa chi duoc tao trong luot lay quyen loi -
+    /// tuc la SAU khi da dang nhap (hang C) - va bi xoa khi dang xuat.
+    /// </summary>
+    public IDpopKeyStore? DpopKeys { get; init; }
+
     public bool IsSignedIn => store.HasSession;
 
     public AccountInfo? Account => store.HasSession ? store.ReadAccount() : null;
@@ -146,7 +152,12 @@ public sealed class ProAccount(
                 if (string.IsNullOrEmpty(t.RefreshToken)) return new LoginOutcome(LoginStatus.NoRefreshToken);
 
                 // Mot tai khoan moi tren cung may: bo quyen loi dem cua tai khoan truoc.
-                if (store.ReadAccount() is { } old && old.Subject != idCheck.Subject) store.ClearSession();
+                // Khoa DPoP cung doi: hai tai khoan khong chung mot jkt (may chu khong noi duoc chung voi nhau).
+                if (store.ReadAccount() is { } old && old.Subject != idCheck.Subject)
+                {
+                    store.ClearSession();
+                    DpopKeys?.Delete();
+                }
 
                 var account = new AccountInfo(idCheck.Subject!, clock());
                 var installation = installations.GetOrCreate();   // sinh o LAN DANG NHAP DAU (ADR-0002 2.3)
@@ -222,13 +233,15 @@ public sealed class ProAccount(
             catch (Exception ex) when (IsNetwork(ex, cancel)) { revoked = false; }
         }
         store.ClearAll();
+        DpopKeys?.Delete();
         return revoked;
     }
 
     private async Task<Entitlement?> FetchEntitlementAsync(string accessToken, string installation, string jwks,
                                                           CancellationToken cancel, Action<UpdateRequiredResponse>? seen = null)
     {
-        var fetch = await http.GetEntitlementAsync(accessToken, installation, cancel).ConfigureAwait(false);
+        using var dpop = DpopKeys?.OpenOrCreate();
+        var fetch = await http.GetEntitlementAsync(accessToken, installation, cancel, dpop).ConfigureAwait(false);
         if (fetch.UpdateRequired is { } upgrade)
         {
             seen?.Invoke(upgrade);
@@ -243,6 +256,9 @@ public sealed class ProAccount(
         {
             var check = new EntitlementVerifier(keys, clientId).Verify(fetch.Jws, clock());
             if (!check.IsValid) return null;
+            // Da gui DPoP ⇒ JWS PHAI gan dung khoa nay (tsudev ADR-0004 muc 6: bang chung hop le ⇒ cnf.jkt). Thieu
+            // hoac khac ⇒ JWS khong phai cap cho thiet bi nay: bo, giu ban dem cu.
+            if (dpop is not null && check.Value!.Jkt != DpopProof.Thumbprint(dpop)) return null;
             // Chi ghi de khi JWS moi KIEM DUOC - phan hoi sai khong xoa duoc ban dem tot.
             store.SaveJwks(jwks);
             store.SaveEntitlementJws(fetch.Jws);

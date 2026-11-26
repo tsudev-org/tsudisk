@@ -78,19 +78,82 @@ public sealed class ProHttp(HttpClient http, ProEndpoints endpoints, string clie
         return await res.Content.ReadAsStringAsync(cancel).ConfigureAwait(false);
     }
 
-    /// <summary><c>GET /api/me/entitlements</c> kem Bearer + <c>X-Tsu-Installation</c> (AUTH_AND_ACCOUNT 14.3).</summary>
-    public async Task<EntitlementFetch> GetEntitlementAsync(string accessToken, string installationId, CancellationToken cancel)
+    /// <summary>Dong ho cho <c>iat</c> cua bang chung DPoP (test thay duoc).</summary>
+    public Func<DateTimeOffset> Clock { get; init; } = () => DateTimeOffset.UtcNow;
+
+    /// <summary>Nonce gan nhat may chu cap qua <c>DPoP-Nonce</c> (RFC 9449 muc 8) - dung lai cho luot sau.</summary>
+    private string? _dpopNonce;
+
+    /// <summary>Do lech dong ho may nay so voi may chu, hoc tu header <c>Date</c> khi bang chung bi tu choi.</summary>
+    private TimeSpan _serverSkew;
+
+    /// <summary>Lech qua muc nay moi coi la "sai gio" (may chu cho ±60 giay, ADR-0004 tsudev muc 6).</summary>
+    internal static readonly TimeSpan SkewTolerance = TimeSpan.FromSeconds(30);
+
+    /// <summary>
+    /// <c>GET /api/me/entitlements</c> kem Bearer + <c>X-Tsu-Installation</c> (AUTH_AND_ACCOUNT 14.3) va, khi co
+    /// <paramref name="dpop"/>, header <c>DPoP</c> (RFC 9449) de may chu gan <c>cnf.jkt</c> vao JWS. Thu lai DUNG MOT
+    /// lan khi may chu doi nonce (<c>use_dpop_nonce</c>) hoac tu choi bang chung ma dong ho may nay lech &gt; 30 giay.
+    /// </summary>
+    public async Task<EntitlementFetch> GetEntitlementAsync(string accessToken, string installationId, CancellationToken cancel,
+                                                            IDpopKey? dpop = null)
+    {
+        var first = await SendEntitlementAsync(accessToken, installationId, dpop, cancel).ConfigureAwait(false);
+        if (dpop is null || !first.Retry) return first.Result;
+        return (await SendEntitlementAsync(accessToken, installationId, dpop, cancel).ConfigureAwait(false)).Result;
+    }
+
+    private async Task<(EntitlementFetch Result, bool Retry)> SendEntitlementAsync(
+        string accessToken, string installationId, IDpopKey? dpop, CancellationToken cancel)
     {
         using var req = Request(HttpMethod.Get, endpoints.Entitlements);
         req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         req.Headers.TryAddWithoutValidation(ProContract.InstallationHeader, installationId);
+        if (dpop is not null)
+            req.Headers.TryAddWithoutValidation(DpopProof.Header,
+                DpopProof.Create(dpop, "GET", endpoints.Entitlements, accessToken, Clock() + _serverSkew, _dpopNonce));
         using var res = await http.SendAsync(req, cancel).ConfigureAwait(false);
         var text = await res.Content.ReadAsStringAsync(cancel).ConfigureAwait(false);
         var json = TryParse(text);
+        var retry = dpop is not null && ShouldRetryDpop(res, json);
         if (UpdateRequiredFrom(res.StatusCode, json) is { } upgrade)
-            return new EntitlementFetch(null, res.StatusCode, "update_required", upgrade);
-        if (!res.IsSuccessStatusCode) return new EntitlementFetch(null, res.StatusCode, Str(json, "error"));
-        return new EntitlementFetch(Str(json, "jws"), res.StatusCode, null);
+            return (new EntitlementFetch(null, res.StatusCode, "update_required", upgrade), false);
+        if (!res.IsSuccessStatusCode) return (new EntitlementFetch(null, res.StatusCode, Str(json, "error") ?? DpopError(res)), retry);
+        return (new EntitlementFetch(Str(json, "jws"), res.StatusCode, null), false);
+    }
+
+    /// <summary>
+    /// Hoc nonce moi (moi phan hoi deu co the mang <c>DPoP-Nonce</c>) va quyet dinh co thu lai:
+    /// <c>use_dpop_nonce</c> kem nonce MOI, hoac <c>invalid_dpop_proof</c> ma header <c>Date</c> cho thay lech gio.
+    /// </summary>
+    private bool ShouldRetryDpop(HttpResponseMessage res, JsonElement? json)
+    {
+        var oldNonce = _dpopNonce;
+        if (res.Headers.TryGetValues(DpopProof.NonceHeader, out var n) && n.FirstOrDefault() is { Length: > 0 and <= 256 } nonce)
+            _dpopNonce = nonce;
+        if (res.StatusCode is not (HttpStatusCode.Unauthorized or HttpStatusCode.BadRequest)) return false;
+        var error = Str(json, "error") ?? DpopError(res);
+        if (error == "use_dpop_nonce") return _dpopNonce is not null && _dpopNonce != oldNonce;
+        if (error == "invalid_dpop_proof" && res.Headers.Date is { } serverNow)
+        {
+            var skew = serverNow - Clock();
+            if ((skew - _serverSkew).Duration() <= SkewTolerance) return false;   // khong phai do dong ho
+            _serverSkew = skew;
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>Ma loi trong <c>WWW-Authenticate: DPoP error="..."</c> (RFC 9449 muc 7.1).</summary>
+    private static string? DpopError(HttpResponseMessage res)
+    {
+        foreach (var h in res.Headers.WwwAuthenticate)
+        {
+            if (!string.Equals(h.Scheme, "DPoP", StringComparison.OrdinalIgnoreCase) || h.Parameter is null) continue;
+            var m = System.Text.RegularExpressions.Regex.Match(h.Parameter, "(?:^|,)\\s*error=\"([a-z_]{1,64})\"");
+            if (m.Success) return m.Groups[1].Value;
+        }
+        return null;
     }
 
     private async Task<TokenResult> TokenAsync(Dictionary<string, string> form, CancellationToken cancel)

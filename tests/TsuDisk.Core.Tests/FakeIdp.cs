@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using TsuDisk.Core.Pro;
@@ -41,6 +42,17 @@ internal sealed class FakeIdp : HttpMessageHandler
     /// <summary>Gia lap may chu tu choi ban cu: <c>/api/me/entitlements</c> tra <c>426 update_required</c> (ADR-0012 muc 8).</summary>
     public bool UpgradeRequired { get; set; }
     public bool SessionRevoked { get; private set; }
+
+    // DPoP (RFC 9449, tsudev ADR-0004 muc 6).
+    public List<string> DpopProofs { get; } = new();
+    /// <summary>Khac null ⇒ doi bang chung mang dung nonce nay (RFC 9449 muc 9).</summary>
+    public string? RequiredNonce { get; set; }
+    /// <summary>Gio cua may chu lech so voi gio may khach; bang chung co <c>iat</c> lech &gt; 60 giay bi tu choi.</summary>
+    public TimeSpan ServerClockOffset { get; set; }
+    /// <summary>Tu choi moi bang chung (loi khong phai do dong ho).</summary>
+    public bool RejectDpop { get; set; }
+    /// <summary>Ghi de <c>cnf.jkt</c> trong JWS; chuoi rong ⇒ bo han <c>cnf</c>.</summary>
+    public string? CnfOverride { get; set; }
 
     public string Sub { get; set; } = "u-1";
 
@@ -151,10 +163,33 @@ internal sealed class FakeIdp : HttpMessageHandler
         var now = DateTimeOffset.UtcNow;
         var claims = ProTestKit.Claims(devices: Devices, iat: now.AddMinutes(-1));
         claims["sub"] = Sub;
+        if (req.Headers.TryGetValues(DpopProof.Header, out var proofs))
+        {
+            var proof = Assert.Single(proofs);
+            DpopProofs.Add(proof);
+            var checkedProof = DpopCheck.Verify(proof, "GET", Endpoints.Entitlements.AbsoluteUri, bearer);
+            if (RequiredNonce is not null && checkedProof.Nonce != RequiredNonce) return DpopError("use_dpop_nonce", RequiredNonce);
+            var serverNow = now + ServerClockOffset;
+            if (RejectDpop || Math.Abs(checkedProof.Iat - serverNow.ToUnixTimeSeconds()) > 60)
+            {
+                var denied = DpopError("invalid_dpop_proof", null);
+                denied.Headers.Date = serverNow;
+                return denied;
+            }
+            if (CnfOverride != "") claims["cnf"] = new Dictionary<string, string> { ["jkt"] = CnfOverride ?? checkedProof.Jkt };
+        }
         var jws = BadEntitlementSignature
-            ? _kit.Sign(claims, key: System.Security.Cryptography.ECDsa.Create(System.Security.Cryptography.ECCurve.NamedCurves.nistP256))
+            ? _kit.Sign(claims, key: ECDsa.Create(ECCurve.NamedCurves.nistP256))
             : _kit.Sign(claims);
         return Json(HttpStatusCode.OK, JsonSerializer.Serialize(new { jws }));
+    }
+
+    private static HttpResponseMessage DpopError(string error, string? nonce)
+    {
+        var res = Json(HttpStatusCode.Unauthorized, JsonSerializer.Serialize(new { error }));
+        res.Headers.TryAddWithoutValidation("WWW-Authenticate", $"DPoP error=\"{error}\"");
+        if (nonce is not null) res.Headers.TryAddWithoutValidation(DpopProof.NonceHeader, nonce);
+        return res;
     }
 
     private HttpResponseMessage Revoke(Dictionary<string, string> form)
@@ -175,6 +210,67 @@ internal sealed class FakeIdp : HttpMessageHandler
             .Select(p => p.Split('=', 2))
             .ToDictionary(p => Uri.UnescapeDataString(p[0].Replace('+', ' ')),
                           p => p.Length > 1 ? Uri.UnescapeDataString(p[1].Replace('+', ' ')) : "");
+}
+
+/// <summary>Kiem bang chung DPoP nhu may chu (<c>verifyDpopProof</c> cua tsudev), viet doc lap voi <see cref="DpopProof"/>.</summary>
+internal static class DpopCheck
+{
+    public sealed record Result(string Jkt, long Iat, string Jti, string? Nonce);
+
+    public static Result Verify(string proof, string htm, string htu, string accessToken)
+    {
+        var parts = proof.Split('.');
+        Assert.Equal(3, parts.Length);
+        using var header = JsonDocument.Parse(Base64Url.TryDecode(parts[0])!);
+        using var payload = JsonDocument.Parse(Base64Url.TryDecode(parts[1])!);
+        var h = header.RootElement;
+        var p = payload.RootElement;
+        Assert.Equal("dpop+jwt", h.GetProperty("typ").GetString());
+        Assert.Equal("ES256", h.GetProperty("alg").GetString());
+        var jwk = h.GetProperty("jwk");
+        Assert.Equal(new[] { "crv", "kty", "x", "y" }, jwk.EnumerateObject().Select(m => m.Name).Order(StringComparer.Ordinal));
+        var x = Base64Url.TryDecode(jwk.GetProperty("x").GetString())!;
+        var y = Base64Url.TryDecode(jwk.GetProperty("y").GetString())!;
+        using var key = ECDsa.Create(new ECParameters { Curve = ECCurve.NamedCurves.nistP256, Q = new ECPoint { X = x, Y = y } });
+        Assert.True(key.VerifyData(Encoding.ASCII.GetBytes(parts[0] + "." + parts[1]), Base64Url.TryDecode(parts[2])!,
+                                   HashAlgorithmName.SHA256, DSASignatureFormat.IeeeP1363FixedFieldConcatenation));
+        Assert.Equal(htm, p.GetProperty("htm").GetString());
+        Assert.Equal(htu, p.GetProperty("htu").GetString());
+        Assert.Equal(Base64Url.Encode(SHA256.HashData(Encoding.ASCII.GetBytes(accessToken))), p.GetProperty("ath").GetString());
+        var jkt = Base64Url.Encode(SHA256.HashData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new SortedDictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["crv"] = "P-256", ["kty"] = "EC", ["x"] = Base64Url.Encode(x), ["y"] = Base64Url.Encode(y),
+        }))));
+        return new Result(jkt, p.GetProperty("iat").GetInt64(), p.GetProperty("jti").GetString()!,
+                          p.TryGetProperty("nonce", out var n) ? n.GetString() : null);
+    }
+}
+
+/// <summary>Kho khoa DPoP gia: khoa P-256 tam trong bo nho, dem so lan tao/xoa.</summary>
+internal sealed class FakeDpopKeys : IDpopKeyStore
+{
+    private ECParameters? _key;
+    public int Created;
+    public int Deleted;
+    public bool Unavailable { get; set; }
+
+    public IDpopKey? OpenOrCreate()
+    {
+        if (Unavailable) return null;
+        if (_key is null)
+        {
+            using var fresh = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+            _key = fresh.ExportParameters(true);
+            Created++;
+        }
+        return new EcdsaDpopKey(ECDsa.Create(_key.Value));
+    }
+
+    public void Delete()
+    {
+        _key = null;
+        Deleted++;
+    }
 }
 
 /// <summary>"Ma hoa" gia: dao byte + tien to - du de test thay tep KHONG chua token ro.</summary>
@@ -211,7 +307,9 @@ internal sealed class ProRig : IDisposable
     /// <summary>Moi lan <see cref="ProAccount.UpdateRequired"/> duoc goi (may chu tra 426).</summary>
     public List<UpdateRequiredResponse> Upgrades { get; } = new();
 
-    public ProRig(HttpMessageHandler? handler = null, string? appHeader = null)
+    public FakeDpopKeys Dpop { get; } = new();
+
+    public ProRig(HttpMessageHandler? handler = null, string? appHeader = null, bool dpop = true)
     {
         Idp = new FakeIdp(Kit);
         Http = new HttpClient(handler ?? Idp);
@@ -222,6 +320,7 @@ internal sealed class ProRig : IDisposable
         {
             LockWait = TimeSpan.FromMilliseconds(200),
             UpdateRequired = Upgrades.Add,
+            DpopKeys = dpop ? Dpop : null,
         };
     }
 
