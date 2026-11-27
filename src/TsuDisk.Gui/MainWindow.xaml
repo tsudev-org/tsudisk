@@ -101,7 +101,16 @@
                           </Border>
                         </Border>
                         <ControlTemplate.Triggers>
+                          <!-- UI1: vung trong nen bg-subtle gan nhu trung nen the ⇒ vien border-control (>= 3:1, IconContrastTests).
+                               Dat TRUOC IsSelected de vien chon (text-primary) thang. -->
+                          <DataTrigger Binding="{Binding Role}" Value="Free">
+                            <Setter TargetName="Block" Property="BorderBrush" Value="{DynamicResource border-control}" />
+                            <Setter TargetName="Block" Property="BorderThickness" Value="1" />
+                            <Setter TargetName="Outer" Property="Padding" Value="2" />
+                          </DataTrigger>
                           <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Block" Property="BorderThickness" Value="2" />
+                            <Setter TargetName="Outer" Property="Padding" Value="1" />
                             <Setter TargetName="Block" Property="BorderBrush" Value="{DynamicResource text-primary}" />
                           </Trigger>
                           <Trigger Property="IsKeyboardFocused" Value="True">
@@ -131,7 +140,7 @@
               <Rectangle Fill="{DynamicResource primary}" /><TextBlock Text="{g:T RoleData}" />
               <Rectangle Fill="{DynamicResource info}" /><TextBlock Text="{g:T RoleSystem}" />
               <Rectangle Fill="{DynamicResource warning}" /><TextBlock Text="{g:T RoleRecovery}" />
-              <Rectangle Fill="{DynamicResource bg-subtle}" Stroke="{DynamicResource border-strong}" /><TextBlock Text="{g:T RoleFree}" />
+              <Rectangle Fill="{DynamicResource bg-subtle}" Stroke="{DynamicResource border-control}" /><TextBlock Text="{g:T RoleFree}" />
               <Rectangle Fill="{DynamicResource text-muted}" /><TextBlock Text="{g:T RoleOther}" />
             </WrapPanel>
 
