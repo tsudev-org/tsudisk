@@ -12,6 +12,7 @@
 - [ ] Phase UI2-B kế tiếp (mỗi ngữ cảnh một Phase). Bản phát hành kế tiếp mang cửa sổ Tài khoản + `xoa-tai-khoan`
       (CHANGELOG "Chưa phát hành").
 - [ ] winget-pkgs#490479 (26.11.2701) chờ moderator; 26.11.2702: winget-pkgs#490487.
+- [ ] 👤 Việc từ phiếu `20261127-DD2` mục 3 (token thô, `.jks`, co VHDX, phần mềm gỡ sót) - quan trọng nhất.
 - [ ] 👤 Dọn đĩa: phiếu `logs/handover/20261126-DD1_phoi-hop-don-dia.md` mục 3 (co VHDX, bản build tsudisk).
       ⛔ Infatica đang chạy - phiên tsuguard theo dõi.
 - [ ] UI2 phần B: hoạ tiết nền thẻ theo thể loại (phần A + nền Sáng mới + font đã xong ở #80).
@@ -35,6 +36,9 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 27/11/2026 (phiên 19) - Rà quét rác Ubuntu + Windows (chỉ đọc) + lệnh `quet-rac` chỉ báo cáo (ADR-0013, 637 test đạt;
+  chưa commit). Phiếu `20261127-DD2`: ổ C chỉ lấy lại được bằng co VHDX (👤); phát hiện token thô + `.jks` bản rõ cần 👤.
 
 - 27/11/2026 (phiên 18) - Phase QR4-UI1 XONG (#98): bộ quy ước v9.0.0 (sync + lượt ba vì script cũ;
   `check-central-login --strict` trong CI; phiếu `20261127-LOGIN1` ĐÓNG). QR4 theo một cổng: GUI `AccountWindow` (chỉ

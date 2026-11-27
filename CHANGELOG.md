@@ -4,6 +4,8 @@ Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/V
 
 ## [Chưa phát hành]
 
+- Lệnh mới `tsudisk quet-rac` (chỉ đọc): quét rác tạm (mặc định `%TEMP%`) và báo mục nào có thể thu hồi, mục nào được
+  bảo vệ (tệp khóa/bí mật, dữ liệu người dùng, thư mục hệ thống, ổ đĩa ảo) và vì sao. TsuDisk không xóa gì (ADR-0013).
 - Giao diện có nút **Tài khoản**: xem trạng thái đăng nhập (không kết nối mạng khi mở), **Đăng nhập trên trình duyệt**,
   **Mở trang tài khoản**, **Đăng xuất**, **Xóa tài khoản**. Đăng nhập (kể cả bằng mã QR từ điện thoại) diễn ra trên
   tsudev.com; TsuDisk không có ô nhập mật khẩu nào.

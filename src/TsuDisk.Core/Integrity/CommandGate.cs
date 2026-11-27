@@ -25,7 +25,7 @@ public static class CommandGate
     {
         "danh-sach", "phan-tich", "ke-hoach", "mo-rong", "ke-hoach-winre", "mo-rong-winre", "ke-hoach-doi-ten", "doi-ten",
         "ke-hoach-tao-phan-vung", "tao-phan-vung", "ke-hoach-thu-nho", "thu-nho", "ke-hoach-xoa", "xoa-phan-vung",
-        "nhat-ky", "winre", "suc-khoe", "kiem-tra-gpt", "kiem-tra-mbr2gpt", "sao-luu", "xuat-du-lieu",
+        "nhat-ky", "winre", "quet-rac", "suc-khoe", "kiem-tra-gpt", "kiem-tra-mbr2gpt", "sao-luu", "xuat-du-lieu",
         "dang-nhap", "dang-xuat", "tai-khoan", "xoa-tai-khoan", "phien-ban", "tro-giup",
     }.ToFrozenSet(StringComparer.Ordinal);
 
