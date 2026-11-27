@@ -27,6 +27,7 @@
     <EmbeddedResource Include="../../.standards/tokens/products/disk.json" LogicalName="tokens/disk.json" />
     <Resource Include="../../assets/brand/app/icon-64.png" Link="Resources/icon-64.png" />
     <Resource Include="../../assets/brand/app/icon-128.png" Link="Resources/icon-128.png" />
+    <Resource Include="../../assets/brand/app/logo-tsudev-32.png" Link="Resources/logo-tsudev-32.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../TsuDisk.Core/TsuDisk.Core.csproj" />

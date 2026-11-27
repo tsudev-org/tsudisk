@@ -76,6 +76,8 @@ internal sealed partial class MainWindow : Window
 
     private void OnAbout(object sender, RoutedEventArgs e) => new AboutWindow { Owner = this }.ShowDialog();
 
+    private void OnAccount(object sender, RoutedEventArgs e) => new AccountWindow { Owner = this }.ShowDialog();
+
     internal static void OpenLink(RequestNavigateEventArgs e)
     {
         // Chi mo trang https co dinh cua TsuDEV bang trinh duyet mac dinh; app khong tu goi mang.

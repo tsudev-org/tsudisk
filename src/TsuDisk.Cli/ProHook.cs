@@ -16,34 +16,12 @@ internal static class ProHook
     public static bool IsInteractive(CliArgs cli) =>
         !cli.Has("json") && !cli.Has("dong-y") && !cli.Has("xac-nhan")
         && !Console.IsInputRedirected && !Console.IsOutputRedirected
-        && cli.Command is not ("phien-ban" or "tro-giup" or "dang-nhap" or "dang-xuat" or "tai-khoan");
+        && cli.Command is not ("phien-ban" or "tro-giup" or "dang-nhap" or "dang-xuat" or "tai-khoan" or "xoa-tai-khoan");
 
-    internal static HttpClient NewHttpClient(TimeSpan timeout)
-    {
-#pragma warning disable CA2000 // HttpClient so huu handler (disposeHandler mac dinh = true)
-        var http = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = timeout };
-#pragma warning restore CA2000
-        http.DefaultRequestHeaders.UserAgent.ParseAdd("TsuDisk/" + Commands.ToolVersion);
-        return http;
-    }
+    internal static HttpClient NewHttpClient(TimeSpan timeout) => ProAccountFactory.NewHttpClient(timeout, Commands.ToolVersion);
 
-    internal static ProAccount CreateAccount(HttpClient http)
-    {
-        var dir = ProContract.DefaultStateDirectory();
-        return new ProAccount(
-            new ProAccountStore(dir, new DpapiTokenProtector()),
-            new InstallationIdStore(dir),
-            new ProHttp(http, ProEndpoints.Production, ProContract.ClientId,
-                        ProContract.AppHeaderValue(Commands.ToolVersion, ProContract.DetectChannel(Environment.ProcessPath))),
-            ProEndpoints.Production,
-            ProContract.ClientId,
-            () => DateTimeOffset.UtcNow)
-        {
-            DpopKeys = new CngDpopKeyStore(),   // ADR-0012 muc 13: TPM neu co, khong thi KSP phan mem
-            // ADR-0012 muc 8: 426 o bat ky luot lay quyen loi nao ⇒ ghi dau de cong CLI + GUI cung khoa.
-            UpdateRequired = r => CliGate.ServerLock.TrySave(r, Commands.ToolVersion, DateTimeOffset.UtcNow),
-        };
-    }
+    internal static ProAccount CreateAccount(HttpClient http) => ProAccountFactory.Create(http, Commands.ToolVersion,
+        r => CliGate.ServerLock.TrySave(r, Commands.ToolVersion, DateTimeOffset.UtcNow));
 
     /// <summary>
     /// Nhac gia han / bao het ky (PRODUCT_POLICY 7.6 - chi nguoi da mua Pro, ngoai le co chu dich cua muc 3.8) o dau
@@ -72,9 +50,11 @@ internal static class ProHook
         }
     }
 
-    /// <summary><c>tsudisk dang-nhap | dang-xuat | tai-khoan</c>.</summary>
+    /// <summary><c>tsudisk dang-nhap | dang-xuat | tai-khoan | xoa-tai-khoan</c>.</summary>
     public static int AccountCommand(CliArgs cli)
     {
+        if (cli.Command == "xoa-tai-khoan")
+            return DeleteAccount();
         using var cancel = new CancellationTokenSource();
         Console.CancelKeyPress += (_, e) =>
         {
@@ -169,6 +149,23 @@ internal static class ProHook
             return ExitCodes.Ok;
         }
         PrintAccount(account.Account, r.Entitlement, r.Status);
+        Console.WriteLine("Trang tài khoản (tsudev.com): " + ProContract.AccountPageUrl);
+        Console.WriteLine("Xóa tài khoản: tsudisk xoa-tai-khoan");
+        return ExitCodes.Ok;
+    }
+
+    /// <summary>
+    /// AUTH_AND_ACCOUNT v5.0.0 muc 2.1 "Xoa tai khoan": mo DUNG trang xoa cua cong bang trinh duyet he thong. Xac thuc
+    /// lai, an han 30 ngay, xuat du lieu deu nam o cong; CLI khong hoi gi, khong goi API xoa, khong xoa tep tren may.
+    /// </summary>
+    private static int DeleteAccount()
+    {
+        Console.WriteLine("Xóa tài khoản TsuDEV diễn ra trên tsudev.com (đăng nhập lại để xác nhận, có 30 ngày để hủy).");
+        Console.WriteLine(SystemBrowser.Open(new Uri(ProContract.DeleteAccountUrl))
+            ? "Đã mở trang xóa tài khoản trong trình duyệt:"
+            : "Không tự mở được trình duyệt - hãy dán liên kết này vào trình duyệt:");
+        Console.WriteLine("  " + ProContract.DeleteAccountUrl);
+        Console.WriteLine("Dữ liệu tài khoản trên máy này xóa bằng: tsudisk dang-xuat");
         return ExitCodes.Ok;
     }
 
