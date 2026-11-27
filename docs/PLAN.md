@@ -7,7 +7,7 @@
 > Quyết định chủ dự án 26/11/2026: chỉ kiểm khi đã đăng nhập; CLI bị khoá thì chặn mọi lệnh trừ
 > `phien-ban`/`tro-giup`/`dang-xuat`/`xuat-du-lieu`.
 
-**Trạng thái kế hoạch**: ĐÃ DUYỆT 26/11/2026. Phase INT1-INT7 xong; kế tiếp: Phase QR4-UI1.
+**Trạng thái kế hoạch**: ĐÃ DUYỆT 26/11/2026. Phase INT1-INT7, QR4-UI1 xong; kế tiếp: Phase UI2-B.
 
 ## Phase INT1 - Lập kế hoạch + ADR cổng phiên bản
 
@@ -161,39 +161,44 @@ không SDK bên thứ ba (I5); OPEN 5.2: `DebugType=none` (#95), lệch chuẩn 
 - [x] Đọc phiếu `20261124-QR1` + phiếu gốc QR1 (mục 2 QR4-DESKTOP, STD-SYNC) + CHANGELOG 9.0.0.
 - [x] `sync-standards.sh --ref v9.0.0` hai lượt (+ cập nhật `scripts/sync-standards.sh` theo bản trung tâm, lượt ba để
       chép `check-central-login.sh`); `check-standards.sh` đạt; `check-central-login.sh` (thường + `--strict`) đạt.
-- [ ] Phiếu `logs/handover/20261127-LOGIN1_ra-soat-mot-cong-dang-nhap.md` theo mẫu `RA_SOAT_DANG_NHAP.md` (rà tay CLI + GUI).
-- [ ] CI `standards.yml`: thêm `.standards/scripts/check-central-login.sh --strict` (bước 5 hướng dẫn nâng cấp).
+- [x] Phiếu `logs/handover/20261127-LOGIN1_ra-soat-mot-cong-dang-nhap.md` theo mẫu `RA_SOAT_DANG_NHAP.md` (rà tay CLI + GUI).
+- [x] CI `standards.yml`: thêm `.standards/scripts/check-central-login.sh --strict` (bước 5 hướng dẫn nâng cấp).
 
 **B. QR4 - mục Tài khoản theo mục 2.1**
-- [ ] Core `Pro/AccountLinks`: URL trang tài khoản + trang xoá tài khoản của cổng (đo 27/11: `/settings/security`
+- [x] Core `ProContract.AccountPageUrl`/`DeleteAccountUrl` (thay cho lớp `AccountLinks` riêng): URL trang tài khoản + trang xoá tài khoản của cổng (đo 27/11: `/settings/security`
       200, neo `#xoa-tai-khoan`), test (https, host `tsudev.com`, không ghi cứng trang đăng nhập).
-- [ ] CLI: lệnh `xoa-tai-khoan` (`delete-account`) mở trang xoá của cổng bằng trình duyệt hệ thống (không ô nhập, không
+- [x] CLI: lệnh `xoa-tai-khoan` (`delete-account`) mở trang xoá của cổng bằng trình duyệt hệ thống (không ô nhập, không
       gọi API xoá); `tai-khoan` in thêm trang tài khoản + cách xoá; trợ giúp, README, CHANGELOG. Cổng khoá giữ nguyên
       danh sách chủ dự án chốt (lệnh mới bị chặn khi khoá - xoá vẫn làm được ở tsudev.com).
-- [ ] GUI: nút "Tài khoản" ở đầu trang mở `AccountWindow`: trạng thái từ tệp phiên cục bộ (KHÔNG gọi mạng khi mở),
+- [x] GUI: nút "Tài khoản" ở đầu trang mở `AccountWindow`: trạng thái từ tệp phiên cục bộ (KHÔNG gọi mạng khi mở),
       nút **Đăng nhập trên trình duyệt** (PKCE loopback như CLI, huỷ được), **Mở trang tài khoản**, **Đăng xuất**,
       **Xoá tài khoản**; không ô nhập nào; vi/en; tương phản cao.
-- [ ] BRAND_ASSETS 12.3: dấu hiệu TsuDEV (PNG sinh từ dây chuyền `brand-assets.mjs`) trước liên kết tsudev.com ở chân
+- [x] BRAND_ASSETS 12.3: dấu hiệu TsuDEV (PNG sinh từ dây chuyền `brand-assets.mjs`) trước liên kết tsudev.com ở chân
       trang GUI, Giới thiệu, Tài khoản.
-- [ ] Ảnh chụp `--chup-man-hinh` thêm cửa sổ Tài khoản (vi/en × Sáng/Tối); E2E GUI ca G12: cửa sổ Tài khoản mở được,
+- [x] Ảnh chụp `--chup-man-hinh` thêm cửa sổ Tài khoản (vi/en × Sáng/Tối); E2E GUI ca G12: cửa sổ Tài khoản mở được,
       không có ô nhập (UIA Edit), đủ các nút, Esc đóng.
 
 **C. UI1 - biểu tượng ≥ 3:1 trên nền thật mọi trạng thái (DESIGN_SYSTEM mục 1)**
-- [ ] Core test: bảng cặp (màu biểu tượng, nền ở mọi trạng thái) của GUI ≥ 3:1 cả Sáng/Tối + test quét XAML GUI:
+- [x] Core test: bảng cặp (màu biểu tượng, nền ở mọi trạng thái) của GUI ≥ 3:1 cả Sáng/Tối + test quét XAML GUI:
       mọi `Path`/biểu tượng vẽ bằng vai trò có trong bảng (chặn tái phát).
-- [ ] Website `scripts/check-bieu-tuong.mjs` (Playwright): mọi `svg` hiện trên các trang mẫu × Sáng/Tối × thường/
+- [x] Website `scripts/check-bieu-tuong.mjs` (Playwright): mọi `svg` hiện trên các trang mẫu × Sáng/Tối × thường/
       di chuột/đang chọn ≥ 3:1 so với nền thật phía sau; gắn CI. Sửa chỗ trượt (nếu có).
 
 **D. Clean Codebase + ngân sách tốc độ (PROJECT_STRUCTURE 3.1, LANGUAGE_SELECTION 5.1)**
-- [ ] .NET: bật `IDE0051`/`IDE0052` mức lỗi + `EnforceCodeStyleInBuild`; sửa vi phạm; build `-warnaserror` đã chặn.
-- [ ] Website: `knip` (ghim phiên bản) `npm run check:knip` trong CI; sửa vi phạm. CI kiểm `git status --porcelain`
+- [x] .NET: bật `IDE0051`/`IDE0052` mức lỗi + `EnforceCodeStyleInBuild`; sửa vi phạm; build `-warnaserror` đã chặn.
+- [x] Website: `knip` (ghim phiên bản) `npm run check:knip` trong CI; sửa vi phạm. CI kiểm `git status --porcelain`
       sạch sau build.
-- [ ] Website: `scripts/check-toc-do.mjs` - LCP ≤ 2,5 s (CPU chậm 4×, mạng 4G chậm), CLS ≤ 0,1, JS tải ban đầu (gzip)
+- [x] Website: `scripts/check-toc-do.mjs` - LCP ≤ 2,5 s (CPU chậm 4×, mạng 4G chậm), CLS ≤ 0,1, JS tải ban đầu (gzip)
       ≤ 170 KB trên các trang mẫu; gắn CI.
-- [ ] Desktop: ghi ngoại lệ .NET (khởi động/kích thước) ở AGENTS B.4 kèm số đo hiện có.
+- [x] Desktop: ghi ngoại lệ .NET (khởi động/kích thước) ở AGENTS B.4 kèm số đo hiện có.
 
 **Nghiệm thu**: theo phiếu QR1 (ảnh Tài khoản 2 chế độ, `check-central-login --strict` xanh, cổng mã chết + tốc độ chặn
 CI). Mọi thay đổi Core kèm test. PR + CI xanh. Ghi kết quả vào phiếu QR1 + phiếu gốc + phiếu LOGIN1.
+
+✅ Nghiệm thu 27/11/2026 (PR #98, CI xanh mọi job): `check-central-login --strict` trong `standards.yml`; ảnh
+`tsudisk-gui-tai-khoan_*` vi/en × Sáng/Tối (artifact `tsudisk-gui-anh`); E2E GUI G12 đạt (khởi động 807 ms); UI1 sửa
+viền vùng trống 1,5:1 -> `border-control`, website 660 lượt đo >= 3:1; IDE0051/52 + knip + ngân sách tốc độ (LCP tối đa
+1,89 s) chặn CI. Test 588 -> 600. Phiếu LOGIN1 ĐÓNG khi gộp.
 
 ## Phase UI2-B - Hiện đại hoá website (phần B)
 

@@ -3,19 +3,17 @@
 > Agent đọc file này ở đầu mỗi phiên và cập nhật ở cuối mỗi phiên.
 > Quy trình: `.standards/docs/AGENT_PROTOCOL.md`.
 
-> **Phiên kế tiếp**: đọc `logs/handover/20261127-01_phien-17-int7-phat-hanh-thu-that.md`, `docs/PLAN.md`
+> **Phiên kế tiếp**: đọc `logs/handover/20261127-02_phien-18-qr4-ui1.md`, `docs/PLAN.md`
 > và `logs/handover/20261126-DD1_phoi-hop-don-dia.md`.
 
 ## Hàng đợi task (làm từ trên xuống)
 
 - [ ] winget-pkgs#489979 (26.11.2601) chờ moderator. (PAT winget cũ đã xoá - sự cố 26/11 ĐÓNG.)
-- [ ] Đồng bộ tsudev-standards v9.0.0 (tin từ phiên `mot-cong-dang-nhap-cp3`, 27/11): chạy `sync-standards.sh` HAI lượt,
-      `.standards/scripts/check-central-login.sh`, lập phiếu RA_SOAT_DANG_NHAP (CHANGELOG 9.0.0 của bộ quy ước).
-- [ ] Phase QR4-UI1 kế tiếp (mỗi ngữ cảnh một Phase), rồi UI2-B.
+- [ ] Phase UI2-B kế tiếp (mỗi ngữ cảnh một Phase). Bản phát hành kế tiếp mang cửa sổ Tài khoản + `xoa-tai-khoan`
+      (CHANGELOG "Chưa phát hành").
 - [ ] winget-pkgs#490479 (26.11.2701) chờ moderator; 26.11.2702: winget-pkgs#490487.
 - [ ] 👤 Dọn đĩa: phiếu `logs/handover/20261126-DD1_phoi-hop-don-dia.md` mục 3 (co VHDX, bản build tsudisk).
       ⛔ Infatica đang chạy - phiên tsuguard theo dõi.
-- [ ] QR4 + UI1 (phiếu 20261124-QR1): đăng nhập QR, tương phản biểu tượng, cổng mã chết/ngân sách tốc độ.
 - [ ] UI2 phần B: hoạ tiết nền thẻ theo thể loại (phần A + nền Sáng mới + font đã xong ở #80).
 - [ ] E2E GUI ca G6 (tạo exFAT trên ổ ảo) chập chờn 1 lần ở #81 (chạy lại thì đạt) - nếu lặp lại, lưu nhật ký lần chạy.
 - [ ] winget-pkgs #486490 (26.11.2202), #487170 (26.11.2301), #487205 (26.11.2302): chờ moderator; #487246 (26.11.2303),
@@ -34,6 +32,13 @@
 | --- | --- | --- |
 
 ## Đã hoàn thành (mới nhất trên cùng)
+
+- 27/11/2026 (phiên 18) - Phase QR4-UI1 XONG (#98): bộ quy ước v9.0.0 (sync + lượt ba vì script cũ;
+  `check-central-login --strict` trong CI; phiếu `20261127-LOGIN1` ĐÓNG). QR4 theo một cổng: GUI `AccountWindow` (chỉ
+  nút, mở không gọi mạng), CLI `xoa-tai-khoan`, `ProAccountFactory` dùng chung, dấu hiệu TsuDEV trước liên kết tsudev.com.
+  UI1: viền vùng trống 1,5:1 -> `border-control`; `IconContrastTests` + website `check-bieu-tuong`. Clean Codebase:
+  IDE0051/52 lỗi build, knip 6.45.1; ngân sách `check-toc-do` (LCP tối đa 1,89 s). E2E GUI G12 (khởi động 807 ms).
+  Test 588 -> 600. Phiếu QR1 phần tsudisk ĐÓNG.
 
 - 27/11/2026 (phiên 17) - Phase INT7 XONG: phát hành **26.11.2701** (#95; bản đầu có cổng phiên bản; `DebugType=none`;
   VT 0/74 hai exe; SHA256SUMS + attestation đã kiểm; website deploy-2026.11.27.1; Scoop scoop-bucket#35;
