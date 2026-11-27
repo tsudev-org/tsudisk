@@ -37,6 +37,7 @@ try
         "xoa-phan-vung" => Commands.DeletePartition(cli, planOnly: false),
         "nhat-ky" => Commands.Journal(cli),
         "winre" => Commands.WinRe(),
+        "quet-rac" => Commands.ScanJunk(cli),
         "suc-khoe" => Commands.Health(cli),
         "kiem-tra-gpt" => Commands.VerifyGpt(cli),
         "kiem-tra-mbr2gpt" => Commands.CheckMbr2Gpt(cli),
@@ -346,6 +347,7 @@ internal static partial class Commands
               tsudisk tao-phan-vung --dia N [như trên]    Thực hiện (cần quyền quản trị); gõ TAO để xác nhận
               tsudisk nhat-ky [tệp journal.json]          Xem lần chạy gần nhất và việc cần làm nếu bị đứt giữa chừng
               tsudisk winre                               Trạng thái Windows Recovery Environment
+              tsudisk quet-rac [--thu-muc DIR]            Quét rác tạm (mặc định %TEMP%): CHỈ ĐỌC, không xóa; nêu rõ mục được bảo vệ
               tsudisk suc-khoe [--dia N] [--json]         Sức khỏe ổ: trạng thái, nhiệt độ, độ mòn, lỗi đọc/ghi (S.M.A.R.T.)
               tsudisk kiem-tra-gpt [--dia N] [--json]     Kiểm tra toàn vẹn bảng GPT trên đĩa (CRC, header dự phòng) - quản trị
               tsudisk kiem-tra-mbr2gpt [--dia N] [--json] Chuyển đĩa MBR sang GPT được không (mbr2gpt /validate, chỉ đọc) - quản trị
