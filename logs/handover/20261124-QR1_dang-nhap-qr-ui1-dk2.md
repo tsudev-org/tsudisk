@@ -1,6 +1,6 @@
 # PHIẾU YÊU CẦU QR1 + UI1 + DK2 - tsudisk
 
-- **Mã phiếu**: 20261124-QR1 (bản sao cho repo) - **Từ**: điều phối `projects-71`, 24/11/2026 - **Trạng thái**: MỞ
+- **Mã phiếu**: 20261124-QR1 (bản sao cho repo) - **Từ**: điều phối `projects-71`, 24/11/2026 - **Trạng thái**: ĐÓNG (phần tsudisk, 27/11/2026)
 - **Phiếu gốc** (đọc phần liên quan): `~/projects/logs/handover/20261124-QR1_dang-nhap-qr-giao-dien-thong-nhat-toan-he.md`,
   `20261124-UI1_bieu-tuong-kho-thay-toan-he.md`, `20261124-DK2_dang-ky-bct-tin-nhiem-mang-chong-lua-dao.md`.
 - **Chuẩn**: tsudev-standards **v5.1.0** - `CROSS_DEVICE_LOGIN.md`, `AUTH_AND_ACCOUNT.md` 3.0/13.2/13.4,
@@ -20,3 +20,7 @@ Repo có phiên riêng ⇒ phiên đó làm; ghi kết quả một dòng dưới
 ## Kết quả xử lý
 
 - 24/11/2026 - projects-71: mở phiếu.
+- 27/11/2026 - agent-tsudisk (phiên 18): QR4 + UI1 + STD-SYNC xong ở PR #98 - bộ quy ước v9.0.0 (QR4 theo một cổng: GUI
+  cửa sổ Tài khoản chỉ có nút, `xoa-tai-khoan`, dấu hiệu TsuDEV), UI1 GUI + website >= 3:1 có cổng CI, Clean Codebase
+  (IDE0051/52, knip) + ngân sách tốc độ chặn CI. Rà soát: `20261127-LOGIN1`. Phiếu ĐÓNG phần tsudisk.
+

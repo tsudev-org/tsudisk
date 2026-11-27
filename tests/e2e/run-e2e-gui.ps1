@@ -410,6 +410,31 @@ try {
     $proc.Kill()
     $proc.WaitForExit(15000) | Out-Null
     $proc = $null
+
+    Write-Host "`n=== Ca G12: cua so Tai khoan chi co nut, khong o nhap (AUTH_AND_ACCOUNT 2.1, QR4) ==="
+    # May CI chua dang nhap: mo cua so KHONG goi mang, khong tao tep. Khong bam Dang nhap/Mo trang (se mo trinh duyet).
+    $startWatch = [Diagnostics.Stopwatch]::StartNew()
+    $proc = Start-Process -FilePath $Exe -PassThru -ArgumentList @('--du-lieu-mau', '--thu-muc-nhat-ky', "`"$Logs`"")
+    $mainCond = New-Object System.Windows.Automation.PropertyCondition($UIA::ProcessIdProperty, $proc.Id)
+    $main = Wait-Until { $proc.Refresh(); if ($proc.HasExited) { throw "tsudisk-gui thoat som (ma $($proc.ExitCode))" }; $UIA::RootElement.FindFirst($Scope::Children, $mainCond) } 'cua so chinh (G12)' 60
+    # Ngan sach desktop (LANGUAGE_SELECTION 5.1): IN so do, KHONG chan - ngoai le .NET ghi o AGENTS.md B.4.
+    Write-Host ("  Khoi dong toi cua so chinh (du lieu mau): {0:N0} ms" -f $startWatch.ElapsedMilliseconds)
+    Invoke-Element (Find-ById $main 'AccountButton')
+    $accCond = New-Object System.Windows.Automation.AndCondition($mainCond,
+        (New-Object System.Windows.Automation.PropertyCondition($UIA::AutomationIdProperty, 'AccountWindow')))
+    $account = Wait-Until { $UIA::RootElement.FindFirst($Scope::Descendants, $accCond) } 'cua so Tai khoan' 20
+    $editCond = New-Object System.Windows.Automation.PropertyCondition($UIA::ControlTypeProperty, [System.Windows.Automation.ControlType]::Edit)
+    Assert-True ($null -eq $account.FindFirst($Scope::Descendants, $editCond)) 'cua so Tai khoan khong co o nhap (UIA Edit)'
+    $buttonCond = New-Object System.Windows.Automation.PropertyCondition($UIA::ControlTypeProperty, [System.Windows.Automation.ControlType]::Button)
+    $ids = (@($account.FindAll($Scope::Descendants, $buttonCond)) | ForEach-Object { $_.Current.AutomationId } | Sort-Object) -join ','
+    Assert-True ($ids -eq 'CloseButton,DeleteAccountButton,OpenAccountButton,SignInButton') "chua dang nhap: dung bon nut ($ids)"
+    Assert-True ((Find-ById $account 'AccountState').Current.Name.Length -gt 20) 'trang thai tai khoan doc duoc bang UIA'
+    $account.SetFocus()
+    Start-Sleep -Milliseconds 300
+    Add-Type -AssemblyName System.Windows.Forms
+    [System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+    $closed = Wait-Until { if ($null -eq $UIA::RootElement.FindFirst($Scope::Descendants, $accCond)) { $true } } 'Esc dong cua so Tai khoan' 10
+    Assert-True $closed 'Esc dong cua so Tai khoan'
 }
 catch {
     Write-Host "LOI: $_" -ForegroundColor Red

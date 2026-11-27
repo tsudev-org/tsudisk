@@ -147,4 +147,31 @@ TsuDisk sẽ đóng lại. Mở PowerShell, dán lệnh (Ctrl+V) rồi nhấn En
   <data name="LockExporting" xml:space="preserve"><value>Đang xuất dữ liệu...</value></data>
   <data name="LockExported" xml:space="preserve"><value>Đã xuất {0} tệp vào: {1}</value></data>
   <data name="LockExportFailed" xml:space="preserve"><value>Không xuất được dữ liệu: {0}</value></data>
+  <data name="Account" xml:space="preserve"><value>Tài khoản</value></data>
+  <data name="AccountTitle" xml:space="preserve"><value>Tài khoản TsuDEV</value></data>
+  <data name="AccountIntro" xml:space="preserve"><value>Đăng nhập, đăng ký, đăng nhập bằng mã QR và xóa tài khoản đều diễn ra trên tsudev.com trong trình duyệt của bạn. TsuDisk không bao giờ hỏi mật khẩu.</value></data>
+  <data name="AccountSignedOut" xml:space="preserve"><value>Chưa đăng nhập. Bản miễn phí dùng đủ mọi chức năng, không gửi dữ liệu nào lên mạng; đăng nhập là không bắt buộc.</value></data>
+  <data name="AccountSignedIn" xml:space="preserve"><value>Đã đăng nhập: {0} (lúc {1})</value></data>
+  <data name="AccountSignIn" xml:space="preserve"><value>Đăng nhập trên trình duyệt</value></data>
+  <data name="AccountCancelSignIn" xml:space="preserve"><value>Hủy đăng nhập</value></data>
+  <data name="AccountOpenPage" xml:space="preserve"><value>Mở trang tài khoản</value></data>
+  <data name="AccountSignOut" xml:space="preserve"><value>Đăng xuất</value></data>
+  <data name="AccountDelete" xml:space="preserve"><value>Xóa tài khoản</value></data>
+  <data name="AccountWaiting" xml:space="preserve"><value>Đang chờ bạn đăng nhập trên tsudev.com (tối đa 5 phút)...</value></data>
+  <data name="AccountReopen" xml:space="preserve"><value>Trình duyệt không tự mở? Mở trang đăng nhập</value></data>
+  <data name="AccountSignInDone" xml:space="preserve"><value>Đã đăng nhập.</value></data>
+  <data name="AccountSignInCancelled" xml:space="preserve"><value>Đã hủy đăng nhập.</value></data>
+  <data name="AccountSignOutDone" xml:space="preserve"><value>Đã đăng xuất và xóa dữ liệu tài khoản trên máy này. Nhật ký và bản sao lưu được giữ nguyên.</value></data>
+  <data name="AccountSignOutOffline" xml:space="preserve"><value>Không báo được cho tsudev.com; phiên trên máy chủ tự hết hạn.</value></data>
+  <data name="AccountDeleteOpened" xml:space="preserve"><value>Đã mở trang xóa tài khoản trên tsudev.com. Xác nhận ở đó; bạn có 30 ngày để hủy.</value></data>
+  <data name="AccountBrowserFailed" xml:space="preserve"><value>Không mở được trình duyệt. Hãy mở: {0}</value></data>
+  <data name="LoginFail_Timeout" xml:space="preserve"><value>Hết 5 phút mà chưa đăng nhập xong. Hãy thử lại.</value></data>
+  <data name="LoginFail_Denied" xml:space="preserve"><value>tsudev.com không cho đăng nhập ({0}).</value></data>
+  <data name="LoginFail_StateMismatch" xml:space="preserve"><value>Phản hồi đăng nhập không khớp lần này - đã bỏ qua để an toàn. Hãy thử lại.</value></data>
+  <data name="LoginFail_WrongIssuer" xml:space="preserve"><value>Phản hồi đăng nhập không đến từ tsudev.com - đã bỏ qua.</value></data>
+  <data name="LoginFail_TokenRejected" xml:space="preserve"><value>tsudev.com từ chối mã đăng nhập ({0}). Hãy thử lại.</value></data>
+  <data name="LoginFail_IdTokenInvalid" xml:space="preserve"><value>Danh tính trả về không kiểm được chữ ký ({0}) - không lưu gì.</value></data>
+  <data name="LoginFail_NoRefreshToken" xml:space="preserve"><value>tsudev.com không cấp quyền giữ đăng nhập (offline_access) - không lưu gì.</value></data>
+  <data name="LoginFail_Offline" xml:space="preserve"><value>Không kết nối được tsudev.com ({0}). Kiểm tra mạng rồi thử lại.</value></data>
+  <data name="LoginFail_NoLoopback" xml:space="preserve"><value>Không mở được cổng nhận phản hồi trên 127.0.0.1 lẫn [::1] ({0}).</value></data>
 </root>

@@ -55,6 +55,18 @@ public class ResxParityTests
     }
 
     [Fact]
+    public void Moi_ket_qua_dang_nhap_that_bai_co_chuoi_hai_ngon_ngu()
+    {
+        // AccountWindow ghep khoa "LoginFail_" + LoginStatus - test KeysUsedInGui_Exist khong thay khoa ghep dong.
+        foreach (var file in new[] { "Strings.resx", "Strings.vi.resx" })
+        {
+            var keys = Load(file).Keys.ToHashSet();
+            foreach (var status in Enum.GetValues<TsuDisk.Core.Pro.LoginStatus>().Where(s => s != TsuDisk.Core.Pro.LoginStatus.Success))
+                Assert.Contains("LoginFail_" + status, keys);
+        }
+    }
+
+    [Fact]
     public void NoEmDash_InStrings()
     {
         foreach (var file in new[] { "Strings.resx", "Strings.vi.resx" })

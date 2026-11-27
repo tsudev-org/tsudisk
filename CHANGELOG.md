@@ -2,6 +2,15 @@
 
 Mới nhất ở trên. Phiên bản theo khuôn `YY.M.DDNN` (`.standards/docs/VERSIONING.md` mục 2).
 
+## [Chưa phát hành]
+
+- Giao diện có nút **Tài khoản**: xem trạng thái đăng nhập (không kết nối mạng khi mở), **Đăng nhập trên trình duyệt**,
+  **Mở trang tài khoản**, **Đăng xuất**, **Xóa tài khoản**. Đăng nhập (kể cả bằng mã QR từ điện thoại) diễn ra trên
+  tsudev.com; TsuDisk không có ô nhập mật khẩu nào.
+- Lệnh mới `tsudisk xoa-tai-khoan`: mở trang xóa tài khoản TsuDEV trên tsudev.com. `tai-khoan` in thêm trang tài khoản.
+- Liên kết tới tsudev.com trong giao diện có dấu hiệu TsuDEV đứng trước.
+- Bản đồ phân vùng: vùng trống có viền rõ hơn (đạt tương phản 3:1 ở cả chế độ Sáng và Tối).
+
 ## [26.11.2702] - 27/11/2026
 
 - Bản bảo trì, không đổi tính năng: kiểm thật đường cập nhật bắt buộc của 26.11.2701 (bản 26.11.2701 đã đăng nhập sẽ

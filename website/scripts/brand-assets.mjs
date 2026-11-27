@@ -243,6 +243,11 @@ async function main() {
       emit(pub(`brand/logo-${CFG.ecosystem.id}-${s}.avif`), await base.clone().avif({ quality: 70, effort: 9 }).toBuffer());
       emit(pub(`brand/logo-${CFG.ecosystem.id}-${s}.webp`), await base.clone().webp({ quality: 90, effort: 6 }).toBuffer());
     }
+    // Ứng dụng desktop: dấu hiệu tsudev trước liên kết tsudev.com (BRAND_ASSETS 12.3) - PNG vì WPF không đọc AVIF/WebP.
+    for (const s of [32, 64]) {
+      emit(app(`logo-${CFG.ecosystem.id}-${s}.png`), await sharp(eco.rounded).resize(s, s, { kernel: 'lanczos3' })
+        .png({ palette: true, quality: 92, effort: 10, compressionLevel: 9 }).toBuffer());
+    }
   }
 
   // --- Favicon + PWA.

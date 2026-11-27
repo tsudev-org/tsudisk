@@ -147,4 +147,31 @@ TsuDisk will now close. Open PowerShell, paste the command (Ctrl+V) and press En
   <data name="LockExporting" xml:space="preserve"><value>Exporting data...</value></data>
   <data name="LockExported" xml:space="preserve"><value>Exported {0} files to: {1}</value></data>
   <data name="LockExportFailed" xml:space="preserve"><value>Could not export data: {0}</value></data>
+  <data name="Account" xml:space="preserve"><value>Account</value></data>
+  <data name="AccountTitle" xml:space="preserve"><value>TsuDEV account</value></data>
+  <data name="AccountIntro" xml:space="preserve"><value>Sign-in, sign-up, QR sign-in and account deletion all happen on tsudev.com in your own browser. TsuDisk never asks for your password.</value></data>
+  <data name="AccountSignedOut" xml:space="preserve"><value>Not signed in. The free edition has every feature and sends nothing over the network; signing in is optional.</value></data>
+  <data name="AccountSignedIn" xml:space="preserve"><value>Signed in: {0} (since {1})</value></data>
+  <data name="AccountSignIn" xml:space="preserve"><value>Sign in with browser</value></data>
+  <data name="AccountCancelSignIn" xml:space="preserve"><value>Cancel sign-in</value></data>
+  <data name="AccountOpenPage" xml:space="preserve"><value>Open account page</value></data>
+  <data name="AccountSignOut" xml:space="preserve"><value>Sign out</value></data>
+  <data name="AccountDelete" xml:space="preserve"><value>Delete account</value></data>
+  <data name="AccountWaiting" xml:space="preserve"><value>Waiting for you to sign in on tsudev.com (up to 5 minutes)...</value></data>
+  <data name="AccountReopen" xml:space="preserve"><value>Browser did not open? Open the sign-in page</value></data>
+  <data name="AccountSignInDone" xml:space="preserve"><value>Signed in.</value></data>
+  <data name="AccountSignInCancelled" xml:space="preserve"><value>Sign-in cancelled.</value></data>
+  <data name="AccountSignOutDone" xml:space="preserve"><value>Signed out and removed account data from this PC. Logs and backups are kept.</value></data>
+  <data name="AccountSignOutOffline" xml:space="preserve"><value>Could not reach tsudev.com; the server session expires on its own.</value></data>
+  <data name="AccountDeleteOpened" xml:space="preserve"><value>Opened the delete-account page on tsudev.com. Confirm there; you have 30 days to cancel.</value></data>
+  <data name="AccountBrowserFailed" xml:space="preserve"><value>Could not open the browser. Visit: {0}</value></data>
+  <data name="LoginFail_Timeout" xml:space="preserve"><value>Sign-in did not finish within 5 minutes. Try again.</value></data>
+  <data name="LoginFail_Denied" xml:space="preserve"><value>tsudev.com did not allow sign-in ({0}).</value></data>
+  <data name="LoginFail_StateMismatch" xml:space="preserve"><value>The sign-in response did not match this attempt and was ignored for safety. Try again.</value></data>
+  <data name="LoginFail_WrongIssuer" xml:space="preserve"><value>The sign-in response did not come from tsudev.com and was ignored.</value></data>
+  <data name="LoginFail_TokenRejected" xml:space="preserve"><value>tsudev.com rejected the sign-in code ({0}). Try again.</value></data>
+  <data name="LoginFail_IdTokenInvalid" xml:space="preserve"><value>The returned identity failed signature checks ({0}). Nothing was saved.</value></data>
+  <data name="LoginFail_NoRefreshToken" xml:space="preserve"><value>tsudev.com did not allow staying signed in (offline_access). Nothing was saved.</value></data>
+  <data name="LoginFail_Offline" xml:space="preserve"><value>Could not reach tsudev.com ({0}). Check the network and try again.</value></data>
+  <data name="LoginFail_NoLoopback" xml:space="preserve"><value>Could not open a local port on 127.0.0.1 or [::1] for the sign-in response ({0}).</value></data>
 </root>

@@ -16,7 +16,7 @@ export const UNG_HO_URL = 'https://tsudev.com/ung-ho/';
 const GOC = normalize(join(process.cwd(), '..'));
 
 /** Tệp .md của repo -> đường dẫn trên website. Tệp khác của repo trỏ về GitHub. */
-export const TRANG_MD: Record<string, string> = {
+const TRANG_MD: Record<string, string> = {
   'README.md': '/huong-dan/',
   'PRIVACY.md': '/quyen-rieng-tu/',
   'docs/DIEU-KHOAN.md': '/dieu-khoan/',
@@ -32,7 +32,7 @@ export function docTep(duongDan: string): string {
 }
 
 /** Slug kiểu GitHub: chữ thường, bỏ dấu câu, khoảng trắng -> "-" (giữ chữ có dấu tiếng Việt). */
-export function slug(text: string): string {
+function slug(text: string): string {
   // Bỏ thẻ HTML lặp tới khi hết (một lượt có thể để lại thẻ ghép lồng như "<scr<b>ipt>")
   let s = text.toLowerCase().trim();
   for (let truoc = ''; truoc !== s; ) {
@@ -53,7 +53,7 @@ function viTriLienKet(href: string, tepMd: string): string {
 }
 
 /** Liên kết ngoài = http(s) tới host khác trang này (so hostname, không so chuỗi đầu: "disk.tsudev.com.evil.example" là ngoài). */
-export function laNgoai(href: string): boolean {
+function laNgoai(href: string): boolean {
   if (!/^https?:/i.test(href)) return false;
   try {
     return new URL(href).hostname.toLowerCase() !== new URL(SITE).hostname;
@@ -127,11 +127,11 @@ export function changelogMoiNhat(soMuc: number): string {
 // ---------------------------------------------------------------------------------------------------------------
 // Bản phát hành
 
-export interface GoiTai { ma: string; tieuDe: string; moTa: string; ten: string; url: string; sha256: string; kichThuoc: number }
+interface GoiTai { ma: string; tieuDe: string; moTa: string; ten: string; url: string; sha256: string; kichThuoc: number }
 export interface BanPhatHanh { tag: string; phienBan: string; ngay: string; url: string; goi: GoiTai[]; phu: GoiTai[]; tepSums: { ten: string; url: string }[] }
 
 /** Các gói giao chương trình theo docs/VERSIONING.md (`tsudisk_26.11.1705_windows-x64-portable.exe`; bản <= 26.11.1704 dùng `tsudisk_26.11.1704_x64-portable.exe`). Thứ tự = thứ tự hiển thị. */
-export const LOAI_GOI: { ma: string; tieuDe: string; moTa: string; mau: RegExp }[] = [
+const LOAI_GOI: { ma: string; tieuDe: string; moTa: string; mau: RegExp }[] = [
   { ma: 'setup', tieuDe: 'Bộ cài đặt', moTa: 'Cài vào Program Files, thêm tsudisk vào PATH, có mục gỡ cài đặt.', mau: /^tsudisk_.+_x64-setup\.exe$/ },
   { ma: 'portable', tieuDe: 'Bản di động', moTa: 'Một tệp tsudisk.exe chạy thẳng, không cài, không cần .NET. Mở Terminal (Admin) ở thư mục chứa tệp.', mau: /^tsudisk_.+_(windows-)?x64-portable\.exe$/ },
   { ma: 'gui', tieuDe: 'Giao diện cửa sổ (xem trước)', moTa: 'Một tệp tsudisk-gui.exe chạy thẳng: bản đồ đĩa, phân tích vùng trống, xem trước kế hoạch, đổi chữ cái/nhãn ổ, tạo phân vùng trong vùng trống, mở rộng ổ bằng vùng trống liền kề. Các thao tác ghi khác vẫn dùng tsudisk.exe.', mau: /^tsudisk-gui_.+_windows-x64-portable\.exe$/ },

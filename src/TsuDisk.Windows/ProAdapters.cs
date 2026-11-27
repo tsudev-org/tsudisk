@@ -184,3 +184,38 @@ public static class SystemBrowser
         void GetItemObject(uint uItem, ref Guid riid, [MarshalAs(UnmanagedType.Interface)] out object ppv);
     }
 }
+
+/// <summary>
+/// Dung <see cref="ProAccount"/> that cho CLI va GUI (mot cho duy nhat): tep phien DPAPI + ma cai dat trong
+/// <see cref="ProContract.DefaultStateDirectory"/>, khoa DPoP CNG (TPM truoc), header <c>X-Tsu-App</c> theo kenh.
+/// </summary>
+[SupportedOSPlatform("windows")]
+public static class ProAccountFactory
+{
+    public static HttpClient NewHttpClient(TimeSpan timeout, string version)
+    {
+#pragma warning disable CA2000 // HttpClient so huu handler (disposeHandler mac dinh = true)
+        var http = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = timeout };
+#pragma warning restore CA2000
+        http.DefaultRequestHeaders.UserAgent.ParseAdd("TsuDisk/" + version);
+        return http;
+    }
+
+    /// <param name="updateRequired">ADR-0012 muc 8: 426 o luot lay quyen loi ⇒ ghi dau de cong CLI + GUI cung khoa.</param>
+    public static ProAccount Create(HttpClient http, string version, Action<UpdateRequiredResponse>? updateRequired)
+    {
+        var dir = ProContract.DefaultStateDirectory();
+        return new ProAccount(
+            new ProAccountStore(dir, new DpapiTokenProtector()),
+            new InstallationIdStore(dir),
+            new ProHttp(http, ProEndpoints.Production, ProContract.ClientId,
+                        ProContract.AppHeaderValue(version, ProContract.DetectChannel(Environment.ProcessPath))),
+            ProEndpoints.Production,
+            ProContract.ClientId,
+            () => DateTimeOffset.UtcNow)
+        {
+            DpopKeys = new CngDpopKeyStore(),   // ADR-0012 muc 13: TPM neu co, khong thi KSP phan mem
+            UpdateRequired = updateRequired,
+        };
+    }
+}

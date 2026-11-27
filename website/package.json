@@ -11,7 +11,10 @@
     "deploy": "npm run test:worker && npm run build && wrangler deploy && node scripts/the-deploy.mjs",
     "check:a11y": "node scripts/check-a11y.mjs",
     "check:theme": "node scripts/check-theme.mjs",
-    "brand": "node scripts/brand-assets.mjs"
+    "brand": "node scripts/brand-assets.mjs",
+    "check:bieu-tuong": "node scripts/check-bieu-tuong.mjs",
+    "check:knip": "knip",
+    "check:toc-do": "node scripts/check-toc-do.mjs"
   },
   "dependencies": {
     "astro": "7.4.13",
@@ -19,7 +22,9 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
+    "knip": "6.45.1",
     "playwright": "1.65.1",
+    "sharp": "0.35.5",
     "wrangler": "4.165.0"
   }
 }

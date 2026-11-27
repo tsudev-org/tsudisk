@@ -42,7 +42,7 @@ try
         "kiem-tra-mbr2gpt" => Commands.CheckMbr2Gpt(cli),
         "sao-luu" => Commands.Backup(cli),
         "xuat-du-lieu" => Commands.Export(cli),
-        "dang-nhap" or "dang-xuat" or "tai-khoan" => ProHook.AccountCommand(cli),
+        "dang-nhap" or "dang-xuat" or "tai-khoan" or "xoa-tai-khoan" => ProHook.AccountCommand(cli),
         "phien-ban" => Commands.Version(),
         _ => Commands.Help(),
     };
@@ -353,6 +353,7 @@ internal static partial class Commands
               tsudisk xuat-du-lieu <thư mục> [--thu-muc-nhat-ky DIR] [--json]  Xuất nhật ký, bản sao lưu GPT, cài đặt ra một tệp .zip kèm SHA-256
               tsudisk tai-khoan                           Tài khoản TsuDEV và gói Pro (không bắt buộc; chưa đăng nhập thì không gọi mạng)
               tsudisk dang-nhap | dang-xuat               Đăng nhập bằng trình duyệt (tsudev.com) / đăng xuất và xóa dữ liệu tài khoản trên máy
+              tsudisk xoa-tai-khoan                       Mở trang xóa tài khoản TsuDEV trên tsudev.com (xác nhận ở đó)
               tsudisk phien-ban | tro-giup
 
             Tùy chọn cho ke-hoach / mo-rong / doi-ten / thu-nho / tao-phan-vung:

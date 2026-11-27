@@ -114,6 +114,35 @@ internal sealed partial class App : Application
             }
         }
         await CaptureLockAsync(window, directory).ConfigureAwait(true);
+        await CaptureAccountAsync(window, directory).ConfigureAwait(true);
+    }
+
+    /// <summary>Cua so Tai khoan (QR4, AUTH 2.1) vi/en x Sang/Toi o trang thai MAU "chua dang nhap" - khong doc tep phien.</summary>
+    private static async Task CaptureAccountAsync(Window owner, string directory)
+    {
+        var dialog = new AccountWindow(sample: true) { Owner = owner };
+        dialog.PrepareForCapture();
+        dialog.Show();
+        try
+        {
+            foreach (var language in UiLanguage.Supported)
+            {
+                Loc.Instance.SetLanguage(language);
+                foreach (var mode in new[] { Core.Presentation.ThemeMode.Light, Core.Presentation.ThemeMode.Dark })
+                {
+                    ThemeManager.Apply(ThemeChoice.System, mode);
+                    await dialog.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+                    var path = Path.Combine(directory,
+                        $"tsudisk-gui-tai-khoan_{language}_{(mode == Core.Presentation.ThemeMode.Dark ? "toi" : "sang")}.png");
+                    SaveElement(dialog, path);
+                    await Console.Out.WriteLineAsync(path).ConfigureAwait(true);
+                }
+            }
+        }
+        finally
+        {
+            dialog.Close();
+        }
     }
 
     /// <summary>Modal khoa vi/en x Sang/Toi voi quyet dinh MAU (khong di qua cong, khong mang) - ADR-0012 muc 10.</summary>
@@ -135,17 +164,8 @@ internal sealed partial class App : Application
                 {
                     ThemeManager.Apply(ThemeChoice.System, mode);
                     await modal.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
-                    modal.UpdateLayout();
-                    var root = (FrameworkElement)modal.Content;
-                    var dpi = VisualTreeHelper.GetDpi(modal);
-                    var bitmap = new RenderTargetBitmap((int)Math.Ceiling(root.ActualWidth * dpi.DpiScaleX),
-                        (int)Math.Ceiling(root.ActualHeight * dpi.DpiScaleY), dpi.PixelsPerInchX, dpi.PixelsPerInchY, PixelFormats.Pbgra32);
-                    bitmap.Render(root);
-                    var encoder = new PngBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create(bitmap));
                     var path = Path.Combine(directory, $"tsudisk-gui-khoa_{language}_{(mode == Core.Presentation.ThemeMode.Dark ? "toi" : "sang")}.png");
-                    using var file = File.Create(path);
-                    encoder.Save(file);
+                    SaveElement(modal, path);
                     await Console.Out.WriteLineAsync(path).ConfigureAwait(true);
                 }
             }
@@ -156,5 +176,29 @@ internal sealed partial class App : Application
             modal.Close();
             UpdateRequiredWindow.AllowClose = false;
         }
+    }
+
+    /// <summary>Ve noi dung cua so (nen theo token, dung DPI) ra PNG.</summary>
+    private static void SaveElement(Window window, string path)
+    {
+        window.UpdateLayout();
+        var root = (FrameworkElement)window.Content;
+        var dpi = VisualTreeHelper.GetDpi(window);
+        var width = root.ActualWidth + root.Margin.Left + root.Margin.Right;
+        var height = root.ActualHeight + root.Margin.Top + root.Margin.Bottom;
+        var visual = new DrawingVisual();
+        using (var dc = visual.RenderOpen())
+        {
+            dc.DrawRectangle(window.Background, null, new Rect(0, 0, width, height));
+            dc.DrawRectangle(new VisualBrush(root) { Stretch = Stretch.None, AlignmentX = AlignmentX.Left, AlignmentY = AlignmentY.Top },
+                null, new Rect(root.Margin.Left, root.Margin.Top, root.ActualWidth, root.ActualHeight));
+        }
+        var bitmap = new RenderTargetBitmap((int)Math.Ceiling(width * dpi.DpiScaleX), (int)Math.Ceiling(height * dpi.DpiScaleY),
+            dpi.PixelsPerInchX, dpi.PixelsPerInchY, PixelFormats.Pbgra32);
+        bitmap.Render(visual);
+        var encoder = new PngBitmapEncoder();
+        encoder.Frames.Add(BitmapFrame.Create(bitmap));
+        using var file = File.Create(path);
+        encoder.Save(file);
     }
 }

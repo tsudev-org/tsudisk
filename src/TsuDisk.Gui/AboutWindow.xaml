@@ -13,7 +13,7 @@
     <TextBlock Text="{g:T AboutDescription}" Margin="0,0,0,12" />
     <TextBlock Text="{g:T Publisher}" Style="{StaticResource Muted}" />
     <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,0">
-      <Hyperlink NavigateUri="https://tsudev.com" RequestNavigate="OnLink" Foreground="{DynamicResource text-link}">https://tsudev.com</Hyperlink>
+      <InlineUIContainer BaselineAlignment="Center"><Image Source="Resources/logo-tsudev-32.png" Width="16" Height="16" Margin="0,0,6,0" AutomationProperties.Name="TsuDEV" /></InlineUIContainer><Hyperlink NavigateUri="https://tsudev.com" RequestNavigate="OnLink" Foreground="{DynamicResource text-link}">https://tsudev.com</Hyperlink>
     </TextBlock>
     <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,0">
       <Hyperlink NavigateUri="https://disk.tsudev.com" RequestNavigate="OnLink" Foreground="{DynamicResource text-link}">https://disk.tsudev.com</Hyperlink>

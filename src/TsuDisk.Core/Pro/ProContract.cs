@@ -70,6 +70,18 @@ public static class ProContract
     public static string DefaultStateDirectory() => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "tsudev", "tsudisk");
 
+    /// <summary>
+    /// AUTH_AND_ACCOUNT v5.0.0 muc 2.1: app CHI co nut "Mo trang tai khoan" va "Xoa tai khoan" dan toi CONG tsudev.com -
+    /// dang nhap/dang ky/QR/mat khau/xoa (xac thuc lai) deu nam o cong, app khong co o nhap nao. Do 27/11/2026: trang tai
+    /// khoan cua cong la <c>/settings/security</c> (200), muc xoa co neo <c>#xoa-tai-khoan</c>; bo duong <c>/tai-khoan</c>
+    /// cua muc 13.1 chua co (404). Dang nhap KHONG ghi cung trang nao: di qua <c>/authorize</c> cua issuer
+    /// (<see cref="ProEndpoints"/>), cong tu chuyen toi trang dang nhap hien hanh.
+    /// </summary>
+    public const string AccountPageUrl = "https://tsudev.com/settings/security";
+
+    /// <summary>Trang xoa tai khoan cua cong (muc 2.1 "Xoa tai khoan": mo dung trang xoa, xac thuc lai nam o cong).</summary>
+    public const string DeleteAccountUrl = "https://tsudev.com/settings/security#xoa-tai-khoan";
+
     /// <summary>Trang Pro cho ban ngoai cua hang (muc 7.3 "Kenh").</summary>
     public static string ProUrl(string clientId) => "https://tsudev.com/pro?app=" + Uri.EscapeDataString(clientId);
 }

@@ -1,0 +1,44 @@
+<Window x:Class="TsuDisk.Gui.AccountWindow" x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:g="clr-namespace:TsuDisk.Gui"
+        Title="{g:T AccountTitle}" Width="480" SizeToContent="Height" ResizeMode="NoResize" ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner" Background="{DynamicResource bg-surface}" Foreground="{DynamicResource text-primary}"
+        FontFamily="{DynamicResource font-body}" FontSize="14" UseLayoutRounding="True" AutomationProperties.AutomationId="AccountWindow">
+  <!-- AUTH_AND_ACCOUNT v5.0.0 muc 2.1: muc Tai khoan cua app cai dat CHI co nut - "Dang nhap tren trinh duyet" (PKCE qua
+       127.0.0.1, trinh duyet he thong) va "Mo trang tai khoan", cong them Dang xuat / Xoa tai khoan. KHONG o nhap nao
+       (test CentralLoginTests). QR, ma khop, Google/GitHub, passkey deu nam tren cong tsudev.com. Esc dong. -->
+  <StackPanel Margin="24">
+    <StackPanel Orientation="Horizontal">
+      <Image Source="Resources/logo-tsudev-32.png" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center"
+             AutomationProperties.Name="TsuDEV" />
+      <TextBlock Text="{g:T AccountTitle}" FontFamily="{DynamicResource font-display}" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" />
+    </StackPanel>
+    <TextBlock x:Name="StateText" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,16,0,0" AutomationProperties.AutomationId="AccountState" />
+    <TextBlock Text="{g:T AccountIntro}" Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,8,0,0" />
+
+    <StackPanel Margin="0,20,0,0">
+      <Button x:Name="SignInButton" Style="{StaticResource Primary}" Content="{g:T AccountSignIn}" Click="OnSignIn" HorizontalAlignment="Stretch" />
+      <Button x:Name="CancelSignInButton" Content="{g:T AccountCancelSignIn}" Click="OnCancelSignIn" HorizontalAlignment="Stretch" Visibility="Collapsed" />
+      <Button x:Name="OpenAccountButton" Click="OnOpenAccount" HorizontalAlignment="Stretch" Margin="0,8,0,0"
+              AutomationProperties.Name="{g:T AccountOpenPage}">
+        <StackPanel Orientation="Horizontal">
+          <!-- BRAND_ASSETS 12.3: dau hieu TsuDEV ngay truoc lien ket toi tsudev.com. -->
+          <Image Source="Resources/logo-tsudev-32.png" Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center" AutomationProperties.Name="TsuDEV" />
+          <TextBlock Text="{g:T AccountOpenPage}" VerticalAlignment="Center" />
+        </StackPanel>
+      </Button>
+      <Button x:Name="SignOutButton" Content="{g:T AccountSignOut}" Click="OnSignOut" HorizontalAlignment="Stretch" Margin="0,8,0,0" />
+      <Button x:Name="DeleteAccountButton" Style="{StaticResource DangerOutline}" Content="{g:T AccountDelete}" Click="OnDeleteAccount"
+              HorizontalAlignment="Stretch" Margin="0,8,0,0" />
+    </StackPanel>
+
+    <TextBlock x:Name="MessageText" TextWrapping="Wrap" Margin="0,16,0,0" Visibility="Collapsed"
+               AutomationProperties.AutomationId="AccountMessage" AutomationProperties.LiveSetting="Polite" />
+    <TextBlock x:Name="ReopenText" Style="{StaticResource Muted}" Margin="0,6,0,0" Visibility="Collapsed">
+      <Hyperlink x:Name="ReopenLink" RequestNavigate="OnReopen" Foreground="{DynamicResource text-link}"><Run Text="{g:T AccountReopen}" /></Hyperlink>
+    </TextBlock>
+
+    <Button x:Name="CloseButton" Content="{g:T Close}" Style="{StaticResource Ghost}" IsCancel="True" HorizontalAlignment="Right" Margin="0,20,0,0" />
+  </StackPanel>
+</Window>

@@ -33,6 +33,7 @@ internal sealed class CliArgs
         ["sao-luu"] = "sao-luu", ["backup"] = "sao-luu",
         ["xuat-du-lieu"] = "xuat-du-lieu", ["export"] = "xuat-du-lieu",
         ["dang-nhap"] = "dang-nhap", ["login"] = "dang-nhap",
+        ["xoa-tai-khoan"] = "xoa-tai-khoan", ["delete-account"] = "xoa-tai-khoan",
         ["dang-xuat"] = "dang-xuat", ["logout"] = "dang-xuat",
         ["tai-khoan"] = "tai-khoan", ["account"] = "tai-khoan",
         ["phien-ban"] = "phien-ban", ["version"] = "phien-ban", ["--version"] = "phien-ban", ["-v"] = "phien-ban",
