@@ -152,11 +152,48 @@ không SDK bên thứ ba (I5); OPEN 5.2: `DebugType=none` (#95), lệch chuẩn 
 
 ## Phase QR4-UI1 - Đăng nhập QR + tương phản biểu tượng + cổng mã chết
 
-- [ ] Đọc phiếu `20261124-QR1` + các phiếu gốc (`CROSS_DEVICE_LOGIN.md`); lập checklist chi tiết vào đây khi bắt đầu.
-- [ ] UI1: biểu tượng trên mọi nền ≥ 3:1 ở Sáng/Tối (GUI + website), có test chặn tái phát.
-- [ ] Cổng Clean Codebase (mã chết/phụ thuộc thừa) + ngân sách tốc độ website trong CI.
+> Bộ quy ước v9.0.0 (27/11/2026) thay đổi QR4: app cài đặt KHÔNG có màn đăng nhập riêng - QR, mã khớp, Google/GitHub,
+> passkey đều nằm trên cổng `tsudev.com` (AUTH_AND_ACCOUNT v5.0.0 mục 2.1, CROSS_DEVICE_LOGIN v1.2.0). QR4 của tsudisk
+> = mục Tài khoản đúng hai loại nút (Đăng nhập trên trình duyệt, Mở trang tài khoản) + Xoá tài khoản, CLI giữ PKCE
+> loopback. Phiếu: `logs/handover/20261124-QR1_dang-nhap-qr-ui1-dk2.md`, rà soát `20261127-RS1_ra-soat-dang-nhap.md`.
 
-**Nghiệm thu**: theo phiếu QR1. CI xanh. Ghi kết quả vào phiếu QR1 + phiếu gốc.
+**A. Bộ quy ước v9.0.0 + rà soát một cổng**
+- [x] Đọc phiếu `20261124-QR1` + phiếu gốc QR1 (mục 2 QR4-DESKTOP, STD-SYNC) + CHANGELOG 9.0.0.
+- [x] `sync-standards.sh --ref v9.0.0` hai lượt (+ cập nhật `scripts/sync-standards.sh` theo bản trung tâm, lượt ba để
+      chép `check-central-login.sh`); `check-standards.sh` đạt; `check-central-login.sh` (thường + `--strict`) đạt.
+- [ ] Phiếu `logs/handover/20261127-RS1_ra-soat-dang-nhap.md` theo mẫu `RA_SOAT_DANG_NHAP.md` (rà tay CLI + GUI).
+- [ ] CI `standards.yml`: thêm `.standards/scripts/check-central-login.sh --strict` (bước 5 hướng dẫn nâng cấp).
+
+**B. QR4 - mục Tài khoản theo mục 2.1**
+- [ ] Core `Pro/AccountLinks`: URL trang tài khoản + trang xoá tài khoản của cổng (đo 27/11: `/settings/security`
+      200, neo `#xoa-tai-khoan`), test (https, host `tsudev.com`, không ghi cứng trang đăng nhập).
+- [ ] CLI: lệnh `xoa-tai-khoan` (`delete-account`) mở trang xoá của cổng bằng trình duyệt hệ thống (không ô nhập, không
+      gọi API xoá); `tai-khoan` in thêm trang tài khoản + cách xoá; trợ giúp, README, CHANGELOG. Cổng khoá giữ nguyên
+      danh sách chủ dự án chốt (lệnh mới bị chặn khi khoá - xoá vẫn làm được ở tsudev.com).
+- [ ] GUI: nút "Tài khoản" ở đầu trang mở `AccountWindow`: trạng thái từ tệp phiên cục bộ (KHÔNG gọi mạng khi mở),
+      nút **Đăng nhập trên trình duyệt** (PKCE loopback như CLI, huỷ được), **Mở trang tài khoản**, **Đăng xuất**,
+      **Xoá tài khoản**; không ô nhập nào; vi/en; tương phản cao.
+- [ ] BRAND_ASSETS 12.3: dấu hiệu TsuDEV (PNG sinh từ dây chuyền `brand-assets.mjs`) trước liên kết tsudev.com ở chân
+      trang GUI, Giới thiệu, Tài khoản.
+- [ ] Ảnh chụp `--chup-man-hinh` thêm cửa sổ Tài khoản (vi/en × Sáng/Tối); E2E GUI ca G12: cửa sổ Tài khoản mở được,
+      không có ô nhập (UIA Edit), đủ các nút, Esc đóng.
+
+**C. UI1 - biểu tượng ≥ 3:1 trên nền thật mọi trạng thái (DESIGN_SYSTEM mục 1)**
+- [ ] Core test: bảng cặp (màu biểu tượng, nền ở mọi trạng thái) của GUI ≥ 3:1 cả Sáng/Tối + test quét XAML GUI:
+      mọi `Path`/biểu tượng vẽ bằng vai trò có trong bảng (chặn tái phát).
+- [ ] Website `scripts/check-bieu-tuong.mjs` (Playwright): mọi `svg` hiện trên các trang mẫu × Sáng/Tối × thường/
+      di chuột/đang chọn ≥ 3:1 so với nền thật phía sau; gắn CI. Sửa chỗ trượt (nếu có).
+
+**D. Clean Codebase + ngân sách tốc độ (PROJECT_STRUCTURE 3.1, LANGUAGE_SELECTION 5.1)**
+- [ ] .NET: bật `IDE0051`/`IDE0052` mức lỗi + `EnforceCodeStyleInBuild`; sửa vi phạm; build `-warnaserror` đã chặn.
+- [ ] Website: `knip` (ghim phiên bản) `npm run check:knip` trong CI; sửa vi phạm. CI kiểm `git status --porcelain`
+      sạch sau build.
+- [ ] Website: `scripts/check-toc-do.mjs` - LCP ≤ 2,5 s (CPU chậm 4×, mạng 4G chậm), CLS ≤ 0,1, JS tải ban đầu (gzip)
+      ≤ 170 KB trên các trang mẫu; gắn CI.
+- [ ] Desktop: ghi ngoại lệ .NET (khởi động/kích thước) ở AGENTS B.4 kèm số đo hiện có.
+
+**Nghiệm thu**: theo phiếu QR1 (ảnh Tài khoản 2 chế độ, `check-central-login --strict` xanh, cổng mã chết + tốc độ chặn
+CI). Mọi thay đổi Core kèm test. PR + CI xanh. Ghi kết quả vào phiếu QR1 + phiếu gốc + phiếu RS1.
 
 ## Phase UI2-B - Hiện đại hoá website (phần B)
 
