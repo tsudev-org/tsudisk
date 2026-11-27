@@ -3,7 +3,7 @@
 > Agent đọc file này ở đầu mỗi phiên và cập nhật ở cuối mỗi phiên.
 > Quy trình: `.standards/docs/AGENT_PROTOCOL.md`.
 
-> **Phiên kế tiếp**: đọc `logs/handover/20261127-02_phien-18-qr4-ui1.md`, `docs/PLAN.md`
+> **Phiên kế tiếp**: đọc `logs/handover/20261127-02_phien-18-qr4-ui1.md` (mục 4: prompt gợi ý), `docs/PLAN.md`
 > và `logs/handover/20261126-DD1_phoi-hop-don-dia.md`.
 
 ## Hàng đợi task (làm từ trên xuống)
