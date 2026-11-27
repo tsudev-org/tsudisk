@@ -4,7 +4,7 @@ using TsuDisk.Core.Pro;
 namespace TsuDisk.Core.Tests;
 
 /// <summary>
-/// Mot cong dang nhap (AUTH_AND_ACCOUNT v5.0.0 muc 2.1, phieu RS1): app chi mo trinh duyet he thong toi cong tsudev.com;
+/// Mot cong dang nhap (AUTH_AND_ACCOUNT v5.0.0 muc 2.1, phieu LOGIN1): app chi mo trinh duyet he thong toi cong tsudev.com;
 /// khong o mat khau, khong WebView, khong co CLI nhan mat khau. Bo sung cho <c>check-central-login.sh</c> (script chi
 /// quet chu, khong biet XAML/WPF).
 /// </summary>
@@ -33,6 +33,26 @@ public class CentralLoginTests
         foreach (var u in new[] { e.Authorization, e.Token, e.Revocation, e.Jwks })
             Assert.StartsWith(ProContract.Issuer + "/", u.AbsoluteUri, StringComparison.Ordinal);
         Assert.DoesNotMatch("(?i)login|dang-nhap", e.Authorization.AbsolutePath);
+    }
+
+    /// <summary>
+    /// Diem cuoi duoc GHIM (ADR-0007: discovery gia mao khong doi duoc diem cuoi token/JWKS), nhung PHAI trung discovery
+    /// that cua issuer - fixture chup tu https://tsudev.com/oidc/.well-known/openid-configuration ngay 27/11/2026.
+    /// IdP doi diem cuoi ⇒ chup lai fixture ⇒ test do ⇒ sua <see cref="ProEndpoints.Production"/>.
+    /// </summary>
+    [Fact]
+    public void Diem_cuoi_ghim_khop_discovery_cua_issuer()
+    {
+        using var doc = System.Text.Json.JsonDocument.Parse(File.ReadAllText(
+            Path.Combine(RepoRoot(), "tests", "TsuDisk.Core.Tests", "Fixtures", "oidc", "openid-configuration.json")));
+        var d = doc.RootElement;
+        var e = ProEndpoints.Production;
+        Assert.Equal(ProContract.Issuer, d.GetProperty("issuer").GetString());
+        Assert.Equal(e.Authorization.AbsoluteUri, d.GetProperty("authorization_endpoint").GetString());
+        Assert.Equal(e.Token.AbsoluteUri, d.GetProperty("token_endpoint").GetString());
+        Assert.Equal(e.Revocation.AbsoluteUri, d.GetProperty("revocation_endpoint").GetString());
+        Assert.Equal(e.Jwks.AbsoluteUri, d.GetProperty("jwks_uri").GetString());
+        Assert.Contains("S256", d.GetProperty("code_challenge_methods_supported").EnumerateArray().Select(x => x.GetString()));
     }
 
     [Fact]

@@ -16,7 +16,8 @@ TsuDisk dùng được không cần tài khoản, không cần trả phí. Dữ 
 thông tin đĩa, nhật ký, bản sao lưu lên internet.
 
 **Hạng sản phẩm: C - Ngoại tuyến** (theo `.standards/docs/AUTH_AND_ACCOUNT.md` mục 1): chạy trọn vẹn không cần
-Internet, không tài khoản, không gửi dữ liệu đi đâu. Đăng nhập tài khoản TsuDEV (`tsudisk dang-nhap`) là tùy chọn, chỉ
+Internet, không tài khoản, không gửi dữ liệu đi đâu. Đăng nhập tài khoản TsuDEV (`tsudisk dang-nhap` hoặc nút **Tài khoản**
+của giao diện, đăng nhập trên trang tsudev.com trong trình duyệt) là tùy chọn, chỉ
 khi bạn tự gõ lệnh (TsuDisk không bao giờ nhắc đăng nhập), để nhận huy hiệu TsuDEV Pro/Ủng hộ; chưa đăng nhập thì
 TsuDisk không kết nối mạng lần nào.
 
@@ -68,7 +69,7 @@ tsudisk kiem-tra-gpt              # Kiểm tra toàn vẹn bảng GPT trên đĩ
 tsudisk kiem-tra-mbr2gpt          # Đĩa Windows MBR chuyển sang GPT được không (mbr2gpt /validate, chỉ đọc, Admin)
 tsudisk sao-luu                   # Sao lưu sector GPT thô + bố cục + SHA-256 (Admin)
 tsudisk xuat-du-lieu D:\sao-luu   # Xuất nhật ký, bản sao lưu GPT, cài đặt ra một tệp .zip kèm manifest SHA-256
-tsudisk tai-khoan                 # Tài khoản TsuDEV và gói Pro (tùy chọn); dang-nhap / dang-xuat
+tsudisk tai-khoan                 # Tài khoản TsuDEV và gói Pro (tùy chọn); dang-nhap / dang-xuat / xoa-tai-khoan
 ```
 
 Tùy chọn của `ke-hoach` / `mo-rong` / `doi-ten` / `thu-nho` / `tao-phan-vung` / `xoa-phan-vung`:

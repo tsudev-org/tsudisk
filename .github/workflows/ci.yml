@@ -87,6 +87,8 @@ jobs:
             if ($n -ne 4) { throw "$($run.Dir): can 4 anh, co $n" }
             $k = (Get-ChildItem $out -Filter 'tsudisk-gui-khoa_*.png').Count   # modal khoa vi/en x Sang/Toi (ADR-0012)
             if ($k -ne 4) { throw "$($run.Dir): can 4 anh modal khoa, co $k" }
+            $t = (Get-ChildItem $out -Filter 'tsudisk-gui-tai-khoan_*.png').Count   # cua so Tai khoan vi/en x Sang/Toi (QR4)
+            if ($t -ne 4) { throw "$($run.Dir): can 4 anh cua so Tai khoan, co $t" }
           }
       - name: E2E lai giao dien doi ten tren o ao VHDX (UI Automation, ADR-0009)
         shell: powershell

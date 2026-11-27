@@ -10,7 +10,7 @@ using TsuDisk.Windows;
 namespace TsuDisk.Gui;
 
 /// <summary>
-/// Tai khoan TsuDEV trong GUI (AUTH_AND_ACCOUNT v5.0.0 muc 2.1, phieu RS1). Mo cua so KHONG goi mang: trang thai doc tu
+/// Tai khoan TsuDEV trong GUI (AUTH_AND_ACCOUNT v5.0.0 muc 2.1, phieu LOGIN1). Mo cua so KHONG goi mang: trang thai doc tu
 /// tep phien cuc bo. Chi khi nguoi dung bam nut moi co mang (dang nhap PKCE loopback, thu hoi khi dang xuat) - cung duong
 /// voi <c>tsudisk dang-nhap</c>. Che do chup man hinh: trang thai mau "chua dang nhap", khong doc tep nao.
 /// </summary>

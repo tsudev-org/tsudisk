@@ -28,8 +28,10 @@ cụ hệ thống như `reagentc`, `bcdedit`, `diskpart`, `mbr2gpt`), mã mạng
 
 ## Khi bạn đăng nhập (tùy chọn)
 
-`tsudisk dang-nhap` mở trình duyệt tới tsudev.com để bạn đăng nhập tài khoản TsuDEV, nhằm nhận quyền lợi TsuDEV Pro
-(huy hiệu). TsuDisk không bao giờ tự nhắc đăng nhập; chỉ khi bạn gõ lệnh này.
+`tsudisk dang-nhap` (hoặc nút **Đăng nhập trên trình duyệt** trong cửa sổ **Tài khoản** của giao diện) mở trình duyệt
+tới tsudev.com để bạn đăng nhập tài khoản TsuDEV, nhằm nhận quyền lợi TsuDEV Pro (huy hiệu). Mọi bước đăng nhập (mật
+khẩu, Google, GitHub, khoá truy cập, mã QR) diễn ra trên tsudev.com; TsuDisk không có ô nhập và không bao giờ thấy mật
+khẩu. TsuDisk không bao giờ tự nhắc đăng nhập; chỉ khi bạn chủ động bấm hoặc gõ lệnh.
 Sau đó TsuDisk chỉ trao đổi với tsudev.com:
 
 - Mã đăng nhập (lưu trên máy, mã hóa bằng Windows DPAPI theo tài khoản Windows của bạn) và **mã cài đặt** ngẫu nhiên
@@ -44,7 +46,9 @@ Sau đó TsuDisk chỉ trao đổi với tsudev.com:
   liệu bằng `tsudisk xuat-du-lieu` hoặc nút **Xuất dữ liệu** của giao diện - tệp `.zip` chỉ lưu trên máy bạn).
 
 TsuDisk **không** gửi thông tin đĩa, phân vùng, nhật ký hay tệp nào của bạn lên mạng, kể cả khi đã đăng nhập. Dữ liệu
-tài khoản trên máy nằm ở `%LOCALAPPDATA%\tsudev\tsudisk`; `tsudisk dang-xuat` thu hồi phiên, xóa thư mục đó và khóa thiết bị.
+tài khoản trên máy nằm ở `%LOCALAPPDATA%\tsudev\tsudisk`; `tsudisk dang-xuat` (nút **Đăng xuất**) thu hồi phiên, xóa thư
+mục đó và khóa thiết bị. Xóa hẳn tài khoản TsuDEV: `tsudisk xoa-tai-khoan` hoặc nút **Xóa tài khoản** mở trang xóa của
+tsudev.com (xác nhận và hủy trong 30 ngày ở đó).
 
 ## Website disk.tsudev.com
 

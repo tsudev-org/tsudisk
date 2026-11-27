@@ -155,13 +155,13 @@ không SDK bên thứ ba (I5); OPEN 5.2: `DebugType=none` (#95), lệch chuẩn 
 > Bộ quy ước v9.0.0 (27/11/2026) thay đổi QR4: app cài đặt KHÔNG có màn đăng nhập riêng - QR, mã khớp, Google/GitHub,
 > passkey đều nằm trên cổng `tsudev.com` (AUTH_AND_ACCOUNT v5.0.0 mục 2.1, CROSS_DEVICE_LOGIN v1.2.0). QR4 của tsudisk
 > = mục Tài khoản đúng hai loại nút (Đăng nhập trên trình duyệt, Mở trang tài khoản) + Xoá tài khoản, CLI giữ PKCE
-> loopback. Phiếu: `logs/handover/20261124-QR1_dang-nhap-qr-ui1-dk2.md`, rà soát `20261127-RS1_ra-soat-dang-nhap.md`.
+> loopback. Phiếu: `logs/handover/20261124-QR1_dang-nhap-qr-ui1-dk2.md`, rà soát `20261127-LOGIN1_ra-soat-mot-cong-dang-nhap.md`.
 
 **A. Bộ quy ước v9.0.0 + rà soát một cổng**
 - [x] Đọc phiếu `20261124-QR1` + phiếu gốc QR1 (mục 2 QR4-DESKTOP, STD-SYNC) + CHANGELOG 9.0.0.
 - [x] `sync-standards.sh --ref v9.0.0` hai lượt (+ cập nhật `scripts/sync-standards.sh` theo bản trung tâm, lượt ba để
       chép `check-central-login.sh`); `check-standards.sh` đạt; `check-central-login.sh` (thường + `--strict`) đạt.
-- [ ] Phiếu `logs/handover/20261127-RS1_ra-soat-dang-nhap.md` theo mẫu `RA_SOAT_DANG_NHAP.md` (rà tay CLI + GUI).
+- [ ] Phiếu `logs/handover/20261127-LOGIN1_ra-soat-mot-cong-dang-nhap.md` theo mẫu `RA_SOAT_DANG_NHAP.md` (rà tay CLI + GUI).
 - [ ] CI `standards.yml`: thêm `.standards/scripts/check-central-login.sh --strict` (bước 5 hướng dẫn nâng cấp).
 
 **B. QR4 - mục Tài khoản theo mục 2.1**
@@ -193,7 +193,7 @@ không SDK bên thứ ba (I5); OPEN 5.2: `DebugType=none` (#95), lệch chuẩn 
 - [ ] Desktop: ghi ngoại lệ .NET (khởi động/kích thước) ở AGENTS B.4 kèm số đo hiện có.
 
 **Nghiệm thu**: theo phiếu QR1 (ảnh Tài khoản 2 chế độ, `check-central-login --strict` xanh, cổng mã chết + tốc độ chặn
-CI). Mọi thay đổi Core kèm test. PR + CI xanh. Ghi kết quả vào phiếu QR1 + phiếu gốc + phiếu RS1.
+CI). Mọi thay đổi Core kèm test. PR + CI xanh. Ghi kết quả vào phiếu QR1 + phiếu gốc + phiếu LOGIN1.
 
 ## Phase UI2-B - Hiện đại hoá website (phần B)
 

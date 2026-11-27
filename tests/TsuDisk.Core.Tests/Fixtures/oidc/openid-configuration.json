@@ -1,0 +1,13 @@
+{
+  "issuer": "https://tsudev.com/oidc",
+  "authorization_endpoint": "https://tsudev.com/oidc/auth",
+  "token_endpoint": "https://tsudev.com/oidc/token",
+  "revocation_endpoint": "https://tsudev.com/oidc/token/revocation",
+  "jwks_uri": "https://tsudev.com/oidc/jwks",
+  "code_challenge_methods_supported": [
+    "S256"
+  ],
+  "id_token_signing_alg_values_supported": [
+    "ES256"
+  ]
+}
