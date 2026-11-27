@@ -21,5 +21,8 @@ jobs:
       - name: Cổng kiểm quy ước cục bộ
         run: ./scripts/check-standards.sh
 
+      - name: Một cổng đăng nhập (AUTH_AND_ACCOUNT 2.1, chế độ chặn)
+        run: .standards/scripts/check-central-login.sh --strict
+
       - name: Đối chiếu với bộ quy ước trung tâm
         run: ./scripts/sync-standards.sh --check

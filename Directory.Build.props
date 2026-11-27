@@ -20,6 +20,8 @@
     <LangVersion>latest</LangVersion>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Cong ma chet (PROJECT_STRUCTURE 3.1): chay luat IDE trong build de IDE0051/IDE0052 (.editorconfig) chan CI. -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <InvariantGlobalization>false</InvariantGlobalization>
     <!-- Build duoc project net10.0-windows tren may dev Linux va CI ubuntu. -->
     <EnableWindowsTargeting>true</EnableWindowsTargeting>

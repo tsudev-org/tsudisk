@@ -31,6 +31,10 @@ dotnet_diagnostic.CA1031.severity = suggestion
 # CA1716/CA1724: ten "Plan", "Step" trung tu khoa VB - khong ho tro VB.
 dotnet_diagnostic.CA1716.severity = none
 dotnet_diagnostic.CA1724.severity = none
+# Clean Codebase (PROJECT_STRUCTURE 3.1): ma chet chan build - thanh vien private khong ai goi (IDE0051), duoc gan ma
+# khong ai doc (IDE0052). Can EnforceCodeStyleInBuild (Directory.Build.props).
+dotnet_diagnostic.IDE0051.severity = error
+dotnet_diagnostic.IDE0052.severity = error
 
 [.standards/**]
 generated_code = true

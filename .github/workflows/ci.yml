@@ -119,6 +119,8 @@ jobs:
           cache: npm
           cache-dependency-path: website/package-lock.json
       - run: npm ci
+      - name: Cong ma chet / phu thuoc thua (knip, PROJECT_STRUCTURE 3.1)
+        run: npm run check:knip
       - name: Sinh thu manifest winget tu packaging/package.json
         working-directory: .
         run: |
@@ -142,3 +144,12 @@ jobs:
         run: npm run check:a11y
       - name: Bo chon giao dien (CSP production)
         run: npm run check:theme
+      - name: Bieu tuong >= 3:1 tren nen that moi trang thai (UI1, Sang + Toi)
+        run: npm run check:bieu-tuong
+      - name: Ngan sach toc do (LCP <= 2,5 s, CLS <= 0,1, JS <= 170 KB gzip - LANGUAGE_SELECTION 5.1)
+        run: npm run check:toc-do
+      - name: Cay lam viec sach sau build (khong tep rac, PROJECT_STRUCTURE 3.1)
+        working-directory: .
+        run: |
+          git status --porcelain
+          test -z "$(git status --porcelain)"

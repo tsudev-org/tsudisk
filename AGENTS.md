@@ -76,6 +76,7 @@ cd website && npm ci && npm run build                           # website
 | `src/` không theo cây `components/features/...` | Giải pháp .NET chia theo project biên dịch | Giữ, đã ghi `docs/ARCHITECTURE.md` |
 | Không bật trimming/Native AOT (APP_INTEGRITY 5.2 .NET) | `System.Management` dùng reflection/COM (B.5) | Giữ; bản phát hành dùng `DebugType=none` |
 | Chưa ký số `tsudisk.exe` | Chờ SignPath Foundation (D5 của hệ sinh thái) | Thêm bước ký khi D5 duyệt |
+| Ngân sách desktop (LANGUAGE_SELECTION 5.1): exe 44,6 MB (CLI) / 67,1 MB (GUI) > 30 MB | .NET self-contained một tệp, không trim/AOT (dòng trên); ngoại lệ .NET được chuẩn cho phép | Giữ; E2E GUI G12 in thời gian khởi động (không chặn); Rust/Tauri chỉ khi có ADR + số đo |
 
 ### B.5. Việc riêng của repo cần biết trước khi sửa
 
