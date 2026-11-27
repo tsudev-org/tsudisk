@@ -15,7 +15,10 @@
 - [ ] 👤 Dọn đĩa: phiếu `logs/handover/20261126-DD1_phoi-hop-don-dia.md` mục 3 (co VHDX, bản build tsudisk).
       ⛔ Infatica đang chạy - phiên tsuguard theo dõi.
 - [ ] UI2 phần B: hoạ tiết nền thẻ theo thể loại (phần A + nền Sáng mới + font đã xong ở #80).
-- [ ] E2E GUI ca G6 (tạo exFAT trên ổ ảo) chập chờn 1 lần ở #81 (chạy lại thì đạt) - nếu lặp lại, lưu nhật ký lần chạy.
+- [ ] E2E GUI ca G6 (tạo exFAT trên ổ ảo) chập chờn: lần 1 ở #81; **lần 2 ở #99** (PR chỉ sửa tài liệu, run 45967653422,
+      27/11 08:48 UTC): "Het 240s cho: nhat ky tao phan vung ket thuc" sau "go so dia 2 -> nut xac nhan bat". Run lỗi KHÔNG
+      có artifact nhật ký ⇒ việc tiếp: `ci.yml` tải `--thu-muc-nhat-ky` + ảnh màn hình lên artifact khi E2E GUI đỏ
+      (`if: failure()`), rồi điều tra (Format-Volume exFAT treo? hộp thoại?). AKB ISS-G6.
 - [ ] winget-pkgs #486490 (26.11.2202), #487170 (26.11.2301), #487205 (26.11.2302): chờ moderator; #487246 (26.11.2303),
       #487347 (26.11.2401): URL-Validation-Error 503 LicenseUrl github.com - cần tác giả (`nguyentrangtinhsu`) bình luận
       xin chạy lại; bản sau dùng `disk.tsudev.com/ban-quyen/` (#76). Merge => khối "Cài bằng lệnh" (PACKAGING 8.1).
